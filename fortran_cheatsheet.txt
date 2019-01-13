@@ -1,0 +1,1037 @@
+﻿
+Updated: Dec. 2, 2018
+
+
+FORTRAN cheatsheet   (focusing on FORTRAN 90)
+===================
+
+
+------------------------
+
+Questions
+
+- what is the procedure parameter default?
+- assignment is copy right?
+
+-------------------------
+
+gfortran -c source.f90   (creates object file)
+gfortran -o executable object1.o object2.o ...  (to link object files to generate executable)
+
+gfortran -o executable source1.f90 source2.f90 (skip separate compilation step)
+
+
+------------------------
+
+- One of the most important features of Fortran 90 is that it contains all of the
+features of Fortran 77.
+
+ In Fortran 90, the programmer can create strings of length zero and
+arrays of size zero; these are always considered to be defined.
+
+- Fortran 77 and below is case sensitive
+- Fortran 90 and above is not
+
+- In Fortran 90 there is a new source form for which particular positions have no
+special meaning, names may have up to 31 characters and use the underscore
+character, blanks have significance in some circumstances, a semicolon may be
+used to separate multiple statements on one line, and comments may occur on
+any line following an exclamation (!).
+
+
+- commenting    !
+
+- no semicolons
+
+- line continuation character
+
+       &
+               
+- implicit none  (always use at beginning of program)
+
+   - makes sure have explicitly declared all your variable types
+
+- basic structure
+
+    program program_name
+    ! comments explaining purpose of the program
+    
+    implicit none
+    ! variable declarations
+    ! e.g.
+    real :: answer,x,y
+    
+       code
+       
+    end program program_name
+    
+- variable declarations
+
+     type :: var_name1
+     type :: var_name2, var_name3
+
+     complex :: cube_root = (-0.5, 0.867)
+
+     character (10) :: prompt = "password"
+
+- constant
+
+     real, parameter :: PI = 3.141593
+
+     INTEGER, PARAMETER :: STATES = 50
+     INTEGER, PARAMETER :: M = MOD (28, 3), &
+                           NUMBER_OF_SENATORS = 2 * STATES
+
+     1, 12.1, (1.0, 1.) complex, .TRUE. or .FALSE., "Hello"
+
+- array
+
+    - An array is a collection of scalar elements of any intrinsic or derived type. All
+      of the elements of an array must have the same type and kind parameter. There
+      may be arrays of structures.
+
+     real, dimension(100) :: x    (by default, indexing starts at 1)
+     real, dimension(0:99) :: x    (indexing starts at 0)
+     real, dimension(-1,1) :: x     (indexing starts at -1)
+    
+     real, dimension(3,4) :: x        (two-dim array 1:3,1:4)
+     
+     real :: X(20)
+     real A(10)
+ 
+     - limit of rank = 7 dimensions (Fortran 90)
+
+     - TYPE (PATIENT) MATERNITY_WARD (20)
+
+     - indexing
+     
+         - individual element : x(3), x(3,4)
+         - slicing : A (2:5) = 1.0
+     
+         - In a data reference, there may be at most one part
+           with rank greater than zero.
+
+         - can do array slices and blocks
+
+     - can allocate size at run time but must have the POINTER or ALLOCATABLE attribute
+     
+         integer, allocatable, dimension(:) :: vector
+         allocate( vector (100))
+         deallocate(vector)
+     
+         REAL, ALLOCATABLE :: A(:), B(:)
+         ALLOCATE (A(10), B(SIZE(A)))
+
+     - can do arithmetic operations on whole array using simple arithmetic operators
+     
+           real dimension(10) :: a,b, c
+           a = 1
+           b = a * 10
+           c = b - a
+
+      - print *, array_name    (linear listing)
+
+      - WHERE ( logical-expression ) array-intrinsic-assignment-statement
+ 
+        WHERE ( logical-expression )
+          [ array-intrinsic-assignment-statement ] ...
+        [ ELSEWHERE
+          [ array-intrinsic-assignment-statement ] ... ]
+        END WHERE
+
+ - parameters for arrays
+ 
+     integer, parameter :: SIZE = 5, LOWER = 3, UPPER = 5
+    
+     real(1:SIZE) :: X
+     real(LOWER:UPPER) :: a
+
+- instrinsic data types
+
+    - real (defaults to 6 digit single precision)
+
+          - double precision (17 digits)
+    
+    - integer
+
+    - complex
+
+    - logical
+
+    - character
+    
+
+- character
+
+    'example'
+    "Nope"
+    "" 
+
+    - declaration e.g.
+    
+         character :: name*10   (10 is max length)
+         character(60) LINE
+	     character(LEN = 60) LINE
+
+    - if no length parameter is specified, the length is 1.
+
+    - CHARACTER (20) DISTRICT
+      DISTRICT(1:6)    (substring)
+
+    - the first character of a parent string is at position 1 and the last character is
+      at position n where n is the length of the string.
+
+    - concatentation   //
+
+    - TRIM()
+
+    - comparison
+
+        When the operands are both of type character, the shorter one is padded on the
+        right with blank padding characters until the operands are of equal length.
+        Then, the operands are compared one character at a time in order, starting
+        from the leftmost character of each operand until the corresponding characters
+        differ.
+
+- structure (user-defined data type)
+
+    TYPE PATIENT
+       INTEGER               PULSE_RATE
+       REAL                  TEMPERATURE
+       CHARACTER (LEN = 300) PROGNOSIS
+    END TYPE PATIENT
+
+    TYPE (PATIENT) JOHN_JONES, SALLY_SMITH
+
+    JOHN_JONES % PULSE_RATE
+
+    - A structure, even though it may contain a component that is an array, is a
+      scalar.
+
+- There are three sorts of dynamic data objects in Fortran 90: pointers, allocatable
+arrays, and automatic data objects.                 
+
+
+- arithmetic operators
+
+      + - * / ** ()   (watch out for integer division!)
+      
+      - Where operations are of equal precedence they are evaluated left to right
+      - Consecutive exponentiations are evaluated right to left
+      
+      - real (but not integer) can handle div by zero (assigns +-Infinity value)
+      
+- intrinsic functions (inbuilt functions)
+
+    - very good for mathematical computation
+    
+    - sin(), cos(), tan(), atan(), abs(real/integer), sqrt(), exp(), log10()
+    - trig functions deal in radians
+
+    Many of the intrinsic procedures may be called elementally (12.5.8), in which
+    case an array is supplied instead of a scalar for an actual argument. The
+    computation is applied element-by-element to those arguments and returns a
+    conformable array result. User-defined procedures cannot be called elementally.
+
+- stopping the program
+
+    stop
+      
+- comparison operators
+
+     == /= < <= > >=   
+
+     .LT., .LE., .EQ., .NE., .GE., .GT.
+     
+- logical operators     
+  
+     .AND., .OR., .EQV., (logical equivalence), .NEQV., .NOT
+      
+- conditionals
+
+    if ( ) then
+       ...
+    end if
+    
+    if ( ) then
+       if () then
+          ...
+       end if
+    end if
+
+    if ( ) then
+       ...
+    else if ( ) then
+       ...
+    else
+       ...
+    end if
+    
+- CASE 
+
+    - case scalar expressions/values are limited to integer, character,
+      and logical
+
+    - each case value is a scalar initialization expression of the same type as
+      the case expression. Recall that an initialization expression is an expression that
+      can be evaluated at compile time; that is, a constant expression, essentially.
+
+    - Within a particular CASE construct, the case expression and all case values
+      must be of the same type. If the character type is used, different character
+      lengths are allowed. But, the kind type parameter values must be the same
+      for all of these expressions.
+
+    - After expression evaluation, there must be no more than one case selector
+      that matches the case index. In other words, overlapping case values and
+      case ranges are prohibited.
+
+    select case (case scalar expression)
+
+        case (case-value-range-list)
+            ....
+        case (case-value-range-list)
+            ....
+        case default (optional and doesn't have to be last case))
+            ....
+     end select
+
+- looping
+
+    do i = 0,20,[increment step]
+       ....
+    end do
+
+
+    FOUND = .FALSE.
+    I = 0
+    DO WHILE (.NOT. FOUND .AND. I < LIMIT )
+       IF (KEY == X (I)) THEN
+          FOUND = .TRUE.
+       ELSE
+          I = I + 1
+       END IF
+    END DO
+
+
+    do 
+       ...
+       if ( ) exit
+    end do    
+       
+    - can't use non-integral control values in F95 anymore
+   
+    - The EXIT statement immediately causes termination of the DO construct. 
+    
+    - the CYCLE statement interrupts the execution of the DO
+      range and begins a new cycle of the DO construct, with appropriate
+      adjustments made to the iteration count and DO variable, if present.
+
+ -------------------------------------------------
+ 
+ - intrinsic array functions
+ 
+      - matmull, dot_product, transpose, maxval, minval, sum
+   
+   
+- Dynamic data objects
+
+    - pointers, allocatable arrays, and automatic data objects
+
+    - pointers
+
+		REAL, POINTER :: LENGTHS (:)
+		ALLOCATE (LENGTHS (200))
+
+           - a pointer need not be an array; it may be a scalar of any type.
+           - a pointer need not be associated with allocated space; 
+            any object with the TARGET attribute can become a pointer target
+           - to associate a pointer witha target (declared or allocated) the
+             symbol pair => is used
+
+                     PTR => X
+
+           - NULLIFY pointerName
+
+		The NULLIFY statement causes a pointer to be disassociated from any target.
+		Pointers have an initial association status that is undefined. To initialize a
+		pointer to point to no target, it is necessary to execute a NULLIFY statement
+		for the pointer.
+    - allocatable array
+
+		REAL, ALLOCATABLE :: LENGTHS (:)
+		ALLOCATE (LENGTHS (200))
+
+         - an object with the TARGET attribute may become the target
+           of a pointer during execution of a program
+
+          REAL, TARGET, DIMENSION (100, 100) :: V, W (100)
+
+    - Automatic data objects
+
+      Either arrays or character strings (or both), may be
+      declared in a subprogram. These local data objects are created on entry to the
+      subprogram and disappear when the execution of the subprogram completes.
+
+      For an array, the extents in each dimension are determined when the procedure is entered. 
+      For a character object, the length is determined when the procedure is entered.
+
+      These are useful in subprograms for temporary arrays and characters strings
+      whose sizes are different for each reference to the subprogram. An example of
+      a subprogram unit with an automatic array TEMP is:
+
+		SUBROUTINE SWAP_ARRAYS (A, B)
+	       	   REAL, DIMENSION (:) :: A, B
+		   REAL, DIMENSION (SIZE (A)) :: TEMP
+
+		   TEMP = A
+		   A = B
+		   B = TEMP
+		END SUBROUTINE SWAP_ARRAYS
+
+- initialization
+
+	A variable may be given an initial value by an entity-oriented type
+	declaration statement that contains an entity declaration of the form:
+
+      	   object-name = initialization-expression
+	
+        or by a DATA statement:
+
+		CHARACTER (LEN = 10) :: NAME = "JOHN DOE"
+		INTEGER, DIMENSION (0:9) :: METERS = (/ (0, I = 1, 10) /)
+
+- STOP
+
+     This statement terminates the program whenever and wherever it is executed.
+
+     The forms of the STOP statement (R842) are:
+
+           STOP [ scalar-character-constant ]
+           STOP digit [ digit [ digit [ digit [ digit ] ] ] ]
+
+     The character constant or list of digits identifying the STOP statement is
+     optional and is called a stop code.
+
+========================================================================
+
+PROCEDURES
+----------
+
+- for all intents Fortran passes everything by reference
+- however, The Fortran language standard doesn't say how arguments are passed. Different compilers can implement argument passing in various ways, depending on the type of the argument and the "intent" of the argument (in/out/inout).
+
+- RETURN
+
+     A RETURN statement terminates execution of a procedure and returns control
+     to the calling program.
+
+- TKR pattern of an object
+
+       data type, kind type parameter, and rank of an object
+
+- The most fundamental rule of argument association is that the TKR patterns of
+  an actual argument and its associated dummy argument must be the same.
+
+- subroutines
+
+    - doesn't return a value
+
+    - A subroutine is a procedure whose purpose is to produce some side effect,
+      such as modifying a set of arguments and/or global variables, or performing
+      input/output.
+
+     call sub_name(...)
+     
+     subroutine sub_name(var1, var2)
+     !
+     implicit none
+     data_type :: var1, var2
+     ...
+     end subroutine sub_name
+     
+
+- user defined functions
+
+     - The purpose of a function is to provide a value needed in an expression;
+       normally functions do not produce side effects, i.e., modify its arguments
+       (although they are not prohibited from having side effects).
+
+     ! in main program
+     datatype :: func_name
+
+     function func_name(var1, var2)
+     !
+     implicit none
+     
+     datatype :: var1, var2
+     
+         func_name = value
+     
+     end function func_name
+
+     OR
+
+     type function func_name(var1, var2)
+     !
+     implicit none
+     
+     datatype :: var1, var2
+     
+         func_name = value
+     
+     end function func_name
+
+     - The type of the function may be specified in the function statement or in a
+       type declaration statement, but not both.
+
+     - If the function is array valued, or a pointer, the declarations must state
+       these attributes for the function result name. The function result name may
+       be declared to be an explicit shape or a deferred shape array. If the function
+       is an explicit-shape array, the bounds may be nonconstant specification
+       expressions.
+
+      - If the result of a function is not a pointer, its value must be completely
+        defined before the end of execution of the function. If the result is an array,
+        all the elements must be defined; if the result is a structure, all of the
+        components must be defined.
+
+      - If the result of the function is an array or a pointer to an array, its shape
+        must be determined before the end of execution of the function.
+
+      - If the result is a pointer, its allocation status must be determined before the
+        end of execution of the function; that is, a target must be associated with
+        the pointer, or the pointer must have been explicitly disassociated from a
+        target.
+
+- Dummy arguments 
+
+    are the names by which the actual arguments are known
+    inside a procedure. These names are specified when the procedure is defined
+    and are used to represent arguments in computations in the procedure. When
+    the procedure is referenced during program execution, the actual arguments in
+    the reference become associated with the dummy arguments via argument
+    association
+   
+    - assumed length dummy arguments
+
+          - character: *
+
+          - An assumed-length dummy argument does not have a length until it becomes
+            associated with an actual argument. When it becomes associated, its length
+            becomes the length of the actual argument. In effect, the length of the actual
+            argument is passed as part of the actual argument and is picked up by the
+            dummy argument in the course of argument association
+
+     - assumed shape dummy arguments
+
+           - assumed-shape dummy arguments assume their shape attributes from the actual
+             argument upon association. The only requirement for the user of assumed-
+             shape dummy arguments is to ensure that the ranks of the actual and dummy
+             arguments agree as well as the type and kind; the rest follows automatically,
+             and association is on an element-by-corresponding-element basis. Thus, again,
+             TKR is the only rule to observe when using assumed-shape dummy
+             arguments.
+
+            - If the dummy argument is assumed shape, the actual argument must not
+              be an assumed-size array.
+
+     - If a STRUCTURE is a dummy argument of an external procedure, the derived type
+       for the structure has to be specified so that it is exactly the same type as that
+       for the corresponding actual argument. The preferred way to do this is to
+       define a derived type in a module and access the module via a USE statement
+       both for the external procedure and the program unit referencing it.
+
+     - Fortran 90 also provides an order-independent way of constructing actual argument
+       lists. With this option the programmer can explicitly specify in the call which
+       actual argument is to be associated with an dummy argument rather than
+       using its position in the actual argument list to determine the pairing:
+
+            dummy-argument-name = actual-argument
+
+     - there is support for OPTIONAL arguments (see doc)
+
+- INTENT
+
+    - The INTENT attribute specifies the intended use of a dummy argument
+
+    - IN: 
+
+         the subprogram must not change the value of the argument nor must the
+         argument become undefined during the course of the subprogram
+
+    - OUT: 
+
+	the subprogram must not use the argument before it is defined, 
+        and it must be definable. Only used to return results to the calling program.
+
+    - INOUT
+
+	the argument may be used to communicate information to the subprogram and
+	return information; it must be defined on entry into the subprogram and must
+	be definable. May be redefined during execution of the procedure
+
+    - If no intent is specified, the use of the argument is subject to the
+      limitations of the associated actual argument; for example, the actual argument
+      may be a constant (for example, 2) or a more complicated expression (for
+      example, N+2), and in these cases the dummy argument can only be referenced
+      but not defined.
+
+    - examples
+
+	SUBROUTINE MOVE (FROM, TO)
+	   USE PERSON_MODULE
+	   TYPE (PERSON), INTENT (IN) :: FROM
+	   TYPE (PERSON), INTENT (OUT) :: TO
+	   . . .
+
+	SUBROUTINE SUB (X, Y)
+	    INTEGER, INTENT (INOUT) :: X, Y
+	    . . .
+
+- Both internal and module procedures have explicit interfaces by nature
+
+- With explicit interfaces, the integrity of information flow among different parts
+of the program is automatically enforced. Such interfaces relieve the
+programmer (and maintainer) of the considerable mechanics of ensuring such
+integrity and allow software development resources to be concentrated instead
+on the functional design of this information flow. The net effect is that a
+Fortran program becomes more of an integrated, highly reliable, cohesive
+whole, rather than simply an aggregation of separate program units. Thus, the
+advantages of modular design are retained, while the effects of a change in one
+place on other parts of the program are tracked automatically. The result is
+more productive application development and maintenance—in short, better
+engineered software.
+
+
+- interfaces
+
+       - explicit interfaces enable significant
+         functionality; the following ten situations require explicit interfaces:
+
+         1.  optional arguments
+         2.  array-valued functions
+         3.  pointer-valued functions
+         4.  character-valued functions whose lengths are determined dynamically
+         5.  assumed-shape dummy arguments (needed for efficient passing of array
+             sections)
+         6.  dummy arguments with the pointer or target attribute
+         7.  keyword actual arguments (which allow for better argument identification
+             and order independence of the argument list)
+         8.  generic procedures (calling different procedures with the same name)
+         9.  user-defined operators (which is just an alternate form for calling certain
+             functions)
+         10. user-defined assignment (which is just an alternate form for calling certain
+             subroutines)
+
+      - internal and module procedures, by definition have explicit interfaces and
+        therefore have these advantages. The interface block is provided to allow 
+        optional explicit specification of external procedure interfaces,
+
+      - Several important new features in Fortran 90 require explicit interfaces in order
+        to allow correct and efficient procedure calls. These include array section actual
+        arguments, pointer arguments, optional arguments, keyword calls, user-
+        defined operations, user-defined assignment, and user-defined generic
+        procedures.
+
+      - An interface body may contain a USE statement and access entities, such as
+        derived-type definitions, via use association.
+
+===================================================================
+
+PROGRAM ORGANIZATION
+--------------------
+
+- Program Units
+
+   There are several kinds of executable and nonexecutable program units in
+   Fortran. Each of these program units provides unique functionality. The
+   executable program units are the main program and procedure subprograms;
+   the nonexecutable program units are block data units, which are now
+   effectively obsolescent, and modules, which provide definitions used by other
+   program units.
+
+   The five principal kinds of program units are:
+
+      main program
+      external function subprogram
+      external subroutine subprogram
+      module program unit
+      block data program unit
+
+- main program
+
+   PROGRAM program-name
+      specification-part
+      execution-part
+      internal-subprogram-part
+   END [ PROGRAM [ program-name ] ]
+
+- An important property of internal and module procedures is that the data environment of the
+  host is available to the procedure
+
+- Internal procedures
+
+     Internal procedures are very much like Fortran 77 external procedures, except
+     that they are packaged inside main programs or other procedure subprograms.
+     This makes their names local, rather than global like Fortran 77 external
+     procedures, and an internal procedure can be referenced only within the
+     program unit that contains its definition. Internal procedures may be recursive,
+     must not contain ENTRY statements, and must not be passed as actual
+     arguments. There are three principal reasons for providing internal procedures
+     in Fortran 90:
+
+     1. to provide a procedure facility that has convenient access to the host
+     environment (the host is the program unit containing the internal
+     procedure)
+     2. to provide a multistatement form of the statement function functionality
+     3. to facilitate modular design and better software engineering
+
+     The use of internal procedures can increase programmer productivity and
+     program reliability by making modular design easier. Safety and reliability are
+     enhanced because interfaces are known explicitly. Internal procedures can be
+     expanded easily inline and therefore can increase efficiency.
+
+          PROGRAM
+
+            ...
+
+          CONTAINS
+               internal-subprogram
+               [ internal-subprogram ] ...
+          END
+
+- The basic idea of host association is that entities in the
+  host (for example, host variables) are also available in any procedures or
+  derived-type definitions within the host.
+
+- external procedures
+
+   - examples
+
+      FUNCTION FOOTBALL (GAME)
+         INTEGER FOOTBALL
+         FOOTBALL = N_PLAYERS
+           . . .
+      END FUNCTION FOOTBALL
+
+      SUBROUTINE SATURDAY (SEVEN)
+          X = . . .
+      END
+
+   External procedures are stand-alone subroutines and functions that are not part
+   of any other program unit. They may share information, such as data and
+   procedures via argument lists, modules, and common blocks, but otherwise
+   they do not share information with any other program unit. They may be
+   developed, compiled, and used completely independently of other procedures
+   and program units. In fact they need not even be written in Fortran.
+
+   External subprograms are global to the Fortran program; they may be
+   referenced or called anywhere. An internal procedure, on the other hand, is
+   known only within its host.
+
+   The major difference between external procedures and internal (and module)
+   procedures is not syntactic; it is the fact that an external procedure interface is
+   not known at the point of procedure reference. Also, internal (and module)
+   procedures are compiled with their hosts, whereas external procedures usually
+   are compiled separately.
+
+   An external procedure name may be used as an actual argument in a
+   procedure reference, corresponding to a dummy procedure argument in
+   the procedure referenced.
+
+- block data program unit
+
+    Block data program units are also nonexecutable and are used
+    only to specify initial values for variables in named common blocks. With the
+    addition of modules to Fortran, block data program units are no longer needed
+
+- module
+
+    - the module program unit is new in Fortran 90 and is
+      intended to help the programmer organize elements of the program. A module
+      itself is not executable but contains data declarations, derived-type definitions,
+      procedure interface information, and subprogram definitions used by other
+      program units
+
+    - A number of different Fortran applications are easier to write and understand
+      using modules. Modules provide a way of packaging:
+      1. global data, including data structures and common blocks
+      2. user-defined operators
+      3. software libraries
+      4. data abstraction
+
+    - There is an even greater need in Fortran 90 for a way to locate data “centrally”,
+      available to all program units. The module program unit provides this
+      capability.
+
+	- Modules can declare global data. This use of modules provides more power
+  	  and is much less error-prone than the use of common blocks. Modules also
+	  may be used to collect related items, such as data, procedures, and procedure
+	  interfaces.
+
+	- It may contain data definitions,
+	type definitions, procedure definitions, and procedure interface descriptions.
+	Information in a module may be made available to other program units or it
+	may be kept private to the module.
+
+    - USE statements provide access to entities packaged in modules
+      USE statements immediately follow the program unit heading
+
+    - Anything required by more than one program unit may be packaged in
+      modules and made available where needed. A module is not itself executable,
+      although the procedures it contains can be individually referenced in the
+      execution part of other program units. The number of modules is not
+      restricted, and a module may use any number of other modules as long as the
+      access path does not lead back to itself. Modules, therefore, are powerful tools
+      for managing program organization and simplifying program design.
+
+      MODULE module-name
+          [ specification-part ]
+          [ module-subprogram-part ]
+      END [ MODULE [ module-name ] ]
+
+	- The PUBLIC and PRIVATE attributes control access to type definitions,
+	variables, functions, and named constants in a module.
+
+    - The following is an example of a simple module for providing global data:
+
+        MODULE T_DATA
+           INTEGER :: A, KA
+           REAL    :: X = 7.14
+           REAL    :: Y (10,10), Z (20,20)
+        END MODULE T_DATA
+
+        ! This module declares three scalar variables (A, KA, and X)
+        ! and two arrays (Y and Z). X is given an initial value.
+        ! These five variables can be considered to be "global"
+        ! variables that can selectively be made available to
+        ! other program units.
+
+        ! The USE statement makes A, KA, X, Y, and Z
+        ! available to subroutine TASK_2
+        SUBROUTINE TASK_2
+           USE T_DATA
+           . . .
+        END SUBROUTINE TASK_2
+
+     - module subprogram
+
+         Module procedures are not strictly local to the host module, nor are they
+         global to the program. Only program units using the module can access the
+         module’s procedures not specified to be PRIVATE.
+
+         The form of the module subprogram part is:
+
+             CONTAINS
+                module-subprogram
+                [ module-subprogram ] ...
+
+      - The default accessibility for all entities in a module is PUBLIC
+
+- INCLUDE
+
+     the INCLUDE line was added to Fortran 90 (see Section 3.5). 
+     It operates as if the included lines of text were
+     copied into a program unit, which then become part of the local program unit;
+     included material is treated as if it had been part of the program unit in the
+     first place.
+
+======s====================================================
+      
+INPUT/OUTPUT from book
+----------------------
+
+- files have sequences of records
+
+- record - two types
+
+      - data record
+
+          is a sequence of values (formatted/characters or unformatted/binary)
+
+      - end-of-file (no value or length): last record of a file
+
+- files
+
+     - external: e.g., disk, terminal
+
+     - internal: in memory
+
+- The initial point is the point just before the first record. The terminal point is
+the point just after the last record. If the file is empty, the initial point and the
+terminal point are the same.
+
+- sequential or  direct access
+
+- units
+
+     Input/output statements refer to a particular file by providing an input/output
+     unit. An input/output unit is either an external unit or an internal unit. An
+     external unit is either a nonnegative integer or an asterisk (∗). When an
+     external file is a nonnegative integer, it is called an external file unit.
+
+     On most systems, an asterisk in an input data transfer statement is the same as one of
+     the numbered units, usually 5, and in an output data transfer statement, an
+     asterisk is the same as another numbered unit, usually 6.
+
+     Some unit numbers on some processors are
+     always used for data input (for example, unit 5), others are always used for
+     output (for example, unit 6).
+
+     In order to transfer data to or from an external file, the file must be connected
+     to a unit. An internal file is always connected to the unit that is the name of the
+     character variable.
+
+     There are two ways to establish a connection between a unit and an external file:
+
+        1. execution of an OPEN statement in the executing program
+        2. preconnection by the operating system (e.g. 5, 6 for default input/output files)
+
+
+      Only one file may be connected to a unit at any given time and vice versa.
+
+      *  
+         indicates a processor-dependent external unit.
+         It is the same unit number that the processor
+         would define if a READ or PRINT statement
+         appeared without the unit number.
+
+- INQUIRE
+
+    An inquiry may be made about a file’s existence, connection, access method, or
+    other properties.
+
+
+
+================================================================
+
+INPUT/OUTPUT
+
+- input
+
+     read *, x
+     read *, x,y,z
+
+- output
+
+     - print goes to standard output
+     - * indicates the standard list directed format
+     
+     - write can write to files as well
+
+     print *, 'Enter two numbers'
+     print  *, 'The total is ', answer
+     print *, 'the values you typed are for z,y,x are: ',z,y,x
+
+    - each print or write statement on a new line be default starts printing on a new
+      line       
+
+
+- reading from files
+
+      open(10, file='filename.txt')
+      read(10,*) x,y,z
+
+     - first param is any positive integer
+
+- writing to files
+
+      open(12, file='filename')
+      write(12,*) i,num      ! printed on same line
+      
+      
+- formatting output
+
+ the write and format statements come in pairs.
+
+     write(output device,label) variable(s)
+     label  format(specification)
+
+     We are using in this example a * as the output device – in other words, the screen.
+
+     The format statement can actually go anywhere in the program, but by convention we 
+     usually place them just after the associated write or all together at the end of the 
+     program. It's just a matter of taste.
+     
+    -   * indicates default output option
+    
+    - There are different specifications for integer, real, and character variables.
+    
+    - Integer Specification
+
+        General form :   nim
+
+          Right justified
+          m is the number of character spaces reserved for printing (including the sign
+           if there is one)
+          If the actual width is less than m, blanks are printed
+          n is the number of  integers to output per line. If omitted, one number is output
+          per line.
+
+     - Floating point Specification
+
+       General form : nfm.d
+
+       Right justified
+       m is the number of character spaces reserved for printing (including the sign if there
+       is one), and the decimal point.
+       If the actual width is less than m, blanks are printed
+       n is the number of  real numbers to output per line. If omitted, 
+       one number is output per line.
+       d is the number of spaces reserved for the fractional part of the number – filled with
+       0's if fewer spaces are needed. If the fractional part is too wide it is rounded.
+
+       If the total width for output (m) is too small, FORTRAN will just output *'s.
+
+       Rule        m >=       width of the integer part plus
+                               d plus
+                                1 (space for decimal point) plus
+                                1 (space for sign – if negative)
+
+       Essentially, make m nice and wide and you won't have any trouble!
+       
+       
+      - Exponential Specification
+
+        General form nEm.d
+
+        Alternative specification for outputting real
+        d is the number of decimal places
+        m  is the total width of the field including the sign (if any), the character E and
+        its sign, the decimal point and the number of places of decimals. Again make m nice
+        and wide to ensure the field is properly printed out.
+        n is the number of  exponential numbers to output per line. If omitted, one number is 
+        output per line.
+
+Example
+
+        real :: a,b
+        a = sqrt(5.0)
+        b = -sqrt(a)
+        write(*,10) a,b
+        10  format(2E14.5)
+
+produces:
+
+        0.22361E+01  -0.14953E+01
+
+Character Specification
+
+General form  nAm
+
+    n is the number of strings to print
+    m is the maximum number of characters to output
+
+Example:
+
+        program chars
+        implicit none
+        character ::a*10,b*10
+        a='hello'
+        b='goodbye'
+        write(*,10) a,b
+        10    format(2a10)
+        end program chars
+
+
+

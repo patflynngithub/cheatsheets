@@ -1,0 +1,870 @@
+C++ Cheatsheet
+==============
+
+Modified: 1/12/2019
+
+IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, ...
+
+
+- TO DO
+
+    
+
+- sources
+
+     - cplusplus.com
+
+     - C++ Primer, 5th edition, Lippman, Lajoie, Moo
+
+         - covers up to C++11 standard
+
+     - https://isocpp.org/wiki/faq
+
+- g++
+     - g++ -std=c++0x -o filename filename.cc
+     - g++ -std=c++11 -o filename filename.cc
+
+     - use -Wall option to generate warnings about problematic constructs
+
+**************************************************************
+**************************************************************
+
+*********************************
+* IMPORTANT REMINDERS ABOUT C++ *
+*********************************
+
+- semicolons mark the end of most C++ statements
+- C++ is case sensitive but has free-form layout
+- lexicography: '9' < 'Z' < 'a'
+- C++ is statically typed, which means that types are checked at compile time.
+- default function parameter passing is by value
+    - if want pass by reference (allows function to modify the variable), use
+
+        - reference (&) (prefered if don't need "reseating")
+
+            type_name&  parameter_name
+    
+        OR
+
+        - pointer (*)
+
+- = operator between two objects of same type defaults to copy by value (not by reference)
+
+- comments
+
+    - single line: //
+    - paired: /* */  (cannot nest them)
+
+- program skeleton
+
+    int main()   // main required to have return type of int
+    {
+        statements;
+        return 0;
+    }
+
+    OR
+
+    #include <iostream>
+
+    using namespace std;
+
+    int main()
+    {  
+        statements;
+        return 0;
+    }
+
+- basic numeric types
+
+    - bool, int, float, double
+
+- constant variables
+
+           const type_name VARIABLE_NAME = value;
+
+- available flow of control structures
+
+    - while (condition) statement;
+    - while (condition) { ... }   // no semicolon at end if using curly braces
+
+    - do { ... } while (condition);
+
+    - for (initializer; condition; expression) statement;
+    - for (initializer; condition; expression) { ... }
+
+        - can have variable declaration in initalizer
+
+            for (int i = 0; ... ; ... ) { ... }
+
+    - if (condition) statement;
+    - if (condition) { ... }
+
+    - if (condition) statement1; else statement2;
+    - if (condition) { ... } else { ... }
+
+    - selection operator
+        - (condition) ? expression if true : expression if false
+            e.g.  z = (y > 0) ? 100 : 200;
+
+    - switch (integral expression)  // test cases must be integer constants
+      {
+          case 1: statement; break;
+          ...
+          case N: statement; break;
+          default: statement; break;
+      }
+
+- C++ strings (in <string>)
+
+    - preferred over C-style strings "...\0"
+
+- classes
+
+        class ClassName
+        {
+            public:
+                ...
+            private:
+                ...
+        };
+
+**************************************************************
+**************************************************************
+
+- comments
+
+    - single line: //
+    - paired: /* */  (cannot nest them)
+
+
+- variable names must start with a letter or the underscore character, and the remaining characters must be letters, numbers, or underscores. 
+  You cannot use other symbols such as $ or %. Spaces are not permitted inside names either.
+  Furthermore, you cannot use reserved words (special C++ meanings).
+- all C++ keywords, and the names of most library functions, use only lowercase letters
+- convention: use all lowercase letters for variable names 
+- convention: all class names start with uppercase and are followed by lowercase letters, with an occasional uppercase letter in the middle
+- convention: constants are all uppercase
+
+- program skeleton
+
+    int main()   // main required to have return type of int
+    {
+        return 0;
+    }
+
+    or
+
+    #include <iostream>
+
+    using namespace std;
+
+    int main()
+    {  
+        statements;
+        return 0;
+    }
+
+- command line arguments
+
+    - int main(int argc, char* argv[])
+
+    - argc = number of command line arguments , including the name of the program in argv[0]
+    - argv[i]'s are character strings, not C++ strings
+
+    - use string(argv[i]) to convert to C++ string
+
+- header files
+
+    - from standard library:            #include <iostream>
+    - not part of the standard library: #include "custom.h"
+
+- source file layouts/structure
+
+    - "all in one file"
+
+        - included header files
+        - constants
+        - classes
+        - global variables
+        - functions
+
+    - "separate files"
+
+        - header file contains  (preprocess: #ifndef, #define, #endif)
+            - e.g. guards against multiple inclusion
+                #ifndef PRODUCT_H
+                #define PRODUCT_H
+                ...
+                #endif
+
+            - definitions of shared constants
+            - definitions of classes
+            - declarations of nonmember functions
+            - declarations of shared global variables
+
+        - source file contains
+            - definitions of member functions
+            - definitions of nonmember functions
+            - definitions of global variables
+
+- primitive built-in types
+
+    - two categories
+
+        - void type
+        - arithmetic types
+
+    - arithmetic types
+
+        - integral (includes character and boolean)
+        - floating point
+
+    - void type (void is the keyword)
+
+        - has no associated values
+        - can be used in only a few circumstances
+
+            - most commonly as the return type for functions that do not return a value
+
+    - integral types
+
+        - bool (true, false)
+        - char, wchar_t, char16_t, char32_t
+        - short, int, long, long long (long long came in with C++11)
+        - float, double, long double
+
+        - only minimum size in bits or significant digits is specified in language standard
+
+    - signed / unsigned types
+
+        - except for bool and the extended character types, the integral types may be signed or unsigned
+        - int, short, long, and long long are all signed
+        - unsigned keyword (by itself means unsigned int)
+        - there are three character types but only two representations
+
+            - types: char, signed char, unsigned char
+            - representations: signed and unsigned
+            - the (plain) char type uses one of these representations;
+              which of the two other character representations is equivalent to char is compiler dependent
+
+- expressions
+
+    - in C++ an expression yields a result and is compose of one or more operands and (usually) an operator.
+
+- declarations vs definitions
+
+    - C++ distinguishes between them to support separate compilation in different files
+    - code defined in one file may need to use a variable defined in another file
+    - to use the same variable in multiple files, we must define that variable in one -- and only one -- file. 
+      Other files that use that variable must declare -- but not define -- that variable.
+
+    - declaration: makes a name known to the program
+
+        - asserts the existence of a variable, function, or type defined elsewhere
+        - a file that wants to use a name defined elsewhere includes a declaration for that name
+        - a variable declaration specifies the type and name of a variable
+
+    - definition: creates the associated entity
+
+        - allocates storage for a variable of a specified type and may provide the variable with an initial value
+
+    - variables must be defined exactly once but can be declared many times
+
+    - to obtain a declaration that is not also a definition, we add the extern keyword and cannot provide an explicit initializer
+
+    - e.g.
+
+        - std::cout, std::cin
+
+            - defined in the standard library, yet our programs can use these objects
+
+        - extern int i;      // declares but does not define i  (will have been declared & defined elsewhere)
+        - int j;             // declares and defines j
+        - class Sales_item;  // forward declares Sales_item class
+        - Sales_item item;   // defines item 
+
+- literals
+
+    - by default, decimal literals are signed and have the smallest type of int, long, or long long
+      in which the literal's value fits
+    - by default, floating-point literals have type double
+    - true and false are literals of type bool
+    - modifiers:
+         - long: l,L
+         - unsigned: U,u
+         - long long: LL,ll (C++11)
+    - char literal: 'a'
+    - string literal: "abierto"
+        - array of constant chars appended with a null character ('\0')
+        - two string literals that appear adjacent to one another and are separated only be spaces, tabs or newlines
+          are concatentated into a single literal.
+            - we use this form of literal when we need to write a literal that would otherwise be too large to fit
+              comfortably on a single line:
+
+                // multiline string literal
+                std::cout << "line 1 "    
+                             "line 1 continued";
+    - nullptr is a pointer literal
+
+- variables
+
+    - declaration:
+
+           type_name variable_name [= value];
+
+    - constant variables
+
+           const type_name VARIABLE_NAME = value;
+
+    - initializers
+        - initialization happens when a variable is explicitly given a value when it is created
+            - assignment obliterates an object's current value and replaces that value with a new one
+        - initialization and assignment are different operations in C++
+            - despite both being able to use = symbol
+
+        - default initialization (i.e., a variable defined without an initializer)
+            - the value of an object of built-in type that is not explicitly initialized depends on where 
+              the variable is defined
+                - variable defined outside any function body are initialized to zero
+                - with one exception, variables of built-in type defined inside a function are uninitialized
+            - each class controls how we initialize objects of that class type
+                - in particular, it is up to the class whether we can define objects of that type without an initializer
+
+        - Uninitialized objects of built-in type defined inside a function body have undefined value.
+          Objects of class type that we do not explicitly initialize have a value that is defined by the class.
+
+- type conversion
+
+    - type conversions happen automatically when we use an object of one type where an object of another type is expected
+
+    - when we assign one of the nonbool arithmetic types to a bool object,
+      the result is false if the value is 0 and true otherwise
+    - when we assign a bool to one of the other arithemtic types,
+      the resulting value is 1 if the bool is true and 0 if the bool is false
+
+    - when we assign a floating-point value to an object of integral type, the value is truncated
+    - when we assign an integral value to an object of floating-point type, the fractional part is zero.
+
+    - explicit cast : static_cast<type>
+
+- operators
+
+    - <<, >>
+
+    - +, -, *, / (floating point and integer), %
+    - ++, --
+    - =
+    - +=, -=, *=, /=, %/
+
+    - ==, <, >, <=, >=, !=
+
+    - !, &&, ||
+
+- flow of control
+
+    - while (condition) statement;
+    - while (condition) { ... }   // no semicolon at end if using curly braces
+
+    - do { ... } while (condition);
+
+    - for (initializer; condition; expression) statement;
+    - for (initializer; condition; expression) { ... }   // no semicolon at end if using curly braces
+
+        - two parts: header ( (;;) ) and the body ( { ... } )
+
+        - the initializer is executed once at the begininng and then the condition is tested
+        - then the body is executed
+        - then the expression is executed at the end of the for body
+        - then the for retests the condition
+
+        - can have variable declaration in initalizer
+
+            for (int i = 0; ... ; ... ) { ... }
+
+    - if (condition) statement;
+    - if (condition) { ... }   // no semicolon at end if using curly braces
+
+    - if (condition) statement1; else statement2;
+    - if (condition) { ... } else { ... }
+
+    - selection operator
+        - (condition) ? expression if true : expression if false
+            e.g.  z = (y > 0) ? 100 : 200;
+
+    - switch (integral expression)  // test cases must be integer constants
+      {
+      case 1: statement; break;
+      ...
+      case N: statement; break;
+      default: statement; break;
+      }
+
+- functions
+
+    - function definition
+
+        - must have () even if parameter list is empty
+
+    - if needed, use a function declaration or prototype so that a function can be called before it is defined
+
+           scope_ident return_type function_name(param1, param2, ... , paramN);
+
+    - defining a function and supply its implementation
+
+         scope_ident return_type function_name(param1, param2, ... , paramN)
+         {
+            statements;
+         }
+
+    - reference parameters (vs. value parameters)
+    - default is parameter passing by value
+    - to pass by reference (allows function to modify the variable)
+
+            type_name&  parameter_name
+
+        -References are usually preferred over pointers whenever we don't need "reseating".
+
+    - constant references
+
+        - const type_name& parameter_name
+        - don't use for integer or floating point numbers (would be slower)
+
+    - overloading
+
+        int func_examp();
+        int func_examp(int param1);
+
+    - functions with defaults   (need more info here)
+
+          int func_example1(int = 0, char = 'a');
+          int func_example2(int num, char = 'A', double = 3.2);
+
+- pointers
+
+    - pointers can refer to objects that are dynamically allocated (heap memory)
+
+    - necessary for polymorphism
+    - can be used for shared access to objects
+
+    - can create objects during run-time rather than compile time by using new
+
+        new type_name
+        new type_name(expression1, ... , expression)
+
+    - allocates and constructs a value on the heap and return pointer to that value
+
+    - declaring a pointer variable
+
+        - add * to the type_name
+        - e.g.
+
+            Employee* boss;
+            Product* p = new Product;
+
+    - can't do: Employee * p, q   (only first one is pointer)
+
+    - dereferencing: going from pointer to the value
+
+        - e.g.
+
+            *boss
+            *p
+
+    - dot operator has higher precedence than the * operator
+
+        - so need to do   (*boss).get_name()
+
+    - can't apply a dot operator to a pointer; must dereference first
+
+        - or use ->  e.g.   boss->get_name()
+        - abbreviates the "dereference and access member" operation
+
+    - to obtain address of a local or global variable
+
+        - address operator:   &
+        - e.g. Employee harry
+               Employee* p = &harry;
+
+    - note: don't delete an address obtained from the & operator
+
+    - to indicate pointer doesn't point anywhere, use NULL or 0
+
+    - operations can do on a pointer
+
+        - assign it to a pointer variable
+        - compare it with another pointer or the special value NULL
+        - dereference it to access the value to which it points
+
+    - deallocating dynamic memory
+
+        - need to manually reclaim unused memory allocated with new
+        - say variable boss is a pointer
+
+              delete boss;   (use delete[] for a pointer to an array)
+
+             - note: boss still points to same address
+
+        - memory blocks that are never deallocated are called memory leaks
+        - note: don't delete an address obtained from the & operator
+
+    - dangling pointer
+
+        - uninitialized pointer or one that has been deleted and not 
+          reassigned or NULLed
+
+    - uses of pointers
+
+        - an optional element (e.g. object) in a class
+        - sharing between objects
+        - polymorphism
+
+    - a reference parameter amounts to using a pointer in disguise
+
+         - when you use references, the compiler automatically passes parameter addresses and dereferences the pointer parameters in the function body.
+           For that reason, references are more convenient for the programmer than explicit pointers
+
+    - pointers into arrays
+
+        - int a[10];   (the a points to the starting element)
+        - arithmetic (e.g. a + 10) works in units of the array type (pointer arithmetic)
+        - a[n] = *(a + n)   (array/pointer duality law)
+
+        - when passing an array parameter  (e.g. int a[]), one is actually passing a pointer to the starting element of the array  (e.g. int * a)
+
+    - returning a pointer to a local array
+
+        - can't return a pointer to a local variable of the procedure returning from
+        - could instead return pointer to heap-allocated variable
+        - or could use vector (best)
+
+    - dynamically allocating arrays
+
+        - Employee* staff = new Employee[staff_capacity];
+
+        - allocates an array of staff_capacity objects of type Employee, each of which is constructed with the default constructor
+
+        - to deallocate:   delete[] staff;
+
+        - note; when dynamically allocating array variables, you can choose a different size for each program run
+
+- references
+
+    - type_name&  parameter_name
+
+    - difference in reference variable and pointer variable
+
+        - references are generally implemented using pointers. A reference is same object, just with a different name and reference must refer to an object. 
+          Since references can't be NULL, they are safer to use.
+
+        1 - A pointer can be re-assigned while reference cannot, and must be assigned at initialization only.
+        2 - Pointer can be assigned NULL directly, whereas reference cannot.
+        3 - Pointers can iterate over an array, we can use ++ to go to the next item that a pointer is pointing to.
+        4 - A pointer is a variable that holds a memory address. A reference has the same memory address as the item it references.
+        5 - A pointer to a class/struct uses '->'(arrow operator) to access it's members whereas a reference uses a '.'(dot operator)
+        6 - A pointer needs to be dereferenced with * to access the memory location it points to, whereas a reference can be used directly.
+
+    - References are usually preferred over pointers whenever we don't need "reseating".
+
+    - Overall, use references when you can, and pointers when you have to.
+      But if we want to write C code that compiles with both C and a C++ compiler, you'll have to restrict yourself to using pointers.
+
+- classes
+
+        class ClassName
+        {
+            public:
+                ...
+            private:
+                ...
+        };
+
+    - allows us to define our own data structures
+
+    - a class defines a type along with a collection of operations that are related to that type
+
+    - typically, a class is defined in a header file (.h)
+
+    - member functions (aka methods)
+
+    - = operator between two objects of same type defaults to copy by value (not by reference)
+
+- objects
+
+    - constructor
+
+         e.g. Time day_end = Time(21, 59, 59);
+              Time day_end((21, 59, 59);
+              Time a_time = Time();     (default construction)
+              Time a_time;              (default construction)
+
+- inheritance
+
+     - e.g.    class DerivedClass : public BaseClass
+               {
+                 public:
+                     new member functions
+                 private:
+                     new data members
+               };
+
+     - all member functions and data members of the base class are automatically inherited by the derived class. 
+       However, the private data members of the base class are not accessible by the member functions of the derived class.
+
+     - derived class will need its own constructor, which will also need initialize the base object
+         - e.g.   DerivedClass::DerivedClass( params)
+                     : BaseClass(params)
+                  {
+                  . . .
+                  }
+
+         - if the base-class constructor is omitted, the base object is constructed with the default constructor of the base class (error if not available).
+
+     - "public" required to allow derived class objects to call member function of the base class
+
+     - not having public, which defaults elements in side the class to private, only allows member
+       functions of the derived class to access the base class member functions     (rarely useful)
+
+     - calling Base-Class member functions
+
+          - in derived class member function implementation
+
+                  - if Base-Class member function hasn't been replaced or extended by a derived class member function of the same name
+                    (i.e. simply inherited, just call the function
+
+                  - if has been replaced or extended, then
+
+                          BaseClass::member_function_name(...)
+
+     - protected  : allows access to Base Class data by the member functions of the derived class
+
+- polymorphism
+
+    - to store objects of different classes in one vector w/o slicing occurring, use a vector of pointers instead:
+
+         vector<BaseClass*> obj_vector(3)
+         obj_vector[0] = new BaseClass(...);
+         obj_vector[1] = new DerivedClass1(...);
+         obj_vector[2] = new DerivedClass2(...);
+
+    - However,  if all three classes have the member function named same_method_name, obj_vector[i]->same_method_name(...)
+      only executes the BaseClass version of the member function in ALL three cases
+
+        - get around this with dynamic binding (vs. standard static binding), which is done by tagging the Base class declaration of the member function as virtual
+
+             class BaseClass
+             {
+             public:
+                   ...
+                   virtual same_method_name(...)
+                   ...
+             private:
+                   ...
+             };
+
+        - don't use virtual for the base or derived class method definitions and don't have to for the derived class declaration, but it is considered good taste
+        - only member functions are virtual
+
+        - if have a situation where the base class virtual function is not desired to have any functionality (no code), there are two ways to handle this
+
+              1 – declaration in base class definition
+
+                     virtual double compute_pay(int hours) const;
+
+                     base class method definition (required)
+                         double compute_pay(int hours) const { }
+
+                     all derived classes have the option of having method of same name
+
+              2 – better way
+                              
+                     declaration in class definition
+
+                          virtual double compute_pay(int hours) const = 0;
+
+                     base class method definition
+
+                          not done
+            
+              all derived classes must define a compute_pay function
+
+- input/output
+
+    - the C++ language does not define any statements that do input or output (I/O)
+
+    - instead C++ includes an extensive standard library that provides I/O (and many other facilities)
+
+    - #include <iostream>
+
+        - fundamental types
+
+            - istream (input stream)
+
+                - cin object (standard input)
+
+            - ostream (output stream)
+
+                - cout object (standard output)
+                - cerr object (standard error: for warning and error messages)
+                - clog object (general information about the execution of the program)
+                - endl object (end of line and flushing the buffer associated with the device) (manipulator)
+
+                    - flushing the buffer ensures that all the output the program has generated so far is actually
+                      written to the output stream, rather than sitting in memory waiting to be written
+
+            - ordinarily, the system associates each of these objects with the windows in which the program is executed
+
+        - input/output operators
+
+            - output operator
+
+                - <<
+
+                    ostream-object << value-to-print
+
+                    - the operator writes the given value on the given ostream object
+                    - the result of the output operator is its left-hand operand
+                        - this allows the chaining of output requests
+
+             - input operator
+
+                - >>
+
+                    - the operator reads data from the given istream object and stores what was read in the given object
+                    - the result of the input operator is its left-hand operand
+                        - this allows the chaining of input requests
+
+        - without namespaces, have to use std::cin and std::cout
+
+        - examples:
+
+            std::cout << "Enter ..." << std:endl;
+            std::cin  >> v1 >> v2;
+            std::cout << "v1 = " << v1 << ", v2 = " << v2 << std::endl;
+
+    - ensuring have data to process
+
+        if (std::cin >> currVal) { ... }
+
+    - reading in an unknown number of inputs
+
+        // read until end-of-file or invalid input (invalid state)
+        while (std::cin >> value) { ... }
+
+    - input techniques
+
+        - character input: cin.getch(ch)
+        - word input: cin  >>  variable_name      
+        - line input: getline(cin, string_name)        
+                reads an entire line of input, including the newline character;
+                the newline character is not put in the string;
+                needs <string> library
+        - >> operator        reads all white space (tabs, spaces, newlines) until it reaches a number
+        - cin.fail()   // returns boolean; input validation (recommended technique)
+               - or can just use cin, which gives opposite boolean result
+           - note: cin >> x  has cin as its value
+        - cin.good()
+        - cin.eof()
+
+- namespaces
+
+    - allow us to avoid inadvertent collisions between the names we define and uses of those same names inside a library
+
+    - all names defined by the standard library are in the std namespace
+
+          using namespace std;
+
+    - :: is the scope operator
+
+- std::string library type
+
+    - is defined in namespace std
+    - include <string>
+
+    - is a type that represents a variable-length sequence of characters
+    - several ways of initializing string objects
+        - copy of a string literal
+        - if initializer not supplied, then initialized to the empty string
+        - unlike numeric variables, string variables are guaranteed to be initialized
+          with the empty string
+    - can concatenate strings with +
+        - at least one of the operands must be a string object
+
+    - C strings
+
+        - char* or char[]
+        - put a tremendous burden on the programmer to locate storage space
+          for these sequences manually
+        - in C, a common error is moving a string into a variable that is too small
+          to hold all of its characters
+        - C++ strings handle all this completely automatically
+        - for most programming tasks you do not need the data type "char" at all.
+          Instead, just use strings of length 1 for individual characters.
+
+- prefined classes
+
+    - string class: used to declare string variables
+
+- predefined functions
+
+    - sqrt()                    (needs <cmath>)
+    - pow(x,n)                    (needs <cmath>)
+    - fabs(x)                     (needs <cmath>)
+    - ceil(x), floor(x)             (needs <cmath>)
+    - exp(x), log(x), log10(x)             (needs <cmath>)
+    - sin(x), cos(x), tan(x)             (needs <cmath>)
+    - asin(x), acos(x), atan(x), atan2(y,x)    (needs <cmath>)
+    - sinh(x), cosh(x), tanh(x)         (needs <cmath>)
+    - abs(x)                    (needs <cstdlib>) (c library)
+
+    - rand()                    (needs <cstdlib>) (c library)
+    - int between 0 and RAND_MAX
+    - seed it up to not repeat sequences
+
+              Time now;  // book library
+              int seed = now.seconds_from(Time(0, 0, 0));
+              srand(seed);
+
+              or
+
+              int seed = static_cast<int>(time(0));   (#include <ctime>)
+              srand(seed);
+
+    - toupper(char)                (needs <cctype>)
+    - tolower(char)                (needs <cctype>)
+
+- libraries
+
+    - <iostream>
+
+        - contains the definition for the stream input/output package
+        - required when program performs output the screen
+        - must include it when a program reads or writes text
+
+    - <string>
+
+        - needed for C++-style strings
+
+    - <string.h>
+
+        - needed for C-style strings
+
+    - <cmath>
+
+        - contains mathematical functions
+
+    - <cstdlib>
+
+        - contains abs(x)  (book used it for absolute value of an integer)
+
+    - <iomanip>­
+
+        - contains output formatting stream manipulators
+
+- other
+
+    - enumerated types
+
+        - enum type_name { entity1,  ... , entityn };
+        - type_name variable_name [ = entitiyi];
+

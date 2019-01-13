@@ -1,0 +1,121 @@
+GDB Cheatsheet
+--------------------------------------
+
+(still in the initial process of creation)
+
+Modified: 3/22/2017
+
+- https://www.howtoforge.com/tutorial/how-to-debug-c-programs-in-linux-using-gdb/
+-  	The art of debugging with GDB, DDD, and Eclipse by Norman Matloff and Peter Jay Salzman.
+
+- Most people use the printf() debugging method. This is called adding "trace code" to your program.
+
+- gcc -g -Wall prog.c -o prog
+
+      compile for debugging in gdb
+
+- gdb ./prog
+
+      To use GDB to launch a process and debug it
+
+- gdb <exectable> <process ID>
+
+      To attach GDB to a running process: 
+
+- gdb -tui ./gdb
+- Ctrl-x-a  (when in gdb already)
+
+      TUI mode (split panes for code and command line)
+
+- CDGB is add-on text interface with more goodies than TUI
+
+- Ctrl-P and Ctrl N
+
+      allows one to scroll threw previous commands and edit them if you wish
+
+- ENTER (by itself)
+
+      repeats last command issued
+
+- (r)un [arguments]
+
+      launch your program
+
+      if using a second time, you do not have to restate the command-line arguments if
+      you just wish to reuse the old ones. 
+
+- (b)reak <line #>
+- (b)reak <function name>
+
+- tbreak <line #>
+
+      temporary break point that exists for only one time
+
+- (p)rint <variable name>
+
+- (c)ontinue
+
+      continue after break or Ctrl-C
+
+- (s)tep
+
+      step to next line of code (into function if possible
+
+- (n)ext
+
+      step to next line of code (do not step into function)
+
+- backtrace
+
+      - produce the backtrace from the last fault, 
+        i.e., displays the sequence of function calls leading to the 
+        invocation of the function in which the fault occurred.
+      - shows the whole program stack
+
+- frame <number>
+
+      shows a particular frame in the stack
+
+- clear <line #>
+
+      clear breakpoint
+
+- delete breakpoint <breakpoint #>
+
+- info break (i b)
+
+      list all breakpoints
+
+- define
+
+      allows user to define abbreviations and macros
+
+- list
+
+      used in TUI mode to change displayed region of code
+
+- watch <variable name>
+
+      watchpoint: pause execution whenever the value of z changes
+
+- watch <conditional expression>
+
+      watchpoint: pause execution whenever conditional expression is met
+
+- condition
+
+      e.g. 
+
+         break 30
+         condition 1 num_y==1
+
+         "Ordinarily a break command makes execution pause every time the program 
+          hits the specified line. However, the second command here, condition 1 num_y==1,
+          makes that breakpoint conditional: GDB will pause execution of the program at
+          breakpoint 1 only when the condition num_y==1 holds."
+
+          We could have combined the break and condition commands into a single step by using break if as follows:
+
+              break 30 if num_y==1
+
+

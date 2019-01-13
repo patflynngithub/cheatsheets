@@ -1,0 +1,290 @@
+
+Updated: Dec 24, 2015
+
+=======================
+==  Java Cheatsheet  == 
+=======================
+
+ONLY UP TO JAVA SE 6
+
+- Java is intended for writing programs that must be reliable in a variety of ways. Java puts a lot of emphasis on early checking for possible problems, later dynamic (runtime) checking, and eliminating situations that are error-prone.
+
+- The single biggest difference between Java and C/C++ is that Java has a pointer model that eliminates the possibility of overwriting memory and corrupting data
+   
+     - you always have complete safety because you can never access a bad pointer, make memory allocation errors, or have to protect against memory leaking away
+
+- the compiler generates a architecture-neutral object file format (.class containing bytecode instructions)
+
+- Java is case-sensitive
+
+- Java is strongly typed, meaning that each variable must have a declared type
+
+- Java objects are pointed to by Java variables (like C++ pointers to objects)
+  (in C++, Object variables are the objects themselves)
+
+-with objects a and b, the statement b = a only copies the object address, not the object itself (shallow copy), resulting in aliases
+
+    - types that exhibit this sort of behavior have reference semantics
+
+    - so when an object is passed as a parameter, the object's memory address is passed by value but the object practically is passed by reference.
+
+- All objects are on the heap
+
+- in Java, you must use the clone method to get a complete copy of an object.
+
+- method parameters always call by value (but object's contents can be changed)
+
+Java Application
+================
+
+- When you add a main() method to a class, though, that class doesn't really turn into a program. The main() method can't access any of the instance variables in the class, or call any of the regular (non static) methods; it's really a very awkward mechanism that isn't at all object-oriented. Note that main is a static member function, which, even though defined in a class, don not operate on objects.
+
+- simplest structure of an executable Java program
+
+    public class Lincoln
+    {
+        public static void main(String[] args)
+        {
+           . . .
+        }
+    }
+
+    - function/method declarations (always inside classes)
+     
+          - required:   return_type func_name () {}
+          - optional:   public/private/etc, exception list
+    
+- javac Lincoln.java   (filename must be same as class)
+- java Lincoln
+
+
+Data Types
+==========
+
+- primitive types
+
+    - int, short, long, byte
+    - double, float
+    - char
+    - boolean
+
+    - declaring:  e.g.  int dollarAmount;
+
+- Strings are an object
+
+    - immutable
+    - if need to build a lot of strings, use StringBuilder class
+    - use .equals() to compare strings
+
+- Arrays
+
+    int[] anIntArray = new int[100];
+    String[] aString = new String[3];
+    int [][] magicSquare = { {1,2}, {3,4} };
+    
+    - can have arrays of length 0 (different than null)
+    - use Arraus.copyOf or System.arraycopy to copy an array
+    - bounds checking is automatic
+    
+    - can have "ragged arrays"
+    
+- can use "final" to denote a constant
+
+Operators
+=========
+
+- / denotes integer division if both operands are integers
+- % integer remainder
+- assignment: += -= *= /= &= 
+- no exponential operator (use Math.pow())
+- postfix/prefix increment/decrement operators:   n++ --c
+
+- can concatentate strings with +
+
+Language Constructs
+===================
+
+- Comments
+
+    //
+    /*    */      (do not nest)
+    /**    */     (automatic documentation generation)
+
+- if (conditional) {
+  } else if (conditional){
+  } else {
+  }
+
+  - switch (choice) { }  (integers or enumerated constants)
+- while (expression) {}
+- do { } while (expression);
+
+= for (initialization; termination; increment) {}
+- for each
+
+	for (variable :  collection)   (collection must implement the Iterable interface)
+	{
+	}
+
+- break/continue
+
+- all functions are methods of some class
+- even if a method takes no parameters, you must still use empty parentheses
+
+- comparison operator:  !=   is not equals
+- && and || short circult
+
+- ternary operator:   cond ? expr1 : expr2
+
+Output/Input
+============
+
+- System.out.println()
+- System.out.printf()     (if want easy % formatting ability)
+
+- Scanner input = new Scanner(System.in);
+- Scanner line = new Scanner(String);
+
+- Java Se 6 introduces a Console class for reading things like passwords that one doesn't want to be visible.
+
+- Can use the String.format() method if don't want to output to the console but to a string.
+
+File stuff
+==========
+
+- File class:      new File (FilenameString)    (could stuff into Scanner)
+
+    - if filename contains backslashes, escape each of them with an additional backslash.
+
+- write to a file
+
+    - PrintWriter()       new PrintWriter(FilenameString or File)
+
+Numeric
+=======
+
+- Java has an optional arbitrary precision arithmetic package ("big numbers")
+- all floating point computations follow the IEEE 754 specification
+    - + inf, - inf, NaN
+    - see the documentation for the Double class
+    - note that integer division by 0 raises an exception, whereas fp division by 0 yields an infinite or NaN result.
+- floating point numbers are not suitable for financial calculations in which roundoff errors cannot be tolerated
+
+    - If you need precise numerical computations w/o roundoff errors, use the BigDecimal class
+    - there is also a BigInteger class
+
+- strictfp
+
+    - added to a method forces all fp computations inside of it to be done strictly (w/o truncation of intermediate results)
+
+- Math class (examples)
+
+    - sqrt()
+    - pow()
+    - PI, E
+
+    - The functions in the Math class use the routines in the computer's FP unit for fastest performance. If completely predictable results are more important than fast performance, use the StrictMath class instead.
+
+Classes and Objects
+===================
+
+- ClassName objName = new Classname(...);
+
+- all methods are defined inside the class itself
+
+- You can only have one public class in a source file, but can have any number of nonpublic classes. The file's name must be that of the public class.
+
+- define an instance variable as final
+    - must be initialized when the object is constructed
+    - particularly useful for fields of type primate or immutable objects
+    - for a mutable object, it just means the reference to the object can't be changed
+
+    
+- extends (no multiple inheritance) (all inheritance is public)
+
+     class SubclassName extends SuperclassName
+     { added methods and fields }
+
+     - original class: superclass, base class, or parent class
+     - inheriting class: subclass, derived class, child clas
+     
+- a subclass has no direct access to the private fields of the superclass
+- super.parentClassMethod()  (need to use if child/parent have method of same name)
+- super(…) calls the constructor of the parent class (must be first statement in child constructor)
+
+- Dynamic binding is the default behavior (don't need to use "virtual" like in C++)
+- can assign a subclass object to a superclass variable (not vice versa though)
+- with Java SE 5.0 it is now legal for the subclass to change the return type of an overridden method to a subtype of the original type.
+
+- can use final to prevent extension of a class or overriding a superclass's method
+(all methods in a final class are automatically final)
+
+- x instanceof y
+
+- abstract class
+
+    - has one or more abstract methods
+    - declared but unimplemented methods
+    - public abstract String getDescription();
+    - abstract class Person { }
+    - can have fields and concrete methods.
+    - a subclass will extend this class
+
+    - can't be instantiated, but could have a variable of its type that would hold subclasses.
+
+- Interfaces are sets of requirements for classes to conform to
+
+       public interface InterfaceName {}
+       
+       class ClassName implements IterfaceName
+
+       - implements (there can be multiple interfaces for class)
+
+Methods
+=======
+
+- method parameters always call by value (but object's contents can be changed)
+
+- no special syntax distinction between accessors and mutators
+
+- you cannot have two methods with the same names and parameter types but different return types
+
+- Be careful not to write accessor methods that return references to internal to the class mutable objects.
+
+- a method can access the private data of all objects of its class
+
+- Because static methods don't operate on objects, you cannot access instance fields from a static method. But statics methods can access the static fields in their class.
+
+
+Initialization
+==============
+
+- If you don't set a field explicitly in a constructor, it is automatically set to a default value: numbers to 0, Booleans to false, objects to null
+- can initialize fields with the declaration or in a constructor
+- this(…) in a constructor calls another constructor of the same class (must be first 
+statement of constructor)
+- can have initialization block in the class, outside of all methods (inside its own curly braces), which is run before any constructor code. Should place it after the field definitions
+- order of field initialization when a constructor is called
+
+    1) all data fields are initialized to their defaults
+    2) All field initializers and initialization blocks are executed, in order of their appearance in the class declaration
+    3) If the first line of the constructor calls a second constructor, then the body of the 2nd constructor is executed.
+    4) the body of the constructor is executed.
+
+- Initializing static fields (done when a class is first loaded)
+    - are automatically set to default values
+    - to manually initialize them, supply an initial value (in declaration) or by using a static initialization block
+
+        static 
+        { 
+           . . .
+        }
+        
+    - these are executed in the order that they occur in the class
+
+- local variables in a method are not automatically initialized to null or 0 or false. So must always explicitly initialize them.
+
+Generic Programming
+=================
+
+- supported in JAVA

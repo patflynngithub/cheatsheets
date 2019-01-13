@@ -1,0 +1,2165 @@
+﻿
+Updated: 06/05/2018
+
+Python 3.n CheatSheet (still some Python 2.x content from original versions of this cheatsheet)
+=====================
+
+- QUESTIONS / THINGS TO IMPROVE in this document
+
+    1) improve OBJECTS section
+    2) improve FINALLY part of EXCEPTIONS section
+    3) more detail on how to interface with compiled code
+    4) OpenMP, MPI, CUDA, Xeon PHI?
+
+--------------------------------------------------------------------
+
+- good references (many of these notes are from them)
+
+     - Introduction to Python for Computational Science and Engineering (A beginner’s guide to Python 3)
+       by Hans Fangohr (PDF copy available on WWW)
+
+     - Python tutorial: http://www.tutorialspoint.com/python/ 
+
+     - Guido van Rossum's tutorial (https://docs.python.org/3/tutorial/index.html)
+
+     - Style guide: https://www.python.org/dev/peps/pep-0008/
+
+--- -----------------------------------------------------------------
+
+QUICK AND DIRTY STUFF FOR QUICK REVIEW
+
+- Python is interpreted and has a large and comprehensive standard library
+
+- has automatic memory management / garbage collection (see OBJECT section for more details)
+
+- In Python, all numbers (and everything else, including functions, modules and files) 
+  are objects. 
+
+- variables
+
+    - dynamically typed
+
+    - don't need to declare variables before using them, or declare their type.
+
+    - a variable is created through assignment
+
+    - variables must be created (assigned a value) before they can be used, or an error will occur:
+
+    - assignment makes two variables point to same object
+    - if want copy of a list, do z = a[:]
+
+
+- Python has five standard data types
+
+    - numbers, string, list, tuple, dictionary.
+
+    - the python values True and False are special inbuilt objects
+    
+    - strings, lists, and tuples are sequences. They can be indexed and sliced in the same way.
+    - strings and tuples are "immutable"
+
+    - zero-based indexing
+    
+    - lists []
+         - a sequence of objects that can be changed in elements and size
+         - very similar to arrays, which Python doesn't have natively
+         - can contain any type of variables (even mixed types in one list)
+           and as many variables as you wish
+         - a list can contain other lists
+         - mylist = []       
+         - mylist = [1,2,3]
+         - range(...)
+             - generates a list with specified range of entries
+             - often used with for-loops
+             - range(n)              [0, 1, ... , n-1]
+             - range(3,10,2)         [3, 5, 7, 9]
+
+    - tuples ()  (immutable)
+
+        - are very similar in behaviour to lists with the exception that they cannot be
+          modified (i.e. are immutable).
+
+        - () is empty tuple
+        - (entry,)   (is required format for one entry tuple)
+        - a = (12 , 13, 'dog ')
+
+        - parentheses are not necessary to define a tuple: just a sequence of objects separated by
+          commas is sufficient to define a tuple
+          
+        - should use tuples when we don't want the content to change
+        - Note that Python functions that return more than one value, return these in tuples (which makes
+          sense because you don’t want these values be changed).
+          
+    - dictionaries {}
+
+        - also called "associative arrays" and "hash tables"
+        - are unordered sets of key-value pairs (keys are unique)
+
+        - The keyword can be any (immutable) Python object. This includes:
+
+             -  numbers, strings, tuples
+             
+        - can have keys of different types in the same dictionary (as long as hashable)
+        
+        - {} is an empty dictionary
+        - d['today'] = '22 deg C'
+        - d['today'] to retrieve value
+
+        - other ways of populating a dictionary if the data is known at creation time are:
+
+                d2 = {2:4 , 3:9 , 4:16 , 5:25}
+                d3 = dict (a=1, b=2, c=3)
+                The function dict() creates an empty dictionary
+
+        - second instance of a key with a value replaces first value with second one
+ 
+        - dictionaries are very fast in retrieving values (when given the key)
+
+- python uses indentation for blocks (i.e., grouping lines of code), instead of curly braces
+
+    - i.e., classes, functions, loops, conditional statements
+
+- functions
+
+    - all indented lines following the "def" line belong to the function body
+    - whereas, commands in left-most column are executed immediately upon encountering them
+
+          def hello():   # creating function object
+              """Print "Hello World" and return None"""
+              print("Hello World")
+
+          # main program starts here
+          hello()     # execute the function
+
+    - All parameters (arguments) are passed by reference. This means that if you change
+      what a parameter refers to within a function. the change also reflects back in the calling function.
+      This doesn't refer to the overall reference to the object where the function is called, just the
+      inside of the object if it has mutable parts. In a sense, the address of the object is "passed by value."
+      
+           def hello(msg):   # creating function object
+               """Print "Hello World" and return None"""
+               print "Hello World ", msg
+
+           # main program starts here
+           hello("in bed")     # execute the function
+
+    - Python functions that return more than one value return these in tuples (which makes
+      sense because you don't want these values be changed).      
+
+--------------------------------------------------------------------
+
+
+- python code files by tradition have extensions of .py
+
+- can run by entering "python filname.py" at command line.
+- execfile("filename.py") or import "filename" within python
+- alternatively, in Linux, can put "#!/usr/bin/python" as first line in .py file
+  and run it directly.
+
+- Use exit() or Ctrl-Z plus Return to exit
+
+- python is an interpreted language (can be compiled to bytecode)
+- is dynamically typed
+- everything is an object (numbers, functions, modules, and files)
+- has automatic memory management / garbage collection (see OBJECT section for more details)
+- has a large and comprehensive standard library
+- supports multithreading
+- allows programming in
+     - imperative/procedural programming style
+     - object-oriented style
+     - functional style
+
+- the interactive programming environment is sometimes referred to as the read-eval-print loop (REPL)
+
+- help(<object>)
+
+      - help
+
+      - help(math) or help (math.exp)
+
+      - help()  starts an interactive help environment
+
+      - help('modules')  will generate a list of all modules which can be imported into the
+        current interpreter
+
+      - help('some_module')   help for a module that hasn't been imported yet
+
+      - help('some_keyword')    e.g.  help('if')
+
+      - docstring
+
+          Any literal string appearing as the first item in the definition of a class, function,
+          method or module, is taken to be its docstring, which is displayed by help
+
+
+          - e.g.  >>> def power2and3 (x):
+                  ... """ Returns the tuple (x**2 , x **3) """
+                  ... return x**2 ,x**3
+                  ...
+ 
+- no semicolon required at end of lines
+- semicolon used to separate multiple commands on same line
+
+- \ is line continuation character
+- statements contained within the [], {}, or () brackets do not need to use the line continuation character. 
+
+- python uses indentation for blocks (i.e., grouping lines of code), instead of curly braces
+
+    - e.g., in for/while loops, if/elif/else, functions, classes, etc...
+    - both tabs and spaces are supported, but the standard indentation
+      requires standard Python to use 4 spaces
+    - number of spaces required is variable, but all statements within the block must
+      be indented the same amount and way
+    - the indentation level is ignored when you use explicit or implicit continuation lines.
+
+- # is comment line comment character (if not inside a string literal)
+
+- multiline comments
+
+     """ This is an example of a multiline
+     comment that spans multiple lines
+     """
+
+- completely object-oriented; everything is an object
+
+==============================================================
+
+VARIABLES / DATA TYPES
+
+- Python is dynamically typed
+
+- In Python, all numbers (and everything else, including functions, modules and files) 
+  are objects. 
+
+- Python has five standard data types
+
+      - numbers, string, list, tuple, dictionary.
+
+- type(variable or expression) give type
+
+- variables
+
+    - don't need to declare variables before using them, or declare their type.
+
+    - a variable is created through assignment
+
+    - type() will give the type of a variable
+     
+    - a value can be assigned to several variables simultaneously:
+
+           x = y = z = 0
+
+    - variables must be created (assigned a value) before they can be used, or an error will occur:
+
+    - in interactive mode, the last printed expression is assigned to the variable "_"
+
+         - This variable should be treated as read-only by the user.
+
+    - identifiers
+
+      Here are naming conventions for Python identifiers
+
+           Class names start with an uppercase letter. All other identifiers start with a lowercase letter.
+           
+           Name your classes and functions consistently;
+           the convention is to use CamelCase for classes and lower_case_with_underscores for functions and methods. 
+           Always use self as the name for the first method argument.
+
+           Starting an identifier with a single leading underscore indicates that the identifier is private.
+
+           Starting an identifier with two leading underscores indicates a strongly private identifier.
+
+           If the identifier also ends with two trailing underscores, the identifier is a language-defined
+           special name.
+
+    - del
+
+            deletes the reference to an object
+
+- numbers: integers and floating point, complex, long integers
+
+     - e.g.
+
+              myint = 7
+              myfloat = 7.0
+              myfloat = float(7)
+              mycomplex = 1 + 2j
+
+     - Integers in Python 3 are unlimited; Python will automatically assign more memory as needed as the numbers get bigger.
+     - note: Numpy uses integers with a fixed size, because it stores many of them together and needs to calculate with them
+             efficiently. Numpy data types include a range of integer types named for their size, so e.g. int16 is a
+             16-bit integer, with 2 16 possible values. 
+             
+     - floats are double precision (8 bytes)
+     - floats can use E or e for scientific notation
+
+     - numbers are immutable
+
+     - constants: math.pi, math.e (math module)
+
+     - conversion
+
+                Python converts numbers internally in an expression containing mixed types to a
+                common type for evaluation. But sometimes, you need to coerce a number explicitly
+                from one type to another to satisfy the requirements of an operator or function 
+                parameter.
+
+              -  int(), long(), float(), complex(x), complex(x,y)
+
+     - long integers
+
+            - indicated by suffixing L or l on the number
+            - operations on them done at software level with no lower or upper limit
+
+     - complex:  x.real, x.imag, x.conjugate()
+
+           - Note that if you want to perform more complicated operations on complex numbers
+             (such as taking the square root, etc) you have to use the cmath module (Complex MATHematics):
+
+                   import cmath
+
+     - math functions
+
+           - abs(), ceil(), cmp(,), exp(), fabs(), floor(), log(x), log10(), max(,,..,), min(,,...,)
+
+           - round()
+
+           - abs() works on all number types
+
+           - obtain max/min
+
+               - import sys
+
+                 sys.maxint
+
+               - if this range is exceeded, then Python will change the type of the number from int to long
+
+               - If there is any danger that we might exceed the range of the floating point numbers, we have
+                 to rescale our equations so that (ideally) all numbers are of order unity. Rescaling our 
+                 equations so that all relevant numbers are approximately 1 is also useful in debugging our
+                 code: if numbers much greater or smaller than 1 appear, this may be an indication of an error
+
+- strings
+
+      - single or double quotes, or triple quotes
+      - The triple quotes are used to span the string across multiple lines.
+      - can put apostrophes in double quotes
+      - len()
+      - int() to convert string to an integer
+      - float() to convert string to a floating point number
+      - varname.split() to split a string into a list of strings
+      - join() is opposite of split()
+
+            - e.g.    s = a.split()
+                      ".".join(s)
+
+      - dir("") to get list of available string methods
+
+      - raw string  (doesn't treat backslash \ as a special character)
+
+                   r'example'
+
+- logical: True/False or 1/0    
+
+==========================================================================
+
+OPERATORS
+
+- arithmetic
+
+     +, -, *, /, **, % (modulo - integer remainder of division), // (floor division)
+
+     * has integer division if both operands are integers (truncation for floor division)
+
+        - version 3.0 doesn't have this "feature;" returns a floating point number 
+        - can get 2.7 to do this as well beissuing the following command at command line or beginning of file:
+
+               from __future__ import division
+
+        - or can make sure one of operands is float (or complex)
+
+              - e.g. 15. or float(15) instead of 15
+
+        - if we really want integer division, we can use //
+
+- arithmetic/assignment
+
+      +=, -=, *=, /=, %=, **=, //=
+
+
+- string
+
+     +   (concatenate)
+
+     *    repeat a number of times
+
+            lotsofhellos = "hello" * 10
+
+     - can't mix operators between number and strings
+
+- assignment
+
+     =
+
+         e.g.
+             a = b = c = 1 (same integer object , i.e, same memory location)
+             a, b = 3, 4
+             mystring = "focker"
+             a = None
+
+     - assignment makes two variables point to same object
+     - if want copy of a list, do z = a[:]
+
+- comparison
+
+      <, >, ==, >=, <=, != or <>
+
+      ==    compares the values of the objects, not whether they are the same object
+            (means that can use for strings as well)
+
+      The operators <, >, ==, >=, <=, and != compare the values of two objects. The objects need not
+      have the same type.
+   
+      To check whether two objects a and b are the same (i.e. a and b are references to the same 
+      place in memory), we can use the is operator (continued from example above):
+   
+           a is b
+       
+- logical
+
+     and, or, not
+
+- identity
+
+    - compare the memory locations of two objects
+
+    - is 
+
+         evalutes to true if the variables on either side of the operator point to the
+         same object (same place in memory) and false otherwise 
+
+    - is not 
+
+         evalutes to true if the variables on either side of the operator do not point to
+         same object (different places in memory) and false otherwise 
+
+- membership
+
+    - test for membership in a sequence, such as strings, lists, or tuples
+
+    - in    (x in y)
+
+         evalutes to true if it finds a variable in the specificed sequence and
+         false otherwise 
+
+    - not in  ( x not in y)
+
+         evalutes to true if it does not find a variable in the specificed sequence and
+         false otherwise 
+
+- bitwise
+
+     &, |, ^, ~, <<, >>
+
+- operator precedence (highest to lowest)
+
+       ** 		Exponentiation (raise to the power)
+       ~ + - 		Ccomplement, unary plus and minus (method names for the last two are +@ and -@)
+       * / % // 	Multiply, divide, modulo and floor division
+       + - 		Addition and subtraction
+       >> << 		Right and left bitwise shift
+       & 		Bitwise 'AND'td>
+       ^ | 		Bitwise exclusive `OR' and regular `OR'
+       <= < > >=	Comparison operators
+       <> == != 	Equality operators
+       = %= /= //= 	Assignment operators
+      -= += *= **=
+       is is not 	Identity operators
+       in not in 	Membership operators
+       not or and 	Logical operators
+
+============================================================
+
+CONTROL FLOW
+
+- nesting done by whitespace indentation
+
+- if statement   (parentheses in condition are optional)
+
+      if x > peanut :
+         do stuff ...
+      elif x < peanut :
+         do stuff ...
+      else :
+         do stuff ...         
+
+- any non-zero and non-null value is treated as True, and if it i seither zero or null, 
+  then it is treated as False
+
+- no switch/case statements in Python
+
+=========================================================================
+
+LOOPS
+
+- nesting done by whitespace indentation
+
+- for iterating_var in sequence :
+      statements(s)
+
+    - e.g.
+
+        for i in range(11):
+            print i
+
+    - e.g.
+
+        mylist = [1,2,3]
+
+        # prints out 1,2,3
+        for x in mylist :
+            print x
+
+     - e.g.
+
+        for letter in 'Python' :
+            statement(s)
+        
+- while
+
+     while expression : single statement
+
+     while expression :   (parentheses optional)
+
+         statement(s)
+
+- loop control statements
+
+     - break, continue, pass
+
+              - pass is a null operation for when a statment is required syntactily but
+                no command or code is wanted to execute; also useful in places where your code
+                will eventually go, but has not been written yet (e.g., in stubs)
+
+- can have "else" in loops; see internet for details
+
+=================================================================================
+
+CLASSES / OBJECTS
+
+- Python has been an object-oriented language since it existed. Because of this, creating and
+  using classes and objects are downright easy. Class inheritance, overriding methods, and
+  operator overloading are supported.
+
+- everything is an object (numbers, functions, modules, and files)
+
+- In C++ terminology, normally class members (including the data members) are public (except see below Private Variables),
+  and all member functions are virtual.
+  
+- As in Smalltalk, classes themselves are objects.
+  Unlike C++ and Modula-3, built-in types can be used as base classes for extension by the user.
+  Also, like in C++, most built-in operators with special syntax (arithmetic operators, subscripting etc.) can be redefined for class instances.
+
+- Class definitions, like function definitions (def statements) must be executed before they have any effect.
+  (You could conceivably place a class definition in a branch of an if statement, or inside a function.)
+
+- no inheritance
+
+        class ClassName:
+            <statement-1>
+            .
+            .
+            .
+            <statement-N>
+
+- inheritance
+ 
+        class DerivedClassName(BaseClassName):
+            <statement-1>
+            .
+            .
+            .
+            <statement-N>
+
+        class DerivedClassName(Base1, Base2, Base3):
+            <statement-1>
+            .
+            .
+            .
+            <statement-N>
+
+
+- creating classes
+
+      class Employee:
+         """Common base class for all employees"""  # documentation string
+         
+         empCount = 0 # class variable shared by all instances
+
+         def __init__(self, name, salary):   # class constructor/initializer
+                                             # can access via Employee.empCount
+            self.name = name          # instance variable unique to each instance
+            self.salary = salary      # instance variable unique to each instance
+            Employee.empCount += 1
+
+         def setGender(self, gender):
+            self.gender = gender
+
+         def displayCount(self):
+            print("Total Employee %d" % Employee.empCount)
+
+         def displayEmployee(self):
+            print("Name : ", self.name,  ", Salary: ", self.salary)
+
+- Always use self as the name for the first method argument
+
+- data hiding 
+
+    - “Private” instance variables that cannot be accessed except from inside an
+      object don’t exist in Python. However, there is a convention that is
+      followed by most Python code: a name prefixed with an underscore (e.g.
+      _spam) should be treated as a non-public part of the API (whether it is a
+      function, a method or a data member). It should be considered an
+      implementation detail and subject to change without notice.
+
+    - attributes can be hidden by prefixing them with a "__" (double underscore)
+
+- creating instance objects
+
+        emp1 = Employee("Zara", 2000)
+           x = MyClass()    (if no parameters)
+           
+- accessing attributes
+
+        emp1.displayEmployee()
+        Employee.empCount 
+
+- Data attributes need not be declared; like local variables, they spring into existence when
+  they are first assigned to. BTW: they only exist for the particular instance for which the
+  assignment is made.
+
+        e.g. emp1.favcolor = "green"
+
+- All objects in Python should provide a method __str__ which returns a nice string representation of
+  the object. This method a.__str__() is called when we apply the str function to object a. This could
+  be called the "informal" readable string representation of an object.
+
+    - e.g.
+
+        >>> a = 3.14
+        >>> a.__str__()
+        '3.14 '
+        >>> str(a)
+        '3.14 '
+
+- A second function, __repr__, should convert a given object into a string presentation so that this string
+  can be used to re-created the object using the eval function. The __repr__ function will generally provide
+  a more detailed string than str. Applying repr to the object x will attempt to call x.__repr__(). This could
+  be called the "official" unambiguous string representation of an object.
+
+- The __str__ method is what happens when you print it, and the __repr__ method is what happens when you use
+  the repr() function (or when you look at it with the interactive prompt). If no __str__ method is given,
+  Python will print the result of __repr__ instead. If you define __str__ but not __repr__, Python will use
+  a default formulaic representation for __repr__, but still use __str__ for printing.
+
+- a = b, assignment makes both variables point to the same object in memory (a copy is not made)
+
+- Python provides the id() function which returns an integer number that is unique for each object.
+  (In the current CPython implementation, this is the memory address.) We can use this to identify
+  whether two objects are the same.
+
+- To copy a sequence object (including lists), we can slice it, i.e. if a is a list, then a[:] will return
+  a copy of a.
+
+- Python's standard library provides the copy module, which provides copy functions that can be
+  used to create copies of objects. We could have used import copy; c = copy.deepcopy(a) instead
+  of c = a[:].
+
+- To check whether two objects a and b are the same (i.e. a and b are references to the same place
+  in memory), we can use the is operator (continued from example above):
+
+       a is b          (identical references to the same piece of memory)
+
+- Python has iterators, decorators, 
+
+- destroying objects
+
+    - an class can implement the destructor method __del__(), called when the instance is about
+      to be destroyed
+
+    - Python deletes unneeded objects (built-in types or class instances) automatically to free
+      the memory space. The process by which Python periodically reclaims blocks of memory that
+      no longer are in use is termed Garbage Collection.
+
+    - Python's garbage collector runs during program execution and is triggered when an object's
+      reference count reaches zero. An object's reference count changes as the number of aliases
+      that point to it changes.
+
+    - An object's reference count increases when it is assigned a new name or placed in a container
+      (list, tuple, or dictionary). The object's reference count decreases when it's deleted with del,
+      its reference is reassigned, or its reference goes out of scope. When an object's reference count
+      reaches zero, Python collects it automatically.
+
+- Sometimes it is useful to have a data type similar to the Pascal “record” or C “struct”, bundling together a few named data items.
+  An empty class definition will do nicely:
+
+        class Employee:
+            pass
+
+        john = Employee()  # Create an empty employee record
+
+        # Fill the fields of the record
+        john.name = 'John Doe'
+        john.dept = 'computer lab'
+        john.salary = 1000
+
+
+================================================================================
+
+SEQUENCES	 
+
+- sequences
+
+    - strings, lists, and tuples are sequences. They can be indexed and sliced in the same way.
+    - Tuples and strings are "immutable"
+
+    - zero-based indexing
+    - slicing supported
+    - negative indexing can be used
+    
+    - sequences share the following operations
+
+           a[i]     returns i-th element of a       (-1 returns last element in the sequence)
+                                                    (slicing integers can be negative)
+           a[i:j]   returns elements i up to j - 1    (also can do a[:5] or a[5:])
+                                                      (inclusive of i, exclusive of j)
+                                                      (a[:] generates a copy of a)
+           len(a)   returns number of elements in sequence
+           min(a)   returns smallest value in sequence
+           max(a)   returns largest value in sequence
+           x in a   returns True if x is element in a
+           a + b    concatenates a and b
+           n * a    creates n copies of sequence a
+
+     - Python provides a handy shortcut to retrieve the last element in a list: for this one uses the index
+“      -1” where the minus indicates that it is one element from the back of the list.
+
+- strings (immutable)
+
+    - astring.index("o")    (note: indexing starts at 0)
+    - astring.count("l")
+    - astring[2]
+    - astring[3:7]   (slice starting at 3 ending a 8)  (could use negative numbers)
+    - astring.upper(), astring.lower()
+    - astring.startswith("Hello")             ( True or )
+    - astring.endswith("asdfasdfasdf")        ( False   )
+    - astring.split()     ( splits the string, default separator is white space,  )
+                          ( into a bunch of strings grouped together in a list.  )
+
+    - dir("") provides a list of string methods
+
+- lists
+
+      - a sequence of objects that can be changed in elements and size
+      - very similar to arrays, which Python doesn't have natively
+      - can contain any type of variables (even mixed types in one list)
+        and as many variables as you wish
+      - Accessing an index which does not exist generates an exception (an error)
+      - Can be iterated over in a very simple manner
+      - lists can be concatenated using addition operator
+      - a list can be repeated using multiplication operator
+      - a list can contain other lists
+      - remember a list is an object as well
+      - a.append(), a.remove()
+      - a.sort()
+
+      - range(...)
+
+             - generates a list with specified range of entries
+             - often used with for-loops
+             - range(n)              [0, 1, ... , n-1]
+             - range(3,10)           [3, 4, ... , 9]
+             - range(3,10,2)         [3, 5, 7, 9]
+ 
+      - e.g.
+
+            mylist = [1,2,3]
+
+            or
+
+            mylist = []       
+            mylist.append(1)
+            mylist.append(2)
+            mylist.append(3)
+            print(mylist[0]) # prints 1
+            print(mylist[1]) # prints 2
+            print(mylist[2]) # prints 3
+
+            # prints out 1,2,3
+            for x in mylist:
+                print x
+
+- tuples  (immutable)
+
+    - are very similar in behaviour to lists with the exception that they cannot be
+      modified (i.e. are immutable).
+
+    - a = (12 , 13, 'dog ')
+
+      - The parentheses are not necessary to define a tuple: just a sequence of objects 
+      separated by commas is sufficient to define a tuple although it is good practice
+      to include the parantheses where it helps to show that tuple is defined.
+
+          - a = 100 , 200 , 'duck '
+
+    - Tuples can also be used to make two assignments at the same time:
+
+          x, y = 10, 20            ( x = 10 , y = 20 )
+
+      - This can be used to swap to objects within one line. For example
+
+              x, y = y, x
+
+    - () is empty tuple
+
+    - (entry,)   (is required format for one entry tuple)
+	
+    - should use tuples when we don't want the content to change
+
+    - Note that Python functions that return more than one value, return these in tuples (which makes
+      sense because you don’t want these values be changed).
+
+    - Any set of multiple objects, comma-separated, written without identifying symbols, i.e., 
+      brackets for lists, parentheses for tuples, etc., default to tuples
+      
+    - t = 12345, 54321, 'hello!' is an example of tuple packing: the values 12345, 54321 and 'hello!' are packed together in a tuple. 
+      The reverse operation is also possible:
+ 
+            >>> x, y, z = t
+
+- Though tuples may seem similar to lists, they are often used in different situations and for different purposes.
+  Tuples are immutable, and usually contain a heterogeneous sequence of elements that are accessed via unpacking (see later in this section)
+  or indexing (or even by attribute in the case of namedtuples). 
+  Lists are mutable, and their elements are usually homogeneous and are accessed by iterating over the list.
+
+- SETS
+
+    - Python also includes a data type for sets. A set is an unordered collection with no duplicate elements.
+      Basic uses include membership testing and eliminating duplicate entries. Set objects also support mathematical
+      operations like union, intersection, difference, and symmetric difference.
+
+    - Curly braces or the set() function can be used to create sets. 
+      Note: to create an empty set you have to use set(), not {}; the latter creates an empty dictionary,
+
+============================================================================
+
+DICTIONARIES
+
+- also called "associative arrays" and "hash tables"
+- are unordered sets of key-value pairs (keys are unique)
+
+- The keyword can be any (immutable) Python object. This includes:
+
+     -  numbers, strings, tuples
+
+- {} is an empty dictionary
+- d['today'] = '22 deg C'
+- d['today'] to retrieve value
+
+- other ways of populating a dictionary if the data is known at creation time are:
+
+        d2 = {2:4 , 3:9 , 4:16 , 5:25}
+        d3 = dict (a=1, b=2, c=3)
+        The function dict() creates an empty dictionary
+
+- second instance of a key with a value replaces first value with second one
+  
+- d.keys() returns a list of keys
+
+- other useful methods/commands		
+
+       - d.values()               returns a list of the values
+       - d.items()                returns a list of the key/value pairs
+       - d.has_key()              returns True/False
+       - d.get()                  looks for key and returns value if found, or
+                                   second parameter if not
+       - key in d                 returns True/False
+       - del d['key']
+       - dict.clear() 
+
+- can be used in for loops
+
+      for keyval in d.keys()
+         print keyval, d[keyval]	  
+
+- dictionaries are very fast in retrieving values (when given the key)
+
+==========================================================================
+
+FUNCTIONS
+
+    - all indented lines following the "def" line belong to the function body
+    - whereas, commands in left-most column are executed immediately upon encountering them
+
+          def hello():   # creating function object
+              """Print "Hello World" and return None"""
+              print("Hello World")
+
+          # main program starts here
+          hello()     # execute the function
+
+    - The first statement of the function body can optionally be a string literal; this string literal is the function’s documentation string, or docstring.
+      There are tools which use docstrings to automatically produce online or printed documentation, or to let the user interactively browse through code;
+      it’s good practice to include docstrings in code that you write, so make a habit of it.
+      
+    - All parameters (arguments) are passed by value. (where the value is always an object reference, not the value of the object) 
+      This means if you change what a parameter refers to within a function. the change also reflects back in the calling function.
+      This doesn't refer to the overall reference to the object where the function is called, just the
+      inside of the object if it has mutable parts. In a sense, the address of the object is "passed by value."
+      
+     - When objects are passed to a function, Python always passes (the value of) the reference to the
+       object to the function. Effectively this is calling a function by reference, although one could refer to it
+       as calling by value (of the reference).
+      
+           def hello(msg):   # creating function object
+               """Print "Hello World" and return None"""
+               print "Hello World ", msg
+
+           # main program starts here
+           hello("in bed")     # execute the function
+
+    - Python functions that return more than one value return these in tuples (which makes
+      sense because you don't want these values be changed).      
+
+            def upperAndLower(string):
+                return string.upper(), string.lower()
+                
+            testword = 'Banana'
+            
+            uppercase, lowercase = upperAndLower(testword)
+    - return command (no parens) is optional if not returning something (same as return None)
+
+    - keyword arguments
+
+          When you use keyword arguments in a function call, the caller identifies the arguments 
+          by the parameter name.
+
+               printme( str = "mystring")
+
+          This allows you to skip arguments or place them out of order because the Python interpreter
+          is able to use the keywords provided to match the values with parameters.
+
+    - default arguments
+
+          assumes a default value if a value is not provided in the function call for that argument.
+
+          e,g, def printinfo( name, age = 35 ):
+
+    - variable length arguments
+
+           def functionname([formal_args,] *var_args_tuple ):
+               "function_docstring"
+               function_suite
+               return [expression]
+
+           An asterisk (*) is placed before the variable name that holds the values of all nonkeyword 
+           variable arguments. This tuple remains empty if no additional arguments are specified during
+           the function call.
+
+    - global variables cannot be directly assigned a value within a function (unless named in a global statement), although they may be referenced.
+
+==========================================================================
+
+- FUNCTIONAL TOOLS
+
+       - anonymous or lambda functions
+
+              - Sometimes, we need to define a function that is only used once,
+                or we want to create a function but don’t need a name for it (as
+                for creating closures). In this case, this is called anonymous
+                function as it does not have a name. In Python, the lambda
+                keyword can create an anonymous function.
+                
+             These functions are called anonymous because they are not declared in the standard manner
+             by using the def keyword. You can use the lambda keyword to create small anonymous functions.
+             
+             - In Python, we generally use it as an argument to a higher-order
+               function (a function that takes in other functions as arguments).
+               Lambda functions are used along with built-in functions like
+               filter(), map() etc.
+
+             The syntax of lambda functions contains only a single statement, which is as follows −
+
+                   lambda [arg1 [,arg2,.....argn]]:expression
+
+             # Function definition is here
+             sum = lambda arg1, arg2: arg1 + arg2;
+
+             # Now you can call sum as a function
+             print "Value of total : ", sum( 10, 20 )
+             print "Value of total : ", sum( 20, 20 )
+
+       - map
+
+             - map(f, s ) applies a function f to all elements in a sequence s
+
+             - Often, this is combined with the anonymous function lambda
+
+                   map ( lambda x : x ** 2 , range (10) )
+
+             - note: need list() to actually see the output of the map object
+             
+       - filter
+
+              - filter( f, s) applies the function f to all elements in a sequence s.
+                The function f should return True or False. The return value of filter is a
+                list which will contain only those elements of the sequence for 
+                which f(s_i) has returned True.
+
+              - lambda can often simplify things inside of filter
+              
+                    list(filter(lambda x: x > 5, range(11)))
+
+       - list comprehensions
+
+              - List comprehensions provide a concise way to create and modify
+                lists without resorting to use of map(), filter() and/or lambda.
+                The resulting list definition tends often to be clearer than
+                lists built using those constructs. Each list comprehension
+                consists of an expression followed by a for clause, then zero or
+                more for or if clauses. The result will be a list resulting from
+                evaluating the expression in the context of the for and if
+                clauses which follow it. If the expression would evaluate to a
+                tuple, it must be parenthesized.
+
+              - e.g.s
+
+                     >>> freshfruit = [ ’ banana ’ , ’ loganberry ’ , ’ passion fruit
+                     >>> [ weapon.strip () for weapon in freshfruit ]
+                     [’banana’ , ’loganberry’ , ’passion fruit’]
+
+                     >>> vec = [2 , 4 , 6]
+
+                     >>> [3 * x for x in vec ]
+                     [6 , 12 , 18]
+
+                     >>> [3 * x for x in vec if x > 3]
+                     [12 , 18]
+
+                     >>> [3 * x for x in vec if x < 2]
+                     []
+
+                     >>> [[ x , x ** 2] for x in vec ]
+                     [[2 , 4] , [4 , 16] , [6 , 36]]
+                     
+              - We can also use list comprehension to modify the list of
+                integers returned by the range command so that our subsequent
+                elements in the list increase by non-integer fractions:
+
+                     >>> [ x *0.5 for x in range (10)]
+                     [0.0 , 0.5 , 1.0 , 1.5 , 2.0 , 2.5 , 3.0 , 3.5 , 4.0 , 4.5]
+
+       - reduce
+
+               - The reduce function takes a binary function f(x, y), a sequence
+                 s, and a start value a0. It then applies the function f to the
+                 start value a0 and the first element in the sequence: a1 =
+                 f(a0, s[0]). The second element (s[1]) of the sequence is then
+                 processed as follows: the function f is called with arguments
+                 a1 and s[1], i.e. a2 = f(a1, s[1]). In this fashion, the whole
+                 sequence is processed. Reduce returns a single element.
+
+               - e.g.s
+
+                      >>> from functools import reduce
+                      >>> def add (x , y ):
+                      ...
+                      return x + y
+                      ...
+                      >>> reduce ( add , [1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10] , 0)
+                      55
+                      >>> reduce ( add , [1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10] , 100)
+                      155
+
+              - Reduce is often combined with lambda:
+                    >>> reduce(lambda x, y: x + y, [1, 2, 3, 4, 5], 0)
+                    15
+                    
+       - note: using list comprehension and map fit into one line of code whereas the for-loop typically
+         needs more lines of code. This example shows that functional codes result in very concise
+         expressions. Typically, the number of mistakes a programmer makes is per line of code written,
+         so the fewer lines of code we have, the fewer bugs we need to find.
+
+       - The functional tools described above can also be faster than using explicit (for or while) loops
+         over list elements.
+         
+       - There is also the operator module which provides standard Python
+         operators as functions. For example, the function operator.__add__(a,b)
+         is executed when Python evaluates code such as a+b. These are generally
+         faster than lambda expressions. We could write the example above as
+         
+              >>> import operator
+              >>> reduce(operator.__add__, [1, 2, 3, 4, 5], 0)
+              15
+
+==========================================
+
+INPUT/OUTPUT
+
+- print to the screen
+
+    - expression statements in interactive environment
+    
+    - print()
+
+        - print("Hello","World")   (includes newline automatically)
+
+            Hello World
+
+        - print("Hello\nWorld");
+        
+            Hello
+            World
+
+        - in Python 3, print is a function, so parentheses required
+        - in Python 2, print is not a function (basic use can have parentheses)
+
+    - write() file output using sys.stdout
+
+- Python prints a new line after every print call. To suppress that, use the end= parameter:
+
+      print("Printing in line one", end='')
+      
+- two ways to have more control of formatting of output
+
+    - first, do all the string handling yourself; using string slicing and concatenation operations you can create any layout you can imagine.
+      The string type has some methods that perform useful operations for padding strings to a given column width.
+      
+    - second, use formatted string literals, or the str.format() method.  
+    
+- to convert any value to a string: pass it to the repr() or str() functions.
+
+- The str() function is meant to return representations of values which are
+  fairly human-readable, while repr() is meant to generate representations which
+  can be read by the interpreter (or will force a SyntaxError if there is no
+  equivalent syntax). For objects which don’t have a particular representation for
+  human consumption, str() will return the same value as repr(). Many values, such
+  as numbers or structures like lists and dictionaries, have the same
+  representation using either function. Strings, in particular, have two distinct
+  representations.
+
+- good examples of the two approaches
+
+        >>> for x in range(1, 11):
+        ...     print(repr(x).rjust(2), repr(x*x).rjust(3), end=' ')
+        ...     # Note use of 'end' on previous line
+        ...     print(repr(x*x*x).rjust(4))
+        ...
+         1   1    1
+         2   4    8
+         3   9   27
+         4  16   64
+         5  25  125
+         6  36  216
+         7  49  343
+         8  64  512
+         9  81  729
+        10 100 1000
+
+        >>> for x in range(1, 11):
+        ...     print('{0:2d} {1:3d} {2:4d}'.format(x, x*x, x*x*x))
+        ...
+         1   1    1
+         2   4    8
+         3   9   27
+         4  16   64
+         5  25  125
+         6  36  216
+         7  49  343
+         8  64  512
+         9  81  729
+        10 100 1000
+
+- another str.format() example
+
+        Basic usage of the str.format() method looks like this:
+ 
+        >>> print('We are the {} who say "{}!"'.format('knights', 'Ni'))
+        We are the knights who say "Ni!"
+
+        The brackets and characters within them (called format fields) are replaced with the objects passed into the str.format() method. 
+
+        A number in the brackets can be used to refer to the position of the object passed into the str.format() method.
+
+        >>> print('{0} and {1}'.format('spam', 'eggs'))
+        spam and eggs
+        >>> print('{1} and {0}'.format('spam', 'eggs'))
+        eggs and spam
+
+- If keyword arguments are used in the str.format() method, their values are referred to by using the name of the argument.
+
+        >>> print('This {food} is {adjective}.'.format(
+        ...       food='spam', adjective='absolutely horrible'))
+        This spam is absolutely horrible.
+
+- An optional ':' and format specifier can follow the field name. This allows greater control over how the value is formatted. 
+  The following example rounds Pi to three places after the decimal.
+
+        >>> import math
+        >>> print('The value of PI is approximately {0:.3f}.'.format(math.pi))
+        The value of PI is approximately 3.142.
+
+- the str.format() way of formatting output is a newer system of built-in formatting allows more flexibility for complex cases,
+  at the cost of being a bit longer.
+
+- Old string formatting
+
+  The % operator can also be used for string formatting. It interprets the left argument much like a
+  sprintf()-style format string to be applied to the right  argument, and returns the string resulting
+  from this formatting operation. For example:
+
+        >>> import math
+        >>> print('The value of PI is approximately %5.3f.' % math.pi)
+        The value of PI is approximately 3.142.
+
+
+        print("a = %d b = %d" % (10,20))
+        
+    - print has token capability like C's printf  (e.g. print("%d" % varname))
+
+                specifier      style               Example output
+                -------------------------------------------------
+                 %f        floating point 		        149597870700.000000
+                 %e        exponential notation         1.495979e+11
+                 %g        shorter of %e or %f          1.49598e+11
+                 %d        integer                      149597870700
+                 %s        str()                        149597870700
+                 %r        repr()                       149597870700L
+
+                 %.<number of digits>f - Floating point numbers with a fixed amount of digits to the 
+                                         right of the dot.
+                 %x/%X - integers in hex representation (lowercase/uppercase)
+
+         - any object which is not a string can be formatted using the %s operator as well. 
+           The string which returns from the __str__ method of that object is formatted as the string.
+
+            - print("%d or %d or %s" % myfloat % myint % mystring)
+
+            - a newline is printed after every print statment. Suppresss with ending ,
+
+            - We can convert an object to its str() or repr presentation using the format specifiers %s and %r,
+              respectively. (see OBJECT section)
+
+    - Note that the conversion of a format specifier and a tuple of variables into string does not rely on
+      the print command:
+
+            >>> from math import pi
+            >>> "pi = %f" % pi
+            'pi = 3.141593'
+            
+      This means that we can convert objects into strings whereever we need, and we can decide to
+      print the strings later – there is no need to couple the formatting closely to the code that does the
+      printing.
+      
+- Reading and Writing Files
+
+    - open() returns a file object, and is most commonly used with two arguments: open(filename, mode).
+
+        >>> f = open('workfile', 'w')
+
+    - The first argument is a string containing the filename. The second argument is
+    another string containing a few characters describing the way in which the file
+    will be used. mode can be 'r' when the file will only be read, 'w' for only
+    writing (an existing file with the same name will be erased), and 'a' opens the
+    file for appending; any data written to the file is automatically added to the
+    end. 'r+' opens the file for both reading and writing. The mode argument is
+    optional; 'r' will be assumed if it’s omitted.
+    
+    - Normally, files are opened in text mode, that means, you read and write
+    strings from and to the file, which are encoded in a specific encoding. If
+    encoding is not specified, the default is platform dependent (see open()). 'b'
+    appended to the mode opens the file in binary mode: now the data is read and
+    written in the form of bytes objects. This mode should be used for all files
+    that don’t contain text.
+    
+    - In text mode, the default when reading is to convert platform-specific line
+    endings (\n on Unix, \r\n on Windows) to just \n. When writing in text mode, the
+    default is to convert occurrences of \n back to platform-specific line endings.
+    
+    - It is good practice to use the with keyword when dealing with file objects.
+    The advantage is that the file is properly closed after its suite finishes, even
+    if an exception is raised at some point. Using with is also much shorter than
+    writing equivalent try-finally blocks:
+
+        >>> with open('workfile') as f:
+        ...     read_data = f.read()
+        >>> f.closed
+        True
+
+    - If you’re not using the with keyword, then you should call f.close() to close
+    the file and immediately free up any system resources used by it. If you don’t
+    explicitly close a file, Python’s garbage collector will eventually destroy the
+    object and close the open file for you, but the file may stay open for a while.
+    Another risk is that different Python implementations will do this clean-up at
+    different times.
+
+    - To read a file’s contents, call f.read(size), which reads some quantity of
+    data and returns it as a string (in text mode) or bytes object (in binary mode).
+    size is an optional numeric argument. When size is omitted or negative, the
+    entire contents of the file will be read and returned; it’s your problem if the
+    file is twice as large as your machine’s memory. Otherwise, at most size bytes
+    are read and returned. If the end of the file has been reached, f.read() will
+    return an empty string ('').
+
+        >>> f.read()
+        'This is the entire file.\n'
+        >>> f.read()
+        ''
+
+    - f.readline() reads a single line from the file; a newline character (\n) is
+    left at the end of the string, and is only omitted on the last line of the file
+    if the file doesn’t end in a newline. This makes the return value unambiguous;
+    if f.readline() returns an empty string, the end of the file has been reached,
+    while a blank line is represented by '\n', a string containing only a single
+    newline.
+
+        >>> f.readline()
+        'This is the first line of the file.\n'
+        >>> f.readline()
+        'Second line of the file\n'
+        >>> f.readline()
+        ''
+
+    - For reading lines from a file, you can loop over the file object. This is memory efficient, fast, and leads to simple code:
+
+        >>> for line in f:
+        ...     print(line, end='')
+        ...
+        This is the first line of the file.
+        Second line of the file
+
+    - If you want to read all the lines of a file in a list you can also use list(f) or f.readlines().
+
+    - f.write(string) writes the contents of string to the file, returning the number of characters written.
+
+        >>> f.write('This is a test\n')
+        15
+
+    - Other types of objects need to be converted – either to a string (in text mode) or a bytes object (in binary mode) – before writing them:
+
+        >>> value = ('the answer', 42)
+        >>> s = str(value)  # convert the tuple to string
+        >>> f.write(s)
+
+================================================================================
+
+INTROSPECTION
+
+- list objects in namespace  (collection of objects defined in the console at any given time)
+ 
+     dir()
+
+- if dir() is given an object ( e.g. dir(<object>) ), then it inspects the namespace of the object
+  which it was passed
+
+- type(<object>) command returns the type of an object
+
+- reset namespace 
+
+     %reset    (may be just an IPython command)
+          
+- isinstance(<object>, <typespec>)
+
+   - returns True if the given object is an instance of the given type or any of its superclasses
+
+============================================================
+
+MODULES
+
+    - A module allows you to logically organize your Python code. Grouping related code into
+      a module makes the code easier to understand and use. A module is a Python object with
+      arbitrarily named attributes that you can bind and reference.
+
+    - Simply, a module is a file consisting of Python code. A module can define functions, 
+      classes and variables. A module can also include runnable code.
+
+    - Python has a way to put definitions in a file and use them in a script or in an interactive instance of the interpreter.
+      Such a file is called a module; definitions from a module can be imported into other modules or into the main module
+      (the collection of variables that you have access to in a script executed at the top level and in calculator mode).
+
+      A module is a file containing Python definitions and statements. The file name is the module name with the suffix .py appended.
+      
+    - A module can contain executable statements as well as function definitions. These statements are intended to initialize the module.
+      They are executed only the first time the module name is encountered in an import statement. [1] (They are also run if the file is executed as a script.)
+
+      Each module has its own private symbol table, which is used as the global symbol table by all functions defined in the module. 
+      Thus, the author of a module can use global variables in the module without worrying about accidental clashes with a user’s global variables.
+      On the other hand, if you know what you are doing you can touch a module’s global variables with the same notation used to refer to its functions, 
+      modname.itemname.
+
+      Modules can import other modules. It is customary but not required to place all import statements at the beginning of a module
+      (or script, for that matter). The imported module names are placed in the importing module’s global symbol table.
+
+    - sys module is built into every Python interpreter (does still need to be imported)
+
+    - Use of __name__
+    
+        In summary,
+        • __name__ is __main__ if the module file is run on its own
+        • __name__ is the name of the module (i.e. the module filename without the .py suffix) if the module file is imported.
+
+        We can thereforE use the following if statement in module1.py to write code that is only run when
+        the module is executed on its own: This is useful to keep test programs or demonstrations of the
+        abilities of a module in this “conditional” main program. It is common practice for any module files
+        to have such a conditional main program which demonstrates its capabilities.
+
+        Example 1
+        ---------
+        
+        The next example shows a main program for the another file vectools.py that is used to demonstrate
+        the capabilities of the functions defined in that file:
+        
+            from __future__ import division
+            import math
+            import numpy as N
+            
+            def norm(x):
+                """returns the magnitude of a vector x"""
+                return math.sqrt(sum(x ** 2))
+
+            def unitvector(x):
+                """returns a unit vector x/|x|. x needs to be a numpy array."""
+                xnorm = norm(x)
+                if xnorm == 0:
+                    raise ValueError("Can't normalise vector with length 0")
+                return x / norm(x)
+                
+            if __name__ == "__main__":
+               #a little demo of how the functions in this module can be used:
+               x1 = N.array([0, 1, 2])
+               print("The norm of " + str(x1) + " is " + str(norm(x1)) + ".")
+               print("The unitvector in direction of " + str(x1) + " is " \ 
+                   + str(unitvector(x1)) + ".")
+                   
+        If this file is executed using python vectools.py, then __name__==__main__ is true, and the out-
+        put reads
+ 
+            The norm of [0 1 2] is 2.23606797749979.
+            The unitvector in direction of [0 1 2] is [ 0.     0.4472136    0.89442719].
+            
+        If this file is imported (i.e. used as a module) into another python file or the python prompt,
+        then __name__==__main__ is false, and that statement block will not be executed.
+        
+        This is quite a common way to conditionally execute code in files providing library-like functions.
+        The code that is executed if the file is run on its own, often consists of a series of tests (to check that
+        the file’s functions carry out the right operations – regression tests or unit tests ), or some examples of
+        how the library functions in the file can be used.
+
+        Example 2
+        ---------
+                
+        Even if a Python program is not intended to be used as a module file, it is good practice to always
+        use a conditional main program:
+
+            • often, it turns out later that functions in the file can be reused (and saves work then)
+            • this is convenient for regression testing.
+
+        Suppose an exercise is given to write a function that returns the first 5 prime numbers, and in
+        addition to print them. (There is of course a trivial solution to this as we know the prime numbers,
+        and we should imagine that the required calculation is more complex). One might be tempted to
+        write
+        
+        def primes5():
+            return (2, 3, 5, 7, 11)
+        for p in primes5():
+        print("%d" % p, end=' ')
+        
+        Output: 2 3 5 7 11
+        
+        It is better style to use a conditional main function, i.e.:
+        
+        def primes5():
+            return (2, 3, 5, 7, 11)
+        if __name__=="__main__":
+            for p in primes5():
+            print("%d" % p, end=' ')
+            
+        Output: 2 3 5 7 11
+        
+        A purist might argue that the following is even cleaner:
+        
+        def primes5():
+            return (2, 3, 5, 7, 11)
+        def main():
+            for p in primes5():
+            print("%d" % p, end=' ')
+        
+        if __name__=="__main__":
+        main()
+
+    - e.g.s,  
+
+         in a file support.py (the module)
+
+            def print_func( par ):
+               print "Hello : ", par
+               return
+
+         in another file
+
+            import support
+
+              or
+
+            from support import print_func  (doesn't introduce the name support into the current namespace)
+
+              or
+
+            from support import *  (doesn't introduce the name support into the current namespace; but only use for quick & dirty)
+
+            support.print_func("Zara")   
+    
+
+     - can specify a different name by which a module is know locally
+
+            (can be different from its "official" name)
+
+          - import modulename as localname
+
+          - can help avoid name clashes with existing names
+          - make name more manageable 
+
+     - by adding this code at the end of your module:
+
+            if __name__ == "__main__":
+                import sys
+                fib(int(sys.argv[1]))
+
+       you can make the file usable as a script as well as an importable module, because the code that parses the command line
+       only runs if the module is executed as the “main” file:
+
+     - dir()
+
+           The dir() built-in function returns a sorted list of strings containing the names
+           defined by a module.
+
+           The list contains the names of all the modules, variables and functions that are
+           defined in a module
+
+     - package
+     
+           Packages are a way of structuring Python’s module namespace by using “dotted module names”.
+           For example, the module name A.B designates a submodule named B in a
+           package named A. Just like the use of modules saves the authors of different
+           modules from having to worry about each other’s global variable names, the use
+           of dotted module names saves the authors of multi-module packages like NumPy or
+           Pillow from having to worry about each other’s module names.
+
+           A package is a hierarchical file directory structure that defines a single Python
+           application environment that consists of modules and subpackages and sub-subpackages,
+           and so on. Setting these up can simplify the number of imports one has to do in the main
+           program.
+
+           The package can be defined in "_init__.py"
+
+           See internet for more details
+
+============================================================
+
+EXCEPTION HANDLING
+
+- There are (at least) two distinguishable kinds of errors: syntax errors and exceptions.
+
+- An exception is a Python object that represents an error.
+
+- When a Python script raises an exception, it must either handle the exception immediately otherwise it 
+  terminates and quits.
+
+- many standard exceptions
+
+- handling an exception
+
+          try:
+              You do your operations here;
+          except ExceptionI:
+              If there is ExceptionI, then execute this block.
+          except ExceptionII:
+              If there is ExceptionII, then execute this block.
+          else:
+              If there is no exception then execute this block. 
+
+- example
+
+        >>> while True:
+        ...     try:
+        ...         x = int(input("Please enter a number: "))
+        ...         break
+        ...     except ValueError:
+        ...         print("Oops!  That was no valid number.  Try again...")
+        ...
+
+
+
+- An except clause may name multiple exceptions as a parenthesized tuple
+
+      except (RuntimeError, TypeError, NameError):
+
+- can have a generic exception clause, which handles any execution. Doing this by itself
+  is not considered a good programming practice though, because it catches all exceptions
+  but does not make the programmer identify the root cause of the problem that may occur.
+
+- else clause is optional (executes if the code in the try block doesn't raise an exception.)
+  It is a good location for code that does not need the try: block's protection.
+  It is useful for code that must be executed if the try clause does not raise an exception. For example:
+
+    for arg in sys.argv[1:]:
+        try:
+            f = open(arg, 'r')
+        except OSError:
+            print('cannot open', arg)
+        else:
+            print(arg, 'has', len(f.readlines()), 'lines')
+            f.close()
+
+  The use of the else clause is better than adding additional code to the try clause because it avoids accidentally
+  catching an exception that wasn’t raised by the code being protected by the try … except statement.
+        
+
+- The last except clause may omit the exception name(s), to serve as a wildcard. 
+  Use this with extreme caution, since it is easy to mask a real programming error in this way!
+  It can also be used to print an error message and then re-raise the exception (allowing a caller to handle the exception as well)
+
+        import sys
+
+        try:
+            f = open('myfile.txt')
+            s = f.readline()
+            i = int(s.strip())
+        except OSError as err:
+            print("OS error: {0}".format(err))
+        except ValueError:
+            print("Could not convert data to an integer.")
+        except:
+            print("Unexpected error:", sys.exc_info()[0])
+            raise
+
+
+- finally clause
+
+      - The finally block is a place to put any code that must execute, whether the try-block raised
+        an exception or not.
+
+      - is intended to define clean-up actions that must be executed under all circumstances.
+
+      NOT SURE ABOUT THIS ONE   
+      - except/else and finally clauses cannot be used together in the same try: block
+
+- exception arguments
+
+    - An exception can have an argument, which is a value that gives additional information
+      about the problem. The contents of the argument vary by exception.
+
+       try:
+          You do your operations here;
+          ......................
+       except ExceptionType, Argument:
+          You can print value of Argument here...
+
+- raising exceptions
+
+     raise [Exception [, args [, traceback]]]
+
+     - An exception can be a string, a class or an object. Most of the exceptions that the Python
+       core raises are classes, with an argument that is an instance of the class.
+
+- user-defined exceptions
+
+       - Python also allows you to create your own exceptions by deriving classes from the standard
+         built-in exceptions.
+
+       - You can and should derive your own exceptions from the built-in Exception.
+
+       - Here is an example related to RuntimeError. Here, a class is created that is subclassed from
+         RuntimeError. This is useful when you need to display more specific information when an exception
+         is caught.
+
+               class NetworkError(RuntimeError):
+                  def __init__(self, arg):
+                       self.args = arg
+
+- The with statement
+
+    The with statement is used to wrap the execution of a block with methods defined by a context manager (see section With Statement Context Managers).
+    This allows common try…except…finally usage patterns to be encapsulated for convenient reuse.
+    
+    The with statement allows objects like files to be used in a way that ensures they are always cleaned up promptly and correctly.
+
+            with open("myfile.txt") as f:
+                for line in f:
+                    print(line, end="")
+
+    After the statement is executed, the file f is always closed, even if a problem was encountered while processing the lines. 
+    Objects which, like files, provide predefined clean-up actions will indicate this in their documentation.
+
+=======================================================================================
+
+LBYL vs EAFP
+
+   • LBYL (Look Before You Leap) vs
+   • EAFP (Easer to ask forgiveness than permission)
+
+- Example for LBYL:
+
+    if denominator == 0:
+        print("Oops")
+    else :
+        print (numerator / denominator)
+
+- Example for EAFP
+
+    try :
+        print (numerator / denominator)
+    except ZeroDivisionError :
+        print("Oops")
+
+- The Python documentation says about EAFP:
+
+    Easier to ask for forgiveness than permission. This common Python coding style assumes
+    the existence of valid keys or attributes and catches exceptions if the assumption proves
+    false. This clean and fast style is characterized by the presence of many try and except
+    statements. The technique contrasts with the LBYL style common to many other languages
+    such as C.
+
+- The Python documentation says about LBYL:
+
+    Look before you leap. This coding style explicitly tests for pre-conditions before making
+    calls or lookups. This style contrasts with the EAFP approach and is characterized by the
+    presence of many if statements.
+
+    In a multi-threaded environment, the LBYL approach can risk introducing a race condition
+    between the looking and the leaping. For example, the code, if key in mapping: return
+    mapping[key] can fail if another thread removes key from mapping after the test, but before
+    the lookup. This issue can be solved with locks or by using the EAFP approach.
+    
+- EAFP is the Pythonic way.
+
+======================================================================
+
+ASSERTIONS
+
+- An assertion is a sanity-check that you can turn on or turn off when you are done with your
+  testing of the program.
+
+  The easiest way to think of an assertion is to liken it to a raise-if statement (or to be more accurate,
+  a raise-if-not statement). An expression is tested, and if the result comes up false, an exception is raised.
+
+  Assertions are carried out by the assert statement, the newest keyword to Python, introduced in version 1.5.
+
+  Programmers often place assertions at the start of a function to check for valid input, and after a function
+  call to check for valid output.
+
+  When it encounters an assert statement, Python evaluates the accompanying expression, which is hopefully true.
+  If the expression is false, Python raises an AssertionError exception.
+
+  The syntax for assert is −
+
+       assert Expression[, Arguments]
+
+   If the assertion fails, Python uses ArgumentExpression as the argument for the AssertionError. AssertionError
+   exceptions can be caught and handled like any other exception using the try-except statement, but if not 
+   handled, they will terminate the program and produce a traceback.
+
+- example
+
+     def KelvinToFahrenheit(Temperature):
+         assert (Temperature >= 0),"Colder than absolute zero!"
+         return ((Temperature-273)*1.8)+32
+
+============================================================
+
+STANDARD LIBRARY (these modules need to be imported)
+
+- help('modules')
+
+- importing modules
+
+     - import module_name (no filename extension)
+- os
+
+     -  provides dozens of functions for interacting with the operating system
+     
+- sys
+
+     - This module provides access to some objects used or maintained by the
+       interpreter and to functions that interact strongly with the interpreter.   
+
+     - sys.maxint
+
+- math
+
+     - after loading math, do dir(math) to get list of objects available in math module
+
+     - e.g. sin(), cos(), exp(), log(), etc
+
+     - constants:   math.pi, math.e
+
+- random
+- statistics
+- datetime
+- timeit
+- sqlite3
+
+- array
+
+      The array module provides an array() object that is like a list that stores only homogeneous data and stores it more compactly.
+
+
+
+
+============================================================
+
+NAMESPACES AND SCOPING
+
+- Variables are names (identifiers) that map to objects. 
+  A namespace is a dictionary of variable names (keys) and their corresponding objects (values).
+
+  A Python statement can access variables in a local namespace and in the global namespace. If a local and a     
+  global variable have the same name, the local variable shadows the global variable.
+
+  Each function has its own local namespace. Class methods follow the same scoping rule as ordinary functions.
+
+  Python makes educated guesses on whether variables are local or global. It assumes that any variable assigned a 
+  value in a function is local.
+
+  Therefore, in order to assign a value to a global variable within a function, you must first use the global
+  statement.
+
+  The statement "global VarName" tells Python that VarName is a global variable. Python stops searching the local 
+  namespace for the variable.
+
+  For example, we define a variable Money in the global namespace. Within the function Money, we assign Money a 
+  value, therefore Python assumes Money as a local variable. However, we accessed the value of the local variable 
+  Money before setting it, so an UnboundLocalError is the result. Uncommenting the global statement fixes the 
+  problem.
+
+- e.g.
+
+    Money = 2000
+    def AddMoney():
+       # global Money
+       Money = Money + 1
+
+    print Money
+    AddMoney()
+    print Money
+
+- globals() and locals()
+
+    The globals() and locals() functions can be used to return the names in the global and local
+    namespaces depending on the location from where they are called. The return type is dictionary.
+
+============================================================
+
+EXTRA LIBRARIES
+
+- Sometimes, you'll see people importing a whole library this way:
+
+     from numpy import *
+
+  which then avoids the need to prepend the library name to function names with the dot. This saves typing but
+  is sloppy and can get you in trouble (because some function names actually repeat in various libraries). Best 
+  to get into good habits from the beginning!
+
+- os
+
+    - rename(filename1, filname2), remove(filename)
+    - mkdir(dirname), chdir(dirname), getcwd(), rmdir()
+    - many others
+
+- SymPy
+
+    - symbolic computation library (vs. numeric computation)
+    - also check out the SAGE initiative
+    - introduces a form of arbitrary precision (actual fractions)
+
+- SciPy
+
+    - import scipy
+
+    - provides a multitude of numerical algorithms/methods
+
+    - contains NumPy. SciPy is built on numpy
+
+    - any of the numerical algorithms available through scipy and numpy are provided by established
+      compiled libraries which are often written in Fortran or C. They will thus execute much faster than
+      pure Python code (which is interpreted). As a rule of thumb, we expect compiled code to be two
+      orders of magnitude faster than pure Python code.
+
+    - help(scipy)   (partial listing)
+
+          stats
+          sparse
+          lib
+          linalg
+          signal
+          misc
+          interpolate
+          optimize
+          cluster
+          fftpack
+          io
+          integrate
+          lib.lapack
+          special
+          lib.blas
+
+            * many of these packages require explicit import ( see pkgload )
+
+     - Scipy provides routines to read and write Matlab .mat files.
+
+     - lots of good numerical computations examples in "Chapter 16 - Numerical Methods using Python" of the
+       "Introduction to Python for Computational Science and Engineering (A beginner’s guide)" PDF book by
+       Fangohr
+
+- NumPy
+
+    - good tutorial: http://www.python-course.eu/matrix_arithmetic.php
+
+    - import numpy as N
+
+    - The NumPy package (read as NUMerical PYthon) provides access to
+
+      • a new data structure called "arrays" which allow
+      • efficient vector and matrix operations. It also provides
+      • a number of linear algebra operations (such as solving of systems of linear equations, computation
+        of Eigenvectors and Eigenvalues).
+
+    - provides a Python interface to the compiled and efficient LAPACK libraries that are the quasi-standard
+      in numerical linear algebra. If the problems under study can be formulated such that eventually large
+      systems of algebraic equations have to be solved, or eigenvalues computed, etc, then the compiled code
+      in the LAPACK library can be used (through the Python-numpy package). At this stage, the calculations
+      are carried out with the same performance of Fortran/C as it is essentially Fortran/C code that is used. 
+
+    - more efficient in terms of CPU time and memory requirements than using the standard Python code
+      functionality alone.
+
+    - introduces a new data type called "array"  (ndarray)
+
+          - very similar to a list but all elements must be of the same type
+
+               - makes storage more efficient
+               - makes arrays the data structure of choice for numerical calculations,
+                 where we often deal with vectors and matrices.
+
+          - e.g. 1D
+
+                x = N.array([0 , 0.5 , 1 , 1.5])
+                x = N.arange(0 , 2 , 0.5)
+                x = N.zeros(4)
+                x = N.eye(3)    # ones on the diagonal
+
+                x[2] = 4  (zero-based indexing)
+
+          - can perform calculations on every element in the vector with a single statement:
+
+                >>> x = N.arange (0 , 2 , 0.5)
+                >>> y = N.arange (1 , 3 , 0.5)
+                >>> print ( x )
+                [ 0. , 0.5 , 1. , 1.5]
+                >>> print ( x + 10)
+                [ 10. 10.5 11. 11.5]
+                >>> print ( x ** 2)
+                [ 0. 0.25 1. 2.25]
+                >>> print ( N.sin ( x ))
+                [ 0. 0.47942554 0.84147098 0.99749499]
+
+                x + y, x - y, x * y (Hadamard product), x / y, x % y 
+
+          - N.dot(x,y), N.dot(A,x) N.sqrt()           
+
+          - e.g. 2D
+
+                  x = N.array ([[1 , 2 , 3] , [4 , 5 , 6]])
+                  x = N.zeros ((5 , 4))
+                  x.shape
+                  x[1,1]       (zero-based indexing)
+
+           - matrix objects
+
+                N.matrix( ... )
+ 
+                - The matrix objects inherit all the attributes and methods of ndarray. Another difference is
+                  that numpy matrices are strictly 2-dimensional, while numpy arrays can be of any dimension,
+                  i.e., they are n-dimensional.
+
+                  The most important advantage of matrices is that they provide convenient notations for 
+                  matrix mulitplication. If X and Y are two Matrices, then X * Y defines matrix
+                  multiplication. While on the other hand, if X and Y are ndarrays, X * Y define an element by
+                  element multiplication. 
+
+           - convert from array to list or tuple
+
+                  - list(s) or tuple(s)
+
+    - matrix multiplication
+
+         import numpy as N
+         import numpy.random
+         A = numpy.random.rand(5 , 5)     # generates a random 5 by 5 matrix
+         x = numpy.random.rand(5)         # generates a 5 - element vector
+         b = N.dot(A, x)                  # multiply matrix A with vector x
+
+         - for 1D arrays N.dot(,) is equivalent to inner product of vectors
+         - for 2D arrays N.dot(,) is equivalent to matrix multiplication
+
+    - solving systems of linear equations
+    
+          import numpy.linalg as LA
+          x = LA.solve(A, b)
+          
+    - computing eigenvector/values
+
+         import numpy.linalg as LA
+         evalues , evectors = LA.eig ( A )
+
+    - curve fitting of polynomials
+
+        - polyfit(x,y,n)
+
+    - linspace(start, stop, num=50, endpoint=True, retstep=False, dtype=None)
+
+         - Returns "num" evenly spaced samples, calculated over the interval [start, stop ]. (ndarray)
+         - "num" count includes endpoints
+
+              numpy.linspace(0,1,3)
+              array([ 0. ,  0.5,  1. ])
+
+    - arange([start, ]stop, [step, ]dtype=None)
+
+        Returns evenly spaced values within a given interval. (ndarray)
+        Values are generated within the half-open interval [start, stop) 
+        (in other words, the interval including start but excluding stop). 
+        For integer arguments the function is equivalent to the Python built-in range function, 
+        but returns an ndarray rather than a list.
+
+        When using a non-integer step, such as 0.1, the results will often not be consistent. 
+        It is better to use linspace for these cases.
+
+    - my_array = numpy.array([1, 2, 3, 4, 5])  (ndarray)
+
+        An array object represents a multidimensional, homogeneous array of fixed-size items. 
+        An associated data-type object describes the format of each element in the array 
+        (its byte-order, how many bytes it occupies in memory, whether it is an integer, 
+        a floating point number, or something else, etc.)
+
+        - arrays should be constructed using array, zeros or empty
+
+    - more NumPy examples
+
+           http://www.scipy.org/Numpy Example List
+
+    - NumPy for Matlab users
+
+           http://www.scipy.org/Numpy Example List
+
+
+- Matplotlib (Pylab) - plotting y=f(x), (and a bit more)
+
+   - is a Python object-oriented 2D plotting library which produces publication quality figures in a 
+     variety of hardcopy formats and interactive environments. Matplotlib tries to make easy things easy
+     and hard things possible. You can generate plots, histograms, power spectra, bar charts, errorcharts,
+     scatterplots, etc, with just a few lines of code.
+
+         import matplotlib.pyplot as plt
+         plt.plot(x,y)
+         plt.show()
+
+   - pylab is a part of matplotlib providing an interface that imitates the (state-driven) MatLab
+     plotting interface 
+
+        - the numpy.arange, numpy.sin, etc. objects have already been imported into the (convenience) 
+          pylab namespace
+
+   - pylab is slightly more convenient, but Matplotlib object-oriented interface gives far more detailed
+     control over how plots are created 
+
+   - recently, creation of 3D plots has been added to pylab
+
+   - For more detailed information, check these links
+   
+        • A very nice introduction in the object oriented Matplotlib interface, and
+          summary of all important ways of changing style, figure size, linewidth,
+          etc. This is a useful reference:
+          http://nbviewer.ipython.org/urls/raw.github.com/jrjohansson/
+          scientific-python-lectures/master/Lecture-4-Matplotlib.ipynb
+          
+        • Matplotlib tutorial
+        • Matplotlib home page
+        • List of simple screenshot examples 
+          http://matplotlib.sourceforge.net/users/screenshots.html
+        • Extended thumbnail gallery of examples http://matplotlib.sourceforge.net/gallery.html
+
+   - Pylab
+
+         import pylab as p
+         p.figure(...)  # may be unnecessary
+         p.plot (x , y )
+         p.show ()
+
+        - p.legend(), p.grid(). p.xlabel(), p.title(), p.axis(), p.subplot(), p.savefig()
+
+   - Matplotlib can be run in two modes:
+
+        • non-interactive (this is the default)
+        • interactive.
+
+        In non-interactive mode, no plots will be displayed until the show() command has been issued. In
+        this mode, the show() command should be the last statement of your program.
+        In interactive mode, plots will be immediately displayed after the plot command has been issued.
+        One can switch the interactive mode on using pylab.ion() and off using pylab.ioff().
+
+   - mlab
+
+          import matplotlib.mlab as mlab
+
+          - numerical python functions written for compatability with MATLAB commands with the same names
+          
+   - 
+ 
+- Visual Python
+
+       - import visual
+
+       - is a Python module that makes it fairly easy to create and animate 3D scenes.
+       - very handy tool to quickly generate animations of time dependent processes taking place in 3d space.
+       
+- 3D modeling (often time dependent)
+
+      - VTK : Visualization ToolKit (vtk.org)
+      - the following packages use VTK internally
+
+           • Mayavi - http://code.enthought.com/projects/mayavi/
+           • Paraview - http://paraview.org
+           • VisIt - http://wci.llnl.gov/simulation/computer-codes/visit/
+
+      - Writing vtk files from Python (pyvtk)
+
+             - A small but powerful Python library is pyvtk available at https://code.google.com/p/pyvtk/.
+               This allows to create vtk files from Python data structures very easily. Given a finite 
+               element mesh or a finite difference data set in Python, one can use pyvtk to write such data
+               into files, and then use one of the visualisation applications listed above to load the vtk
+               files and to display and investigate them.
+
+=================================================================
+
+INTERFACING WITH COMPILED CODE
+
+- The scipy.weave extension is useful if just a short expression needs to be expressed in C.
+
+- The Cython interface is growing in popularity to (i) semi-automatically declare variable
+  types in Python code, to translate that code to C (automatically), and to then use the
+  compiled C code from Python. Cython is also used to quickly wrap an existing C
+  library with an interface so the C library can be used from Python.
+
+- Boost.Python is specialised for wrapping C++ code in Python.
+

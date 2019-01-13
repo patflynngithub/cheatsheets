@@ -1,0 +1,1264 @@
+Fortran 77 Cheatsheet                  (modified 1/6/19)
+=====================
+
+- ANSI Fortran 77
+
+- gleaned from 
+
+       https://web.stanford.edu/class/me200c/tutorial_77/
+
+          - note: tutorial from 1995-97
+
+- gfortran -std=legacy -o circle circle.f
+
+- column position rules
+
+    - Fortran 77 is NOT a free-format language, but has a very strict set of rules for how
+      the source code should be formatted. The most important rules are the column position rules:
+
+        Col. 1    : Blank, or a "c" or "*" for comments
+        Col. 1-5  : Statement label (optional)
+        Col. 6    : Continuation of previous line (optional)
+        Col. 7-72 : Statements
+        Col. 73-80: Sequence number (optional, rarely used today)
+
+      Most lines in a Fortran 77 program starts with 6 blanks and end before column 72, i.e. only
+      the statement field is used.
+
+         1         2         3         4         5         6         7         8
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+[   ]|[                                                                ][      ]
+
+- example
+
+      program circle
+      real r, area
+ 
+c This program reads a real number r and prints
+c the area of a circle with radius r.
+ 
+      write (*,*) 'Give radius r:'
+      read  (*,*) r
+      area = 3.14159*r*r
+      write (*,*) 'Area = ', area
+ 
+      stop
+      end
+
+- c or * in first column is a comment line
+- You may also encounter Fortran programs that use the exclamation mark (!) for comments. 
+  This is not a standard part of Fortran 77, but is supported by several Fortran 77 compilers
+  and is explicitly allowed in Fortran 90. When understood, the exclamation mark may appear
+  anywhere on a line (except in positions 2-6). 
+
+- not case sensitive ( X and x are same variable)
+- Originally, all Fortran programs had to be written in all upper-case letters.
+  Most people now write lower-case since this is more legible
+
+- program organization
+
+      program "name"
+
+      "declarations"
+
+      "statements"
+
+      stop
+      end
+
+- stop
+
+    - The stop statement is optional and may seem superfluous since the program will stop
+      when it reaches the end anyway, but it is recommended to always terminate a program
+      with the stop statement to emphasize that the execution flow stops there.
+
+- column position rules
+
+    - Fortran 77 is NOT a free-format language, but has a very strict set of rules for how
+      the source code should be formatted. The most important rules are the column position rules:
+
+        Col. 1    : Blank, or a "c" or "*" for comments
+        Col. 1-5  : Statement label (optional)
+        Col. 6    : Continuation of previous line (optional)
+        Col. 7-72 : Statements
+        Col. 73-80: Sequence number (optional, rarely used today)
+
+      Most lines in a Fortran 77 program starts with 6 blanks and end before column 72,
+      i.e. only the statement field is used.
+
+- continuation
+
+      - Sometimes, a statement does not fit into the 66 available columns of a single line.
+        One can then break the statement into two or more lines, and use the continuation mark in position 6.
+
+        Example:
+
+        c23456789 (This demonstrates column position!)
+
+        c The next statement goes over two physical lines
+              area = 3.14159265358979
+             +       * r * r
+
+      - Any character can be used instead of the plus sign as a continuation character. 
+        It is considered good programming style to use either the plus sign, an ampersand,
+        or digits (using 2 for the second line, 3 for the third, and so on). 
+
+- blank spaces
+
+    - blank spaces are ignored in Fortran 77. So if you remove all blanks in a Fortran 77 program,
+      the program is still acceptable to a complier but almost unreadable to humans. 
+
+- variable names
+
+    - Variable names in Fortran consist of 1-6 characters chosen from the letters a-z and the digits 0-9.
+      The first character must be a letter. Fortran 77 does not distinguish between upper and lower case,
+      in fact, it assumes all input is upper case. However, nearly all Fortran 77 compilers will accept lower case.
+
+- variable types and declarations
+
+    - Every variable should be defined in a declaration. This establishes the type of the variable.
+      The most common declarations are:
+
+          integer   list of variables
+          real      list of variables
+          double precision  list of variables
+          complex   list of variables
+          logical   list of variables
+          character list of variables
+
+      The list of variables should consist of variable names separated by commas. 
+      Each variable should be declared exactly once. If a variable is undeclared,
+      Fortran 77 uses a set of implicit rules to establish the type. This means all
+      variables starting with the letters i-n are integers and all others are real.
+      Many old Fortran 77 programs uses these implicit rules, but you should not! 
+      The probability of errors in your program grows dramatically if you do not
+      consistently declare your variables.
+
+- integers
+
+    - Fortran 77 has only one type for integer variables. Integers are usually stored
+      as 32 bits (4 bytes) variables. Therefore, all integer variables should take on
+      values in the range [-m,m] where m is approximately 2*10^9.
+
+- floating point variables
+
+   - Fortran 77 has two different types for floating point variables, called real and double precision.
+     While real is often adequate, some numerical calculations need very high precision and double precision
+     should be used. Usually a real is a 4 byte variable and the double precision is 8 bytes, but this is
+     machine dependent. Some non-standard Fortran versions use the syntax real*8 to denote 8 byte floating point
+     variables. 
+
+- constants - the "parameter" statement
+
+    - Some constants appear many times in a program. It is then often desirable to define them only once, in the
+      beginning of the program. This is what the parameter statement is for. It also makes programs more readable.
+      The parameter statement(s) must come before the first executable statement.
+
+          program circle
+          real r, area, pi
+          parameter (pi = 3.14159)
+
+    - syntax
+
+        parameter (name = constant, ... , name = constant)  
+
+- E-notation constants
+
+    3.333E-1
+    2.0D-1    (double precision)
+
+- complex constants
+
+    (2,-3)
+
+- logical constants
+
+    .TRUE.
+    .FALSE.
+
+- character constants or strings
+
+    'now is the time for all good men'
+
+    - '' (double apostrophe) to get an apostrophe in a string
+
+- arithmetic operators
+
+    +,-,*,/, ** (exponentiation)
+
+   - all are calculated left-to right, except for exponentation, which has right-to-left precedence
+
+   - integer division rounds down: 3/2 equals 1, 3./2. equals 1.5
+
+- type conversion
+
+   - When different data types occur in the same expression, type conversion has to take place, either explicitly
+     or implicitly. Fortran will do some type conversion implicitly. For example,
+
+          real x
+          x = x + 1
+
+     will convert the integer one to the real number one, and has the desired effect of incrementing x by one.
+
+     However, in more complicated expressions, it is good programming practice to force the necessary type
+     conversions explicitly. For numbers, the following functions are available:
+
+          int
+          real
+          dble
+          ichar
+          char
+
+    The first three have the obvious meaning. ichar takes a character and converts it to an integer, while char
+    does exactly the opposite.
+
+    Example: How to multiply two real variables x and y using double precision and store the result in the double
+    precision variable w:
+
+       w = dble(x)*dble(y)
+
+    Note that this is different from
+
+       w = dble(x*y)
+
+- logical operators (highest to lowest precedence)
+    
+     .NOT.
+     .AND.
+     .OR.
+
+- logical expressions
+
+    - Logical expressions can only have the value .TRUE. or .FALSE.. A logical expression can be formed by
+      comparing arithmetic expressions using the following 
+
+      relational operators:
+
+      operator      meaning
+      --------      -------
+      .LT.          <
+      .LE.          <=
+      .GT.          >
+      .GE.          >=
+      .EQ.          =
+      .NE.          /=
+
+    ? So you cannot use symbols like Logical expressions that can be combined by the logical
+      operators .AND. .OR. .NOT. which have the obvious meaning. 
+
+- logical variables and assignment
+
+    - Truth values can be stored in logical variables. The assignment is analogous to the arithmetic assignment.
+      Example:
+
+          logical a, b
+          a = .TRUE.
+          b = a .AND. 3 .LT. 5/2
+
+      The order of precedence is important, as the last example shows. The rule is that arithmetic expressions are
+      evaluated first, then relational operators, and finally logical operators. Hence b will be assigned .FALSE.
+      in the example above. Among the logical operators the precedence (in the absence of parenthesis) is
+      that .NOT. is done first, then .AND., then .OR. is done last.
+
+      Logical variables are seldom used in Fortran. But logical expressions are frequently used in conditional
+      statements like the if statement. 
+
+- if statements
+
+     - one line
+
+            if (logical expression) "executable statement"
+
+     - multiple lines
+
+            if (logical expression) then
+                statements
+            endif
+
+     - most general form
+
+          if (logical expression) then
+             statements
+          elseif (logical expression) then
+             statements
+             ...
+             ...
+          else
+             statements
+          endif
+
+     - nested if statements
+
+     - if statements can be nested in several levels. To ensure readability, it is important to use proper
+       indentation. Here is an example:
+
+          if (x .GT. 0) then
+             if (x .GE. y) then
+                write(*,*) 'x is positive and x >= y'
+             else
+                write(*,*) 'x is positive but x 
+             endif
+          endif
+
+- do-loops (only Fortran 77 loop construct)
+
+    - The do-loop is used for simple counting. Here is a simple example that prints the cumulative sums of the
+      integers from 1 through n (assume n has been assigned a value elsewhere):
+
+      integer i, n, sum
+ 
+              sum = 0
+              do 10 i = 1, n
+                 sum = sum + i
+                 write(*,*) 'i =', i
+                 write(*,*) 'sum =', sum
+          10  continue
+
+      The number 10 is a statement label. Typically, there will be many loops and other statements in a single
+      program that require a statement label. The programmer is responsible for assigning a unique number to each 
+      label in each program (or subprogram). Recall that column positions 1-5 are reserved for statement labels.
+      The numerical value of statement labels have no significance, so any integers can be used, in any order.
+      Typically, most programmers use consecutive multiples of 10.
+
+      The variable defined in the do-statement is incremented by 1 by default. However, you can define the step to
+      be any number but zero. This program segment prints the even numbers between 1 and 10 in decreasing order:
+
+              integer i
+         
+              do 20 i = 10, 1, -2
+                 write(*,*) 'i =', i
+          20  continue
+
+      The general form of the do loop is as follows:
+
+              do label  var =  expr1, expr2, expr3
+                 statements
+        label continue
+
+      var is the loop variable (often called the loop index) which must be integer. expr1 specifies the initial
+      value of var, expr2 is the terminating bound, and expr3 is the increment (step).
+
+      Note: The do-loop variable must never be changed by other statements within the loop! This will cause great
+      confusion.
+
+      The loop index can be of type real, but due to round off errors may not take on exactly the expected
+      sequence of values.
+
+      Many Fortran 77 compilers allow do-loops to be closed by the enddo statement. The advantage of this is that
+      the statement label can then be omitted since it is assumed that an enddo closes the nearest previous do
+      statement. The enddo construct is widely used, but it is not a part of ANSI Fortran 77. 
+
+      It should be noted that unlike some programming languages, Fortran only evaluates the start, end, and step
+      expressions once, before the first pass thought the body of the loop. This means that the following do-loop
+      will multiply a non-negative j by two (the hard way and assuming 2 was entered), rather than running forever
+      as the equivalent loop might in another language.
+
+      integer i,j
+ 
+              read (*,*) j
+              do 20 i = 1, j
+                 j = j + 1
+          20  continue
+              write (*,*) j
+
+    - wrtiing while-loops
+
+         - some compilers except alternative non-standard loop constructs such as
+
+              while (logical expr) do
+                 statements
+              enddo
+
+              or
+
+              do while (logical expr) 
+                 statements
+              enddo
+
+         - correct way is to use if and goto:
+
+                label if (logical expr) then
+                         statements
+                         goto label
+                      endif 
+
+           Here is an example that calculates and prints all the powers of two that are less than or equal to 100:
+            
+                     integer n
+
+                     n = 1
+                  10 if (n .le. 100) then
+                        write (*,*) n
+                        n = 2*n
+                        goto 10
+                     endif
+
+    - writing until-loops
+
+      If the termination criterion is at the end instead of the beginning, it is often called an until-loop. The
+      pseudocode looks like this:
+
+                 do
+                    statements
+                 until (logical expr)
+
+      Again, this should be implemented in Fortran 77 by using if and goto:
+
+          label continue
+                   statements
+                if (logical expr) goto label
+
+      Note that the logical expression in the latter version should be the negation of the expression given in the
+      pseudocode! 
+
+- 1D arrays
+
+    - declarations
+
+          integer i(10)             (default start index is 1, index ranges from 1 to 10)
+          logical aa(0:1)           (start index is 0, index ranges from 0 to 1)
+          double precision x(100)   (default start index is 1, index ranges from 1 to 100
+
+    - referencing entries
+
+          i(5)
+
+    - A common bug in Fortran is that the program tries to access array elements that are out of bounds or
+      undefined. This is the responsibility of the programmer, and the Fortran compiler will not detect any such
+      bugs!
+
+    - Do not assume elements are initialized to zero by the compiler (some compilers will do this, but not all).
+
+- 2D arrays
+
+          real A(3,5)
+
+    - useful to think or referencing as (row,column) indexing
+
+   - column-major storage
+
+   - It is quite common in Fortran to declare arrays that are larger than the matrix we want to store. (This is
+     because Fortran does not have dynamic storage allocation.) This is perfectly legal. Example:
+
+     Consider again the example where we only use the upper 3 by 3 submatrix of the 3 by 5 array A(3,5). The 9
+     interesting elements will then be stored in the first nine memory locations, while the last six are not used.
+     This works out neatly because the leading dimension is the same for both the array and the matrix we store in
+     the array. However, frequently the leading dimension of the array will be larger than the first dimension of
+     the matrix. Then the matrix will not be stored contiguously in memory, even if the array is contiguous. For
+     example, suppose the declaration was A(5,3) instead. Then there would be two "unused" memory cells between
+     the end of one column and the beginning of the next column (again we are assuming the matrix is 3 by 3).
+
+     This may seem complicated, but actually it is quite simple when you get used to it. If you are in doubt, it
+     can be useful to look at how the address of an array element is computed. Each array will have some memory
+     address assigned to the beginning of the array, that is element (1,1). The address of element (i,j) is then
+     given by
+
+         addr[A(i,j)] = addr[A(1,1)] + (j-1)*lda + (i-1)
+
+     where lda is the leading (i.e. row) dimension of A. Note that lda is in general different from the actual
+     matrix dimension. Many Fortran errors are caused by this, so it is very important you understand the
+     distinction!  
+
+- alternate way of array declaration 
+
+         real A, x
+         dimension x(50)
+         dimension A(10,20)
+
+     are equivalent to
+
+         real A(10,20), x(50)
+
+     This dimension statement is considered old-fashioned style today. 
+
+- subprograms
+
+    - Fortran has two different types of subprograms, called functions and subroutines
+
+- functions
+
+    - take a set of input arguments (parameters) and return a value of some type
+
+    - Fortran 77 has some intrinsic (built-in) functions. Some are:
+
+          abs     absolute value
+          min     minimum value
+          max     maximum value
+          sqrt    square root
+          sin     sine
+          cos     cosine
+          tan     tangent
+          atan    arctangent
+          exp     exponential (natural)
+          log     logarithm (natural)
+
+    - a function always has a type. Most of the built-in functions mentioned above, however, are generic. So in
+      the example above, pi and x could be either of type real or double precision. The compiler would check the
+      types and use the correct version of cos (real or double precision). Unfortunately, Fortran is not really a
+      polymorphic language so in general you have to be careful to match the types of your variables and your
+      functions!
+
+    - user-written functions
+
+        - syntax
+
+              type function_name (list-of-variables)
+              declarations
+              statements
+              return
+              end
+
+        - example
+
+              real function r(m,t)
+              integer m
+              real t
+
+              r = 0.1*t * (m**2 + 14*m + 46)
+              if (r .LT. 0) r = 0.0
+
+              return
+              end
+
+        - If you use a function which has not been declared, Fortran will try to use the same implicit typing used
+          for variables, probably getting it wrong.
+
+        - It should be noted that strictly speaking Fortran 77 doesn't permit recursion (functions which call
+          themselves). However, it is not uncommon for a compiler to allow recursion.
+
+    - subroutines
+
+        - A Fortran function can essentially only return one value. Often we want to return two or more values (or
+          sometimes none!). For this purpose we use the subroutine construct.
+
+        - syntax
+
+              subroutine name (list-of-arguments)
+              declarations
+              statements
+              return
+              end
+
+        - example
+
+                  subroutine iswap (a, b)
+                  integer a, b
+            c Local variables
+                  integer tmp
+
+                  tmp = a
+                  a = b
+                  b = tmp
+
+                  return
+                  end
+
+        - Note that subroutines have no type and consequently should not (cannot) be declared in the calling
+          program unit. They are also invoked differently than functions, using the word call before their names
+          and parameters.
+
+        - Note that there are two blocks of variable declarations here. First, we declare the input/output
+          parameters, i.e. the variables that are common to both the caller and the callee. Afterwards, we declare
+          the local variables, i.e. the variables that can only be used within this subprogram. We can use the
+          same variable names in different subprograms and the compiler will know that they are different
+          variables that just happen to have the same names.
+
+-Call-by-reference
+
+    - Fortran 77 uses the so-called call-by-reference paradigm. This means that instead of just passing the values
+      of the function/subroutine arguments (call-by-value), the memory address of the arguments (pointers) are
+      passed instead. A small example should show the difference:
+
+              program callex
+              integer m, n
+        c
+              m = 1
+              n = 2 
+
+              call iswap(m, n)
+              write(*,*) m, n
+
+              stop
+              end
+
+    - The output from this program is "2 1", just as one would expect. However, if Fortran 77 had been using
+      call-by-value then the output would have been "1 2", i.e. the variables m and n were unchanged! The reason
+      for this is that only the values of m and n had been copied to the subroutine iswap, and even if a and b
+      were swapped inside the subroutine the new values would not have been passed back to the main program.
+
+    - In the above example, call-by-reference was exactly what we wanted. But you have to be careful about this
+      when writing Fortran code, because it is easy to introduce undesired side effects. For example, sometimes it
+      is tempting to use an input parameter in a subprogram as a local variable and change its value. Since the
+      new value will then propagate back to the calling program with an unexpected value, you should never do this
+      unless (like our iswap subroutine) the change is part of the purpose of the subroutine.
+
+- arrays in subprograms
+
+    - Fortran subprogram calls are based on call by reference. This means that the calling parameters are not
+      copied to the called subprogram, but rather that the addresses of the parameters (variables) are passed.
+      This saves a lot of memory space when dealing with arrays. No extra storage is needed as the subroutine
+      operates on the same memory locations as the calling (sub-)program.
+
+    - It is possible to declare local arrays in Fortran subprograms, but this feature is rarely used. Typically,
+      all arrays are declared (and dimensioned) in the main program and then passed on to the subprograms as 
+      needed.
+
+    - variable length arrays
+
+        - A basic vector operation is the saxpy operation. This calculates the expression
+
+              y := alpha*x + y
+
+          where alpha is a scalar but x and y are vectors. Here is a simple subroutine for this:
+
+                  subroutine saxpy (n, alpha, x, y)
+                  integer n
+                  real alpha, x(*), y(*)
+            c
+            c Saxpy: Compute y := alpha*x + y,
+            c where x and y are vectors of length n (at least).
+            c
+            c Local variables
+                  integer i
+            c
+                  do 10 i = 1, n
+                     y(i) = alpha*x(i) + y(i)
+               10 continue
+            c
+                  return
+                  end
+
+        - The only new feature here is the use of the asterisk in the declarations x(*) and y(*). This notation
+          says that x and y are arrays of arbitrary length. The advantage of this is that we can use the same
+          subroutine for all vector lengths. Recall that since Fortran is based on call-by-reference, no
+          additional space is allocated but rather the subroutine works directly on the array elements from the
+          calling routine/program. It is the responsibility of the programmer to make sure that the vectors x and
+          y really have been declared to have length n or more in some other program unit. A common error in
+          Fortran 77 occurs when you try to access out-of-bounds array elements.
+
+        - We could also have declared the arrays like this:
+
+              real x(n), y(n)
+
+        - Most programmers prefer to use the asterisk notation to emphasize that the "real array length" is 
+          unknown. Some old Fortran 77 programs may declare variable length arrays like this:
+
+              real x(1), y(1)
+
+        - This is legal syntax even if the array lengths are greater than one! But this is poor programming style
+          and is strongly discouraged. 
+
+    - passing subsections of arrays
+
+        - Next we want to write a subroutine for matrix-vector multiplication. There are two basic ways to do
+          this, either by using inner products or saxpy operations. Let us be modular and re-use the saxpy code
+          from the previous section. A simple code is given below.
+
+                  subroutine matvec (m, n, A, lda, x, y)
+                  integer m, n, lda
+                  real x(*), y(*), A(lda,*)
+            c
+            c Compute y = A*x, where A is m by n and stored in an array
+            c with leading dimension lda.
+            c
+            c Local variables
+                  integer i, j
+                  
+            c Initialize y
+                  do 10 i = 1, m
+                     y(i) = 0.0
+               10 continue
+
+            c Matrix-vector product by saxpy on columns in A.
+            c Notice that the length of each column of A is m, not n!
+                  do 20 j = 1, n
+                     call saxpy (m, x(j), A(1,j), y)
+               20 continue
+
+                  return
+                  end
+
+        - There are several important things to note here. First, note that even if we have written the code as
+          general as possible to allow for arbitrary dimensions m and n, we still need to specify the leading
+          dimension of the matrix A. The variable length declaration (*) can only be used for the last dimension
+          of an array! The reason for this is the way Fortran 77 stores multidimensional arrays (see the section
+          on arrays).
+
+        - When we compute y = A*x by saxpy operations, we need to access columns of A. The j'th column of A is
+          A(1:m,j). However, in Fortran 77 we cannot use such subarray syntax (but it is encouraged in Fortran
+          90!). So instead we provide a pointer to the first element in the column, which is A(1,j) (it is not
+          really a pointer, but it may be helpful to think of it as if it were). We know that the next memory
+          locations will contain the succeeding array elements in this column. The saxpy subroutine will treat
+          A(1,j) as the first element of a vector, and does not know that this vector happens to be a column of a
+          matrix.
+
+        - Finally, note that we have stuck to the convention that matrices have m rows and n columns. The index i
+          is used as a row index (1 to m) while the index j is used as a column index (1 to n). Most Fortran
+          programs handling linear algebra use this notation and it makes it a lot easier to read the code! 
+
+    - Different dimensions
+
+        - Sometimes it can be beneficial to treat a 1-dimensional array as a 2-dimensional array and vice versa.
+          This is fairly simple to do in Fortran 77, some will say it is too easy!
+
+        - Let us look at a very simple example. Another basic vector operation is scaling, i.e. multiplying each
+          element in a vector by the same constant. Here is a subroutine for this:
+
+                  subroutine scale(n, alpha, x)
+                  integer n
+                  real alpha, x(*)
+            c
+            c Local variables
+                  integer i
+
+                  do 10 i = 1, n
+                     x(i) = alpha * x(i)
+               10 continue
+
+                  return
+                  end
+
+        - Now suppose we have a m by n matrix we want to scale. Instead of writing a new subroutine for this, we
+          can simply treat the matrix as a vector and use the subroutine scale. A simple version is given first:
+
+                  integer m, n
+                  parameter (m=10, n=20)
+                  real alpha, A(m,n)
+
+            c Some statements here define A...
+
+            c Now we want to scale A
+                  call scale(m*n, alpha, A)
+
+        - Note that this example works because we assume the declared dimension of A equals the actual dimension
+          of the matrix stored in A. This does not hold in general. Often the leading dimension lda is different
+          from the actual dimension m, and great care must be taken to handle this correctly. Here is a more
+          robust subroutine for scaling a matrix that uses the subroutine scale:
+
+                  subroutine mscale(m, n, alpha, A, lda)
+                  integer m, n, lda
+                  real alpha, A(lda,*)
+            c
+            c Local variables
+                  integer j
+
+                  do 10 j = 1, n
+                     call scale(m, alpha, A(1,j) )
+               10 continue
+
+                  return
+                  end
+
+        - This version works even when m is not equal to lda since we scale one column at a time and only process
+          the m first elements of each column (leaving the rest untouched).
+
+- Common blocks
+
+    - Fortran 77 has no global variables, i.e. variables that are shared among several program units
+      (subroutines). The only way to pass information between subroutines we have seen so far is to use the
+      subroutine parameter list. Sometimes this is inconvenient, e.g., when many subroutines share a large set of
+      parameters. In such cases one can use a common block. This is a way to specify that certain variables should
+      be shared among certain subroutines. But in general, the use of common blocks should be minimized.
+
+    - Example
+
+        - Suppose you have two parameters alpha and beta that many of your subroutines need. The following example
+          shows how it can be done using common blocks.
+
+              program main
+              some declarations
+              real alpha, beta
+              common /coeff/ alpha, beta
+
+              statements
+              stop
+              end
+
+              subroutine sub1 (some arguments)
+              declarations of arguments
+              real alpha, beta
+              common /coeff/ alpha, beta
+
+              statements
+              return
+              end
+
+              subroutine sub2 (some arguments)
+              declarations of arguments
+              real alpha, beta
+              common /coeff/ alpha, beta
+
+              statements
+              return
+              end
+
+        - Here we define a common block with the name coeff. The contents of the common block are the two
+          variables alpha and beta. A common block can contain as many variables as you like. They do not need to
+          all have the same type. Every subroutine that wants to use any of the variables in the common block has
+          to declare the whole block.
+
+        - Note that in this example we could easily have avoided common blocks by passing alpha and beta as
+          parameters (arguments). A good rule is to try to avoid common blocks if possible. However, there are a
+          few cases where there is no other solution. 
+
+    - syntax
+
+          common / name / list-of-variables
+
+        - You should know that
+
+            - The common statement should appear together with the variable declarations, before the executable
+              statements.
+            - Different common blocks must have different names (just like variables).
+            - A variable cannot belong to more than one common block.
+            - The variables in a common block do not need to have the same names each place they occur (although
+              it is a good idea to do so), but they must be listed in the same order and have the same type and
+              size.
+
+    - Arrays in common blocks
+
+        - Common blocks can include arrays, too. But again, this is not recommended. The major reason is
+          flexibility. An example shows why this is such a bad idea. Suppose we have the following declarations in
+          the main program:
+
+              program main
+              integer nmax
+              parameter (nmax=20)
+              integer n
+              real A(nmax, nmax)
+              common /matrix/ A, n
+
+        - This common block contains first all the elements of A, then the integer n. Now assume you want to use
+          the matrix A in some subroutines. Then you have to include the same declarations in all these
+          subroutines, e.g.
+
+              subroutine sub1 (...)
+              integer nmax
+              parameter (nmax=20)
+              integer n
+              real A(nmax, nmax)
+              common /matrix/ A, n
+
+        - Arrays with variable dimensions cannot appear in common blocks, thus the value of nmax has to be exactly
+          the same as in the main program. Recall that the size of a matrix has to be known at compile time, hence
+          nmax has to be defined in a parameter statement.
+
+        - This example shows there is usually nothing to gain by putting arrays in common blocks. Hence the
+          preferred method in Fortran 77 is to pass arrays as arguments to subroutines (along with the leading
+          dimensions). 
+
+- Data and Block Data Statements
+
+    - The data statement
+
+        - The data statement is another way to input data that are known at the time when the program is written.
+          It is similar to the assignment statement. The syntax is:
+
+              data list-of-variables/ list-of-values/, ...
+
+          where the three dots means that this pattern can be repeated. Here is an example:
+
+              data m/10/, n/20/, x/2.5/, y/2.5/
+
+          We could also have written this
+
+              data m,n/10,20/, x,y/2*2.5/
+
+          We could have accomplished the same thing by the assignments
+
+              m = 10
+              n = 20
+              x = 2.5
+              y = 2.5
+
+          The data statement is more compact and therefore often more convenient. Notice especially the shorthand
+          notation for assigning identical values repeatedly.
+
+          The data statement is performed only once, right before the execution of the program starts. For this 
+          reason, the data statement is mainly used in the main program and not in subroutines.
+
+          The data statement can also be used to initialize arrays (vectors, matrices). This example shows how to
+          make sure a matrix is all zeros when the program starts:
+
+              real A(10,20)
+              data A/ 200 * 0.0/
+
+          Some compilers will automatically initialize arrays like this but not all, so if you rely on array
+          elements to be zero it is a good idea to follow this example. Of course you can initialize arrays to 
+          other values than zero. You may even initialize individual elements:
+
+              data A(1,1)/ 12.5/, A(2,1)/ -33.3/, A(2,2)/ 1.0/
+
+          Or you can list all the elements for small arrays like this:
+
+              integer v(5)
+              real B(2,2)
+              data v/10,20,30,40,50/, B/1.0,-3.7,4.3,0.0/
+
+          The values for two-dimensional arrays will be assigned in column-first order as usual. 
+
+    - The block data statement
+
+        - The data statement cannot be used for variables contained in a common block. There is a special
+          "subroutine" for this purpose, called block data. It is not really a subroutine, but it looks a bit
+          similar because it is given as a separate program unit. Here is an example:
+
+              block data
+              integer nmax
+              parameter (nmax=20)
+              real v(nmax), alpha, beta
+              common /vector/v,alpha,beta
+              data v/20*100.0/, alpha/3.14/, beta/2.71/
+              end
+
+          Just as the data statement, block data is executed once before the execution of the main program starts. 
+          The position of the block data "subroutine" in the source code is irrelevant (as long as it is not
+          nested inside the main program or a subprogram). 
+
+- File I/O
+
+    - So far we have assumed that the input/output has been to the standard input or the standard output. It is
+      also possible to read from or write to files which are stored on some external storage device, typically a 
+      disk (hard disk, floppy) or a tape. In Fortran each file is associated with a unit number, an integer
+       between 1 and 99. Some unit numbers are reserved: 5 is standard input, 6 is standard output.
+
+    - Opening and closing a file
+
+        - Before you can use a file you have to open it. The command is
+
+            open (list-of-specifiers)
+
+        where the most common specifiers are:
+
+            [UNIT=]  u
+            IOSTAT=  ios
+            ERR=     err
+            FILE=    fname
+            STATUS=  sta
+            ACCESS=  acc
+            FORM=    frm
+            RECL=    rl
+
+        The unit number u is a number in the range 1-99 that denotes this file (the programmer may chose any 
+        number but he/she has to make sure it is unique).
+
+        ios is the I/O status identifier and should be an integer variable. Upon return, ios is zero if the
+        statement was successful and returns a non-zero value otherwise.
+
+        err is a label which the program will jump to if there is an error.
+
+        fname is a character string denoting the file name.
+
+        sta is a character string that has to be either NEW, OLD or SCRATCH. It shows the prior status of the
+        file. A scratch file is a file that is created when opened and deleted when closed (or the program ends).
+
+        acc must be either SEQUENTIAL or DIRECT. The default is SEQUENTIAL.
+
+        frm must be either FORMATTED or UNFORMATTED. The default is UNFORMATTED.
+
+        rl specifies the length of each record in a direct-access file.
+
+        For more details on these specifiers, see a good Fortran 77 book.
+
+        After a file has been opened, you can access it by read and write statements. When you are done with the
+        file, it should be closed by the statement
+
+            close ([UNIT=]u[,IOSTAT=ios,ERR=err,STATUS=sta])
+
+        where, as usual, the parameters in brackets are optional.
+
+        In this case sta is a character string which can be KEEP (the default) or DELETE.
+ 
+    - Read and write revisited
+
+        - The only necessary change from our previous simplified read/write statements, is that the unit number
+          must be specified. But frequently one wants to add more specifiers. Here is how:
+
+              read ([UNIT=]u, [FMT=]fmt, IOSTAT=ios, ERR=err, END=s)
+              write([UNIT=]u, [FMT=]fmt, IOSTAT=ios, ERR=err, END=s)
+
+        - where most of the specifiers have been described above. The END=s specifier defines which statement
+          label the program jumps to if it reaches end-of-file.
+
+    - Example
+
+        - You are given a data file with xyz coordinates for a bunch of points. The number of points is given on
+          the first line. The file name of the data file is points.dat. The format for each coordinate is 
+          known to be F10.4 (We'll learn about FORMAT statements in a later lesson). Here is a short program that
+          reads the data into 3 arrays x,y,z:
+
+                      program inpdat
+                c
+                c  This program reads n points from a data file and stores them in 
+                c  3 arrays x, y, z.
+                c
+                      integer nmax, u
+                      parameter (nmax=1000, u=20)
+                      real x(nmax), y(nmax), z(nmax)
+
+                c  Open the data file
+                      open (u, FILE='points.dat', STATUS='OLD')
+
+                c  Read the number of points
+                      read(u,*) n
+                      if (n.GT.nmax) then
+                         write(*,*) 'Error: n = ', n, 'is larger than nmax =', nmax
+                         goto 9999
+                      endif
+
+                c  Loop over the data points
+                      do 10 i= 1, n
+                         read(u,100) x(i), y(i), z(i)
+                   10 enddo
+                  100 format (3(F10.4))
+
+                c  Close the file
+                      close (u)
+
+                c  Now we should process the data somehow...
+                c  (missing part)
+
+                 9999 stop
+                      end
+
+- Simple I/O
+
+    - Read and write
+
+    Read is used for input, while write is used for output. A simple form is
+
+          read (unit no, format no) list-of-variables
+          write(unit no, format no) list-of-variables
+
+    The unit number can refer to either standard input, standard output, or a file. The format number refers to a
+    label for a format statement. (see later)
+
+    It is possible to simplify these statements further by using asterisks (*) for some arguments, like we have 
+    done in most of our examples so far. This is sometimes called list directed read/write.
+
+          read (*,*) list-of-variables
+          write(*,*) list-of-variables
+
+    The first statement will read values from the standard input and assign the values to the variables in the
+    variable list, while the second one writes to the standard output.
+
+    - Examples
+
+      Here is a code segment from a Fortran program:
+
+          integer m, n
+          real x, y, z(10)
+
+          read(*,*) m, n 
+          read(*,*) x, y
+          read(*,*) z
+
+      We give the input through standard input (possibly through a data file directed to standard input). A data
+      file consists of records according to traditional Fortran terminology. In our example, each record contains 
+      a number (either integer or real). Records are separated by either blanks or commas. Hence a legal input to 
+      the program above would be:
+
+           -1  100
+          -1.0 1e+2
+          1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0
+
+      Or, we could add commas as separators:
+
+           -1, 100
+         -1.0, 1e+2
+          1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+
+      Note that Fortran 77 input is line sensitive, so it is important not to have extra input elements (fields) 
+      on a line (record). For example, if we gave the first four inputs all on one line as
+
+           -1, 100, -1.0, 1e+2
+          1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+
+      then m and n would be assigned the values -1 and 100 respectively, but the last two values would be 
+      discarded, x and y would be assigned the values 1.0 and 2.0, ignoring the rest of the second line. This 
+      would leave the elements of z all undefined.
+
+      If there are too few inputs on a line then the next line will be read. For example
+
+           -1
+          100
+         -1.0
+         1e+2
+          1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+
+      would produce the same results as the first two examples. 
+
+    - Other versions
+
+      For simple list-directed I/O it is possible to use the alternate syntax
+
+          read  *, list-of-variables
+          print *, list-of-variables
+
+      which has the same meaning as the list-directed read and write statements described earlier. This version 
+      always reads/writes to standard input/output so the * corresponds to the format. 
+
+- Format statements
+
+    - So far we have mostly used free format input/output. This uses a set of default rules for how to input
+      and output values of different types (integers, reals, characters, etc.). Often the programmer wants to
+      specify some particular input or output format, e.g., how many decimals places in real numbers. For this
+      purpose Fortran 77 has the format statement. The same format statements are used for both input and output.
+
+    - Syntax
+
+                 write(*, label) list-of-variables
+           label format format-code
+
+    - A simple example demonstrates how this works. Say you have an integer variable you want to print in a field 
+      4 characters wide and a real number you want to print in fixed point notation with 3 decimal places.
+
+              write(*, 900) i, x
+          900 format (I4,F8.3)
+
+    - The format label 900 is chosen somewhat arbitrarily, but it is common practice to number format statements
+      with higher numbers than the control flow labels. After the keyword format follows the format codes 
+      enclosed in parenthesis. The code I4 stands for an integer with width four, while F8.3 means that the
+      number should be printed using fixed point notation with field width 8 and 3 decimal places.
+
+    - The format statement may be located anywhere within the program unit. There are two programming styles:
+      Either the format statement follows directly after the read/write statement, or all the format statements
+      are grouped together at the end of the (sub-)program. 
+
+    - Common format codes
+
+      The most common format code letters are:
+
+           A - text string
+           D - double precision numbers, exponent notation
+           E - real numbers, exponent notation
+           F - real numbers, fixed point format
+           I - integer
+           X - horizontal skip (space)
+           / - vertical skip (newline)
+
+      The format code F (and similarly D, E) has the general form Fw.d where w is an integer constant denoting
+      the field width and d is an integer constant denoting the number of significant digits.
+
+      For integers only the field width is specified, so the syntax is Iw. Similarly, character strings can be
+      specified as Aw but the field width is often dropped.
+
+      If a number or string does not fill up the entire field width, spaces will be added. Usually the text will
+      be adjusted to the right, but the exact rules vary among the different format codes.
+
+      For horizontal spacing, the nX code is often used. This means n horizontal spaces. If n is omitted, n=1 is
+      assumed. For vertical spacing (newlines), use the code /. Each slash corresponds to one newline. Note that
+      each read or write statement by default ends with a newline (here Fortran differs from C). 
+
+    - Some examples
+
+      This piece of Fortran code
+
+              x = 0.025
+              write(*,100) 'x=', x
+          100 format (A,F)
+              write(*,110) 'x=', x
+          110 format (A,F5.3)
+              write(*,120) 'x=', x
+          120 format (A,E)
+              write(*,130) 'x=', x
+          130 format (A,E8.1)
+
+      produces the following output when we run it:
+
+            x=      0.0250000
+            x=0.025
+            x=  0.2500000E-01
+            x= 0.3E-01
+
+      Note how blanks are automatically padded on the left and that the default field width for real numbers is
+      usually 14. We see that Fortran 77 follows the rounding rule that digits 0-4 are rounded downwards while
+      5-9 are rounded upwards.
+
+      In this example each write statement used a different format statement. But it is perfectly fine to use the
+      same format statement for many different write statements. In fact, this is one of the main advantages of 
+      using format statements. This feature is handy when you print tables for instance, and want each row to
+      have the same format. 
+
+    - Format strings in read/write statements
+
+      Instead of specifying the format code in a separate format statement, one can give the format code in the 
+      read/write statement directly. For example, the statement
+
+               write (*,'(A, F8.3)') 'The answer is x = ', x
+
+      is equivalent to
+
+ 
+              write (*,990) 'The answer is x = ', x
+          990 format (A, F8.3)
+
+      Sometimes text strings are given in the format statements, e.g. the following version is also equivalent:
+
+              write (*,999) x
+          999 format ('The answer is x = ', F8.3)
+
+    - Implicit loops and repeat counts
+
+      Now let us do a more complicated example. Say you have a two-dimensional array of integers and want to
+      print the upper left 5 by 10 submatrix with 10 values each on 5 rows. Here is how:
+
+              do 10 i = 1, 5
+                 write(*,1000) (a(i,j), j=1,10)
+           10 continue
+         1000 format (I6)
+
+      We have an explicit do loop over the rows and an implicit loop over the column index j.
+
+      Often a format statement involves repetition, for example
+
+          950 format (2X, I3, 2X, I3, 2X, I3, 2X, I3)
+
+      There is a shorthand notation for this:
+
+          950 format (4(2X, I3))
+
+      It is also possible to allow repetition without explicitly stating how many times the format should be
+      repeated. Suppose you have a vector where you want to print the first 50 elements, with ten elements on
+      each line. Here is one way:
+
+              write(*,1010) (x(i), i=1,50)
+         1010 format (10I6)
+
+      The format statement says ten numbers should be printed. But in the write statement we try to print 50
+      numbers. So after the ten first numbers have been printed, the same format statement is automatically used
+      for the next ten numbers and so on.
+
+      Implicit do-loops can be multi-dimensional and can be used to make an read or write statement difficult to
+      understand. You should avoid using implicit loops which are much more complicated than the ones shown here.
+
+ - Style tidbits
+
+    -subprograms
+
+        - Never let functions have "side effects", i.e. do not change the value of the input parameters. Use
+          subroutines in such cases.
+
+        - In the declarations, separate parameters, common blocks, and local variables.
+
+        - Minimize the use of common blocks. 
+
+    - Goto
+
+        - Minimize the use of goto. Unfortunately it is necessary to use goto in some loops since while is not
+          standard Fortran. 
+
+    - Arrays
+
+        - In many cases it is best to declare all large arrays in the main program and then pass them as
+          arguments to the various subroutines. This way all the space allocation is done in one place. Remember
+          to pass the leading dimensions. Avoid unnecessary "reshaping" of matrices. 
+
+    - Efficiency concerns
+
+        - When you have a double loop accessing a two-dimensional array, it is usually best to have the first
+          (row) index in the innermost loop. This is because of the storage scheme in Fortran.
+
+        - When you have if-then-elseif statements with multiple conditions, try to place the most likely
+          conditions first. 
+
