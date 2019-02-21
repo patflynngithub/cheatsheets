@@ -1,0 +1,43 @@
+﻿
+Updated: 2/12/2019
+
+
+FORTRAN cheatsheet   (focusing on FORTRAN 95 changes; was a minor revision)
+===================
+
+- still case-insensitive
+
+- changes from Fortran 90
+
+    - FORALL and nested WHERE constructs to aid vectorization
+    - User-defined PURE and ELEMENTAL procedures
+    - Default initialization of derived type components, including pointer initialization
+    - Expanded the ability to use initialization expressions for data objects
+    - Initialization of pointers to NULL()
+    - Clearly defined that ALLOCATABLE arrays are automatically deallocated when they go out of scope.
+
+    A number of intrinsic functions were extended (for example a dim argument was added to the maxloc intrinsic).
+
+    Several features noted in Fortran 90 to be "obsolescent" were removed from Fortran 95:
+
+    - DO statements using REAL and DOUBLE PRECISION index variables
+    - Branching to an END IF statement from outside its block
+    - PAUSE statement
+    - ASSIGN and assigned GO TO statement, and assigned format specifiers
+    - H edit descriptor.
+
+An important supplement to Fortran 95 was the ISO technical report TR-15581: Enhanced Data Type Facilities, informally known as the Allocatable TR. This specification defined enhanced use of ALLOCATABLE arrays, prior to the availability of fully Fortran 2003-compliant Fortran compilers. Such uses include ALLOCATABLE arrays as derived type components, in procedure dummy argument lists, and as function return values. (ALLOCATABLE arrays are preferable to POINTER-based arrays because ALLOCATABLE arrays are guaranteed by Fortran 95 to be deallocated automatically when they go out of scope, eliminating the possibility of memory leakage. In addition, elements of allocatable arrays are contiguous, and aliasing is not an issue for optimization of array references, allowing compilers to generate faster code than in the case of pointers.[30])
+
+Another important supplement to Fortran 95 was the ISO technical report TR-15580: Floating-point exception handling, informally known as the IEEE TR. This specification defined support for IEEE floating-point arithmetic and floating point exception handling.
+Conditional compilation and varying length strings
+
+In addition to the mandatory "Base language" (defined in ISO/IEC 1539-1 : 1997), the Fortran 95 language also includes two optional modules:
+
+    Varying length character strings (ISO/IEC 1539-2 : 2000)
+    Conditional compilation (ISO/IEC 1539-3 : 1998)
+
+which, together, compose the multi-part International Standard (ISO/IEC 1539).
+
+According to the standards developers, "the optional parts describe self-contained features which have been requested by a substantial body of users and/or implementors, but which are not deemed to be of sufficient generality for them to be required in all standard-conforming Fortran compilers." Nevertheless, if a standard-conforming Fortran does provide such options, then they "must be provided in accordance with the description of those facilities in the appropriate Part of the Standard". 
+
+

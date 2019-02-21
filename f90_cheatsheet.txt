@@ -1,17 +1,23 @@
 ﻿
-Updated: Dec. 2, 2018
+Updated: 2/12/2019
 
 
 FORTRAN cheatsheet   (focusing on FORTRAN 90)
 ===================
+
+- good sources
+
+      http://www.icl.utk.edu/~mgates3/docs/fortran.html
+      https://www.nsc.liu.se/~boein/f77to90/f77to90.html
+      http://www.pcc.qub.ac.uk/tec/courses/f90/stu-notes/f90-stu.html
 
 
 ------------------------
 
 Questions
 
-- what is the procedure parameter default?
-- assignment is copy right?
+- assignment is copy, right?
+- delve into pointers
 
 -------------------------
 
@@ -20,23 +26,97 @@ gfortran -o executable object1.o object2.o ...  (to link object files to generat
 
 gfortran -o executable source1.f90 source2.f90 (skip separate compilation step)
 
+================================================================================
 
-------------------------
+QUICK IMPORTANT STUFF (changed from F77)
+---------------------
+
+- free-form
+- case insensitive (not changed from F77)
+- no semicolons requred; can be used to separate statements one line
+- inline comments using !
+- continuation character &
+- characters strings: ' ' or " "
+
+- IMPLICIT NONE (put in program, functions, procedures)
+- arrays can dynamically declared in size (ALLOCATEABLE)
+- structures now supported
+- new variable declaration syntax
+    INTEGER :: Zip, Total, counter
+    REAL    :: AVERAGE, x, Difference
+    LOGICAL :: Condition, OK
+    COMPLEX :: Conjugate
+    CHARACTER :: keypress (1 character)
+    CHARACTER(LEN=20) :: Answer, Quote
+    CHARACTER(20)     :: Answer, Quote
+
+- although, not standard specified, parameter passing is by-reference by default. Use INTENT(IN,OUT,INOUT) to be clear.
+- parameter passing INTENT(IN,OUT,INOUT)    (by-value, ?, by-reference)
+
+- do/endo
+
+=================================================================================
+
+- An important practical extension to FORTRAN 77 was the release of MIL-STD-1753 in 1978.[27] This specification, developed by the U.S. Department 
+  of Defense, standardized a number of features implemented by most FORTRAN 77 compilers but not included in the ANSI FORTRAN 77 standard. 
+  These features would eventually be incorporated into the Fortran 90 standard.
+
+    DO WHILE, EXIT, CYCLE, and END DO statements
+    INCLUDE statement
+    IMPLICIT NONE variant of the IMPLICIT statement
+    Bit manipulation intrinsic functions, based on similar functions included in Industrial Real-Time Fortran (ANSI/ISA S61.1 (1976))
+
+- The IEEE 1003.9 POSIX Standard, released in 1991, provided a simple means for FORTRAN 77 programmers to issue POSIX system calls. 
+  Over 100 calls were defined in the document – allowing access to POSIX-compatible process control, signal handling, file system control, 
+  device control, procedure pointing, and stream I/O in a portable manner. 
+
+=================================================================================
+
+NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
+
+    - Free-form source input, also with lowercase Fortran keywords
+    - Identifiers up to 31 characters in length (In the previous standard, it was only six characters).
+    - Inline comments
+    - Ability to operate on arrays (or array sections) as a whole, thus greatly simplifying math and engineering computations.
+        whole, partial and masked array assignment statements and array expressions, such as   X(1:N)=R(1:N)*COS(A(1:N))
+        WHERE statement for selective array assignment
+        array-valued constants and expressions,
+        user-defined array-valued functions and array constructors.
+    - RECURSIVE procedures
+    - Modules, to group related procedures and data together, and make them available to other program units, including the 
+      capability to limit the accessibility to only specific parts of the module.
+    - A vastly improved argument-passing mechanism, allowing interfaces to be checked at compile time
+    - User-written interfaces for generic procedures
+    - Operator overloading
+    - Derived (structured) data types
+    - New data type declaration syntax, to specify the data type and other attributes of variables
+    - Dynamic memory allocation by means of the ALLOCATABLE attribute and the ALLOCATE and DEALLOCATE statements
+      POINTER attribute, pointer assignment, and NULLIFY statement to facilitate the creation and manipulation of dynamic data 
+      structures
+    - Structured looping constructs, with an END DO statement for loop termination, and EXIT and CYCLE statements for 
+      terminating normal DO loop iterations in an orderly way
+    - SELECT . . . CASE construct for multi-way selection
+    - Portable specification of numerical precision under the user's control
+    - New and enhanced intrinsic procedures.
+
+=================================================================================
+
+
+- parameter passing is by-reference by default. Use INTENT(IN,OUT,INOUT) to be clear.
 
 - One of the most important features of Fortran 90 is that it contains all of the
-features of Fortran 77.
+  features of Fortran 77.
 
- In Fortran 90, the programmer can create strings of length zero and
-arrays of size zero; these are always considered to be defined.
+- In Fortran 90, the programmer can create strings of length zero and
+  arrays of size zero; these are always considered to be defined.
 
-- Fortran 77 and below is case sensitive
-- Fortran 90 and above is not
+- Fortran 90 is not case-sensitive
 
 - In Fortran 90 there is a new source form for which particular positions have no
-special meaning, names may have up to 31 characters and use the underscore
-character, blanks have significance in some circumstances, a semicolon may be
-used to separate multiple statements on one line, and comments may occur on
-any line following an exclamation (!).
+  special meaning, names may have up to 31 characters and use the underscore
+  character, blanks have significance in some circumstances, a semicolon may be
+  used to separate multiple statements on one line, and comments may occur on
+  any line following an exclamation (!).
 
 
 - commenting    !
@@ -47,9 +127,11 @@ any line following an exclamation (!).
 
        &
                
-- implicit none  (always use at beginning of program)
+- implicit none  
 
-   - makes sure have explicitly declared all your variable types
+    - makes sure have explicitly declared all your variable types
+    - always use at beginning of program
+      (seems only need once per program/module)
 
 - basic structure
 
@@ -86,14 +168,16 @@ any line following an exclamation (!).
 
 - array
 
-    - An array is a collection of scalar elements of any intrinsic or derived type. All
+    - an array is a collection of scalar elements of any intrinsic or derived type. All
       of the elements of an array must have the same type and kind parameter. There
       may be arrays of structures.
 
+    - by default, indexing starts at 1
+
      real, dimension(100) :: x    (by default, indexing starts at 1)
      real, dimension(0:99) :: x    (indexing starts at 0)
-     real, dimension(-1,1) :: x     (indexing starts at -1)
-    
+     real, dimension(-1:1) :: x     (indexing starts at -1)
+
      real, dimension(3,4) :: x        (two-dim array 1:3,1:4)
      
      real :: X(20)
@@ -101,7 +185,7 @@ any line following an exclamation (!).
  
      - limit of rank = 7 dimensions (Fortran 90)
 
-     - TYPE (PATIENT) MATERNITY_WARD (20)
+     - TYPE (PATIENT) MATERNITY_WARD (20)      ! see later words about structures
 
      - indexing
      
@@ -124,7 +208,7 @@ any line following an exclamation (!).
 
      - can do arithmetic operations on whole array using simple arithmetic operators
      
-           real dimension(10) :: a,b, c
+           real dimension(10) :: a,b,c
            a = 1
            b = a * 10
            c = b - a
@@ -208,10 +292,6 @@ any line following an exclamation (!).
     - A structure, even though it may contain a component that is an array, is a
       scalar.
 
-- There are three sorts of dynamic data objects in Fortran 90: pointers, allocatable
-arrays, and automatic data objects.                 
-
-
 - arithmetic operators
 
       + - * / ** ()   (watch out for integer division!)
@@ -246,7 +326,7 @@ arrays, and automatic data objects.
 - logical operators     
   
      .AND., .OR., .EQV., (logical equivalence), .NEQV., .NOT
-      
+
 - conditionals
 
     if ( ) then
@@ -267,7 +347,7 @@ arrays, and automatic data objects.
        ...
     end if
     
-- CASE 
+- CASE
 
     - case scalar expressions/values are limited to integer, character,
       and logical
@@ -332,20 +412,37 @@ arrays, and automatic data objects.
  
       - matmull, dot_product, transpose, maxval, minval, sum
    
+ -------------------------------------------------
+ 
    
 - Dynamic data objects
 
-    - pointers, allocatable arrays, and automatic data objects
+    - There are three sorts of dynamic data objects in Fortran 90: 
+
+        - pointers, allocatable arrays, and automatic data objects.                 
+
 
     - pointers
+
+        - A pointer variable, or simply a pointer, is a new type of variable which may reference the data stored by other variables (called targets) 
+          or areas of dynamically allocated memory.
+
+        - Pointers are a new feature to the Fortran standard and bring Fortran 90 into line with languages like C. The use of pointers can provide:
+
+        - A flexible alternative to allocatable arrays.
+
+        - The tools to create and manipulate dynamic data structures (such as linked lists).
+
+        - Pointers are an advanced feature of any language. Their use allows programmers to implement powerful algorithms and tailor the storage 
+          requirements exactly to the size of the problem in hand.
 
 		REAL, POINTER :: LENGTHS (:)
 		ALLOCATE (LENGTHS (200))
 
            - a pointer need not be an array; it may be a scalar of any type.
-           - a pointer need not be associated with allocated space; 
-            any object with the TARGET attribute can become a pointer target
-           - to associate a pointer witha target (declared or allocated) the
+           - a pointer need not be associated with allocated space;
+             any object with the TARGET attribute can become a pointer target
+           - to associate a pointer with a target (declared or allocated) the
              symbol pair => is used
 
                      PTR => X
@@ -356,6 +453,44 @@ arrays, and automatic data objects.
 		Pointers have an initial association status that is undefined. To initialize a
 		pointer to point to no target, it is necessary to execute a NULLIFY statement
 		for the pointer.
+
+        - There are two operators which may act on pointers:
+
+           - The pointer assignment operator (=>)
+
+            - The assignment operator (=)
+
+        - To associate a pointer with a target use the pointer assignment operator (=>):
+
+            pointer => target
+
+          Where pointer is a pointer variable and target is any valid target. pointer may now be used as an alias to the data stored by target. The 
+          pointer assignment operator also allocates storage required by the pointer.
+
+        - To change the value of a pointer's target (just like changing the value of a variable) use the usual assignment operator (=). This is just 
+          as it would be for other variable assignment with a pointer used as an alias to another variable.
+
+        - Pointers are best thought of as variables which are dynamically associated with (or aliased to) some target data. Pointers are said to 
+          `point to' their targets and valid targets include:
+
+            - Variables of the same data type as the pointer and explicitly declared with the TARGET attribute.
+
+            - Other pointers of the same data type.
+
+            - Dynamic memory allocated to the pointer.
+
+        - Pointers may take advantage of dynamic storage but do not require the ALLOCATABLE attribute. The ability to allocate and deallocate 
+          storage is an inherent property of pointer variables.
+
+        - A pointer must have the same data type and rank as its target. For array pointers the declaration statement must specify the rank but not 
+          the shape (i.e. the bounds or extend of the array). In this respect array pointers are similar to allocatable arrays.
+
+        - The POINTER attribute is incompatible with the ALLOCATABLE, EXTERNAL, INTENT, INTRINSIC, PARAMETER and TARGET attributes. The TARGET 
+          attribute is incompatible with the EXTERNAL, INTRINSIC, PARAMETER and POINTER attributes.
+
+        - Where a pointer appears as an alias to a variable it is automatically dereferenced; that is the value of the target is used rather than 
+          the pointer itself. For a pointer to be dereferenced in this way requires that it be associated with a target.
+
     - allocatable array
 
 		REAL, ALLOCATABLE :: LENGTHS (:)
@@ -380,7 +515,7 @@ arrays, and automatic data objects.
       a subprogram unit with an automatic array TEMP is:
 
 		SUBROUTINE SWAP_ARRAYS (A, B)
-	       	   REAL, DIMENSION (:) :: A, B
+	       REAL, DIMENSION (:) :: A, B
 		   REAL, DIMENSION (SIZE (A)) :: TEMP
 
 		   TEMP = A
@@ -418,7 +553,8 @@ PROCEDURES
 ----------
 
 - for all intents Fortran passes everything by reference
-- however, The Fortran language standard doesn't say how arguments are passed. Different compilers can implement argument passing in various ways, depending on the type of the argument and the "intent" of the argument (in/out/inout).
+- however, The Fortran language standard doesn't say how arguments are passed. Different compilers can implement argument 
+  passing in various ways, depending on the type of the argument and the "intent" of the argument (in/out/inout).
 
 - RETURN
 
@@ -463,6 +599,7 @@ PROCEDURES
      !
      implicit none
      
+     datatype :: func_name
      datatype :: var1, var2
      
          func_name = value
@@ -490,18 +627,18 @@ PROCEDURES
        is an explicit-shape array, the bounds may be nonconstant specification
        expressions.
 
-      - If the result of a function is not a pointer, its value must be completely
-        defined before the end of execution of the function. If the result is an array,
-        all the elements must be defined; if the result is a structure, all of the
-        components must be defined.
+     - If the result of a function is not a pointer, its value must be completely
+       defined before the end of execution of the function. If the result is an array,
+       all the elements must be defined; if the result is a structure, all of the
+       components must be defined.
 
-      - If the result of the function is an array or a pointer to an array, its shape
-        must be determined before the end of execution of the function.
+     - If the result of the function is an array or a pointer to an array, its shape
+       must be determined before the end of execution of the function.
 
-      - If the result is a pointer, its allocation status must be determined before the
-        end of execution of the function; that is, a target must be associated with
-        the pointer, or the pointer must have been explicitly disassociated from a
-        target.
+     - If the result is a pointer, its allocation status must be determined before the
+       end of execution of the function; that is, a target must be associated with
+       the pointer, or the pointer must have been explicitly disassociated from a
+       target.
 
 - Dummy arguments 
 
@@ -836,7 +973,7 @@ PROGRAM ORGANIZATION
      included material is treated as if it had been part of the program unit in the
      first place.
 
-======s====================================================
+===========================================================
       
 INPUT/OUTPUT from book
 ----------------------

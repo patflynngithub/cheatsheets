@@ -1,0 +1,25 @@
+﻿
+Updated: 2/12/2019
+
+
+FORTRAN cheatsheet   (focusing on FORTRAN 2003 changes from Fortran 95; was a major revision)
+===================
+
+- changes from Fortran 95
+
+    - Derived type enhancements: parameterized derived types, improved control of accessibility, improved structure constructors, and finalizers
+    - Object-oriented programming support: type extension and inheritance, polymorphism, dynamic type allocation, and type-bound procedures, providing complete support for abstract data types
+    - Data manipulation enhancements: allocatable components (incorporating TR 15581), deferred type parameters, VOLATILE attribute, explicit type specification in array constructors and allocate
+      statements, 
+      pointer enhancements, extended initialization expressions, and enhanced intrinsic procedures
+    - Input/output enhancements: asynchronous transfer, stream access, user specified transfer operations for derived types, user specified control of rounding during format conversions, named 
+      constants for 
+      preconnected units, the FLUSH statement, regularization of keywords, and access to error messages
+    - Procedure pointers
+    - Support for IEEE floating-point arithmetic and floating point exception handling (incorporating TR 15580)
+    - Interoperability with the C programming language
+    - Support for international usage: access to ISO 10646 4-byte characters and choice of decimal or comma in numeric formatted input/output
+    - Enhanced integration with the host operating system: access to command line arguments, environment variables, and processor error messages
+
+- An important supplement to Fortran 2003 was the ISO technical report TR-19767: Enhanced module facilities in Fortran. This report provided sub-modules, which make Fortran modules more similar to Modula-2 modules. They are similar to Ada private child sub-units. This allows the specification and implementation of a module to be expressed in separate program units, which improves packaging of large libraries, allows preservation of trade secrets while publishing definitive interfaces, and prevents compilation cascades.
+

@@ -1,9 +1,9 @@
-Fortran 77 Cheatsheet                  (modified 1/6/19)
+Fortran 77 Cheatsheet                  (modified 2/12/19)
 =====================
 
 - ANSI Fortran 77
 
-- gleaned from 
+- sources 
 
        https://web.stanford.edu/class/me200c/tutorial_77/
 
@@ -11,12 +11,47 @@ Fortran 77 Cheatsheet                  (modified 1/6/19)
 
 - gfortran -std=legacy -o circle circle.f
 
+================================================================================
+
+QUICK IMPORTANT STUFF
+---------------------
+
+- not case sensitive
+
+- variable names
+
+    - Variable names in Fortran consist of 1-6 characters chosen from the letters a-z and the digits 0-9.
+      The first character must be a letter. Fortran 77 does not distinguish between upper and lower case,
+      in fact, it assumes all input is upper case. However, nearly all Fortran 77 compilers will accept lower case.
+
+- Fortran 77 allows only scalar expressions (e.g., in assignment statements =)
+
+- variable types:    integer
+                     real
+                     double precision
+                     complex
+                     logical
+                     character
+
+- character strings
+
+     character*80 line, newline
+     character sentence*80, letter*1, string*8, word(20)*16
+
+     sentence = 'This is important to learn'
+
+          - automatically fills blanks into the remaining characters of "sentence" after the last "n".
+
+     word(2) = 'anticholinesterase'
+
+          - leaves only 'anticholinestera' in "word(2)".
+
 - column position rules
 
     - Fortran 77 is NOT a free-format language, but has a very strict set of rules for how
       the source code should be formatted. The most important rules are the column position rules:
 
-        Col. 1    : Blank, or a "c" or "*" for comments
+        Col. 1    : Blank, or a "C" or "*" for comments
         Col. 1-5  : Statement label (optional)
         Col. 6    : Continuation of previous line (optional)
         Col. 7-72 : Statements
@@ -29,7 +64,37 @@ Fortran 77 Cheatsheet                  (modified 1/6/19)
 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 [   ]|[                                                                ][      ]
 
-- example
+- program organization
+
+      program "name"
+
+      "declarations"
+
+      "statements"
+
+      stop
+      end
+
+- subroutine parameter passing is by-reference
+
+=================================================================================
+
+- An important practical extension to FORTRAN 77 was the release of MIL-STD-1753 in 1978.[27] This specification, developed by the U.S. Department 
+  of Defense, standardized a number of features implemented by most FORTRAN 77 compilers but not included in the ANSI FORTRAN 77 standard. 
+  These features would eventually be incorporated into the Fortran 90 standard.
+
+    DO WHILE, EXIT, CYCLE, and END DO statements
+    INCLUDE statement
+    IMPLICIT NONE variant of the IMPLICIT statement
+    Bit manipulation intrinsic functions, based on similar functions included in Industrial Real-Time Fortran (ANSI/ISA S61.1 (1976))
+
+- The IEEE 1003.9 POSIX Standard, released in 1991, provided a simple means for FORTRAN 77 programmers to issue POSIX system calls. 
+  Over 100 calls were defined in the document – allowing access to POSIX-compatible process control, signal handling, file system control, 
+  device control, procedure pointing, and stream I/O in a portable manner. 
+
+=================================================================================
+
+- example program
 
       program circle
       real r, area
@@ -93,7 +158,7 @@ c the area of a circle with radius r.
 
         Example:
 
-        c23456789 (This demonstrates column position!)
+        c23456789 (column positions)
 
         c The next statement goes over two physical lines
               area = 3.14159265358979
@@ -114,17 +179,19 @@ c the area of a circle with radius r.
       The first character must be a letter. Fortran 77 does not distinguish between upper and lower case,
       in fact, it assumes all input is upper case. However, nearly all Fortran 77 compilers will accept lower case.
 
+-  Fortran 77 allows only scalar expressions (e.g., in assignment statements =)
+
 - variable types and declarations
 
     - Every variable should be defined in a declaration. This establishes the type of the variable.
       The most common declarations are:
 
-          integer   list of variables
-          real      list of variables
+          integer           list of variables
+          real              list of variables
           double precision  list of variables
-          complex   list of variables
-          logical   list of variables
-          character list of variables
+          complex           list of variables
+          logical           list of variables
+          character         list of variables
 
       The list of variables should consist of variable names separated by commas. 
       Each variable should be declared exactly once. If a variable is undeclared,
@@ -134,11 +201,14 @@ c the area of a circle with radius r.
       The probability of errors in your program grows dramatically if you do not
       consistently declare your variables.
 
+      You can change the implicit variable type behavior with the IMPLICIT statement.
+      (note: IMPLICIT NONE not an official option until Fortan 90)
+
 - integers
 
     - Fortran 77 has only one type for integer variables. Integers are usually stored
       as 32 bits (4 bytes) variables. Therefore, all integer variables should take on
-      values in the range [-m,m] where m is approximately 2*10^9.
+      values in the range [-m,m] where m is approximately 2*10^9. ( −2,147,483,648 (−2^31) through 2,147,483,647 ((2^31) − 1)
 
 - floating point variables
 
@@ -147,6 +217,27 @@ c the area of a circle with radius r.
      should be used. Usually a real is a 4 byte variable and the double precision is 8 bytes, but this is
      machine dependent. Some non-standard Fortran versions use the syntax real*8 to denote 8 byte floating point
      variables. 
+
+- character strings
+
+     character*80 line, newline
+     character sentence*80, letter*1, string*8, word(20)*16
+
+     sentence = 'This is important to learn'
+
+          - automatically fills blanks into the remaining characters of "sentence" after the last "n".
+
+     word(2) = 'anticholinesterase'
+
+          - leaves only 'anticholinestera' in "word(2)".
+
+     - '' in a string to get single quote
+
+     - substring   e.g. sentence(i:j)
+
+     - intrinsic functions
+
+        - index, len, ichar, char
 
 - constants - the "parameter" statement
 
@@ -162,7 +253,7 @@ c the area of a circle with radius r.
 
         parameter (name = constant, ... , name = constant)  
 
-- E-notation constants
+- Exponential notation constants
 
     3.333E-1
     2.0D-1    (double precision)
@@ -243,8 +334,8 @@ c the area of a circle with radius r.
       .EQ.          =
       .NE.          /=
 
-    ? So you cannot use symbols like Logical expressions that can be combined by the logical
-      operators .AND. .OR. .NOT. which have the obvious meaning. 
+    ? So you cannot use symbols like logical expressions that can be combined by the logical
+      operators .AND. .OR. .NOT. which have the obvious meaning. (what does this mean?)
 
 - logical variables and assignment
 
@@ -305,7 +396,7 @@ c the area of a circle with radius r.
     - The do-loop is used for simple counting. Here is a simple example that prints the cumulative sums of the
       integers from 1 through n (assume n has been assigned a value elsewhere):
 
-      integer i, n, sum
+              integer i, n, sum
  
               sum = 0
               do 10 i = 1, n
@@ -348,12 +439,16 @@ c the area of a circle with radius r.
       the statement label can then be omitted since it is assumed that an enddo closes the nearest previous do
       statement. The enddo construct is widely used, but it is not a part of ANSI Fortran 77. 
 
+              do label  var =  expr1, expr2, expr3
+                 statements
+              enddo
+
       It should be noted that unlike some programming languages, Fortran only evaluates the start, end, and step
       expressions once, before the first pass thought the body of the loop. This means that the following do-loop
-      will multiply a non-negative j by two (the hard way and assuming 2 was entered), rather than running forever
+      will multiply a non-negative j by two (the hard way), rather than running forever
       as the equivalent loop might in another language.
 
-      integer i,j
+              integer i,j
  
               read (*,*) j
               do 20 i = 1, j
@@ -361,7 +456,7 @@ c the area of a circle with radius r.
           20  continue
               write (*,*) j
 
-    - wrtiing while-loops
+    - writing while-loops
 
          - some compilers except alternative non-standard loop constructs such as
 
@@ -415,7 +510,7 @@ c the area of a circle with radius r.
 
     - declarations
 
-          integer i(10)             (default start index is 1, index ranges from 1 to 10)
+          integer i(10)             (DEFAULT START INDEX is 1, index ranges from 1 to 10)
           logical aa(0:1)           (start index is 0, index ranges from 0 to 1)
           double precision x(100)   (default start index is 1, index ranges from 1 to 100
 
@@ -920,7 +1015,7 @@ c the area of a circle with radius r.
     - So far we have assumed that the input/output has been to the standard input or the standard output. It is
       also possible to read from or write to files which are stored on some external storage device, typically a 
       disk (hard disk, floppy) or a tape. In Fortran each file is associated with a unit number, an integer
-       between 1 and 99. Some unit numbers are reserved: 5 is standard input, 6 is standard output.
+      between 1 and 99. Some unit numbers are reserved: 5 is standard input, 6 is standard output.
 
     - Opening and closing a file
 
