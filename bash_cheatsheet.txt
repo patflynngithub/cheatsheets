@@ -410,15 +410,17 @@ Bash CheatSheet
 
     1) General
 
-        - After the command has been split into tokens (see Section 1.4.1.1), these tokens or words are expanded or
-          resolved. There are eight kinds of expansion performed. After all expansions, quote removal is performed.
-          Below, the expansions are listed in their order of priority.
+        After the command has been split into tokens, these tokens or words are expanded or
+        resolved. There are eight kinds of expansion performed. After all expansions, quote removal is performed.
+        Below, the expansions are listed in their order of priority.
 
     2) brace expansion
 
         Brace expansion is a mechanism by which arbitrary strings may be generated. Patterns to be brace-expanded
         take the form of an optional PREAMBLE, followed by a series of comma-separated strings between a pair of
         braces, followed by an optional POSTSCRIPT. Brace expansions may be nested.
+
+            ... PREAMBLE{ ..., ... , ... }POSTSCRIPT ...
 
             echo sp{el,il,al}l
             spell spill spall
@@ -439,6 +441,54 @@ Bash CheatSheet
         name. If this login name is the null string, the tilde is replaced with the value of the HOME shell variable. If
         HOME is unset, the home directory of the user executing the shell is substituted instead. Otherwise, the
         tilde-prefix is replaced with the home directory associated with the specified login name. 
+
+        If the tilde-prefix is ‘~+’, the value of the shell variable PWD replaces the tilde-prefix. If the tilde-prefix is ‘~-’, 
+        the value of the shell variable OLDPWD, if it is set, is substituted.
+
+        If the characters following the tilde in the tilde-prefix consist of a number N, optionally prefixed by a ‘+’ or a ‘-’, 
+        the tilde-prefix is replaced with the corresponding element from the directory stack, as it would be displayed by the dirs
+        builtin invoked with the characters following tilde in the tilde-prefix as an argument (see The Directory Stack). 
+        If the tilde-prefix, sans the tilde, consists of a number without a leading ‘+’ or ‘-’, ‘+’ is assumed.
+
+        If the login name is invalid, or the tilde expansion fails, the word is left unchanged.
+
+        Each variable assignment is checked for unquoted tilde-prefixes immediately following a ‘:’ or the first ‘=’. In these cases,
+        tilde expansion is also performed. Consequently, one may use filenames with tildes in assignments to PATH, MAILPATH, and CDPATH,
+        and the shell assigns the expanded value.
+
+        The following table shows how Bash treats unquoted tilde-prefixes:
+
+            ~
+
+                The value of $HOME 
+
+            ~/foo
+
+                $HOME/foo
+
+            ~fred/foo
+
+                The subdirectory foo of the home directory of the user fred
+
+            ~+/foo
+
+                $PWD/foo
+
+            ~-/foo
+
+                ${OLDPWD-'~-'}/foo
+
+            ~N
+
+                The string that would be displayed by ‘dirs +N’
+
+            ~+N
+
+                The string that would be displayed by ‘dirs +N’
+
+            ~-N
+
+                The string that would be displayed by ‘dirs -N’ 
         
         See Bash guides for more details.
 
@@ -448,6 +498,9 @@ Bash CheatSheet
         parameter name or symbol to be expanded may be enclosed in braces, which are optional but serve to protect
         the variable to be expanded from characters immediately following it which could be interpreted as part of the
         name.
+
+            height="$2"
+            idealweight=$[$height - 110]
 
         If the first character of "PARAMETER" is an exclamation point, Bash uses the value of the variable formed
         from the rest of "PARAMETER" as the name of the variable; this variable is then expanded and that value is
@@ -460,11 +513,6 @@ Bash CheatSheet
         The following construct allows for creation of the named variable if it does not yet exist:
 
             ${VAR:=value}
-
-        Another examples
-
-            height="$2"
-            idealweight=$[$height - 110]
 
     5) Command substitution
 
