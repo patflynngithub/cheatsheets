@@ -1,5 +1,5 @@
 ﻿
-Updated: 2/12/2019
+Updated: 2/21/2019
 
 
 FORTRAN cheatsheet   (focusing on FORTRAN 90)
@@ -40,7 +40,7 @@ QUICK IMPORTANT STUFF (changed from F77)
 
 - IMPLICIT NONE (put in program, functions, procedures)
 - arrays can dynamically declared in size (ALLOCATEABLE)
-- structures now supported
+- structures now supported (% to reference fields within the structure)
 - new variable declaration syntax
     INTEGER :: Zip, Total, counter
     REAL    :: AVERAGE, x, Difference
@@ -53,22 +53,27 @@ QUICK IMPORTANT STUFF (changed from F77)
 - although, not standard specified, parameter passing is by-reference by default. Use INTENT(IN,OUT,INOUT) to be clear.
 - parameter passing INTENT(IN,OUT,INOUT)    (by-value, ?, by-reference)
 
-- do/endo
+- do/endo (END DO)
+- do while
+- exit/cycle
 
 =================================================================================
 
-- An important practical extension to FORTRAN 77 was the release of MIL-STD-1753 in 1978.[27] This specification, developed by the U.S. Department 
-  of Defense, standardized a number of features implemented by most FORTRAN 77 compilers but not included in the ANSI FORTRAN 77 standard. 
+- An important practical extension to FORTRAN 77 was the release of MIL-STD-1753 in 1978.[27] This specification, developed by 
+  the U.S. Department of Defense, standardized a number of features implemented by most FORTRAN 77 compilers but not included 
+  in the ANSI FORTRAN 77 standard. 
+  
   These features would eventually be incorporated into the Fortran 90 standard.
 
     DO WHILE, EXIT, CYCLE, and END DO statements
     INCLUDE statement
     IMPLICIT NONE variant of the IMPLICIT statement
-    Bit manipulation intrinsic functions, based on similar functions included in Industrial Real-Time Fortran (ANSI/ISA S61.1 (1976))
+    Bit manipulation intrinsic functions, based on similar functions included in Industrial Real-Time Fortran (ANSI/ISA S61.1 
+    (1976))
 
-- The IEEE 1003.9 POSIX Standard, released in 1991, provided a simple means for FORTRAN 77 programmers to issue POSIX system calls. 
-  Over 100 calls were defined in the document – allowing access to POSIX-compatible process control, signal handling, file system control, 
-  device control, procedure pointing, and stream I/O in a portable manner. 
+- The IEEE 1003.9 POSIX Standard, released in 1991, provided a simple means for FORTRAN 77 programmers to issue POSIX system 
+  calls. Over 100 calls were defined in the document – allowing access to POSIX-compatible process control, signal handling, 
+  file system control, device control, procedure pointing, and stream I/O in a portable manner. 
 
 =================================================================================
 
@@ -287,7 +292,7 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
 
     TYPE (PATIENT) JOHN_JONES, SALLY_SMITH
 
-    JOHN_JONES % PULSE_RATE
+    JOHN_JONES % PULSE_RATE  ! % used reference a field in an structure
 
     - A structure, even though it may contain a component that is an array, is a
       scalar.
@@ -328,6 +333,8 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
      .AND., .OR., .EQV., (logical equivalence), .NEQV., .NOT
 
 - conditionals
+
+    if ( ) statement
 
     if ( ) then
        ...
@@ -376,6 +383,11 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
      end select
 
 - looping
+
+    do   ! infinite loop
+       ...
+    end do
+
 
     do i = 0,20,[increment step]
        ....
@@ -480,7 +492,7 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
             - Dynamic memory allocated to the pointer.
 
         - Pointers may take advantage of dynamic storage but do not require the ALLOCATABLE attribute. The ability to allocate and deallocate 
-          storage is an inherent property of pointer variables.
+00000          storage is an inherent property of pointer variables.
 
         - A pointer must have the same data type and rank as its target. For array pointers the declaration statement must specify the rank but not 
           the shape (i.e. the bounds or extend of the array). In this respect array pointers are similar to allocatable arrays.
@@ -501,27 +513,27 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
 
           REAL, TARGET, DIMENSION (100, 100) :: V, W (100)
 
-    - Automatic data objects
+    - automatic data objects
 
-      Either arrays or character strings (or both), may be
-      declared in a subprogram. These local data objects are created on entry to the
-      subprogram and disappear when the execution of the subprogram completes.
+          - Either arrays or character strings (or both), may be
+            declared in a subprogram. These local data objects are created on entry to the
+            subprogram and disappear when the execution of the subprogram completes.
 
-      For an array, the extents in each dimension are determined when the procedure is entered. 
-      For a character object, the length is determined when the procedure is entered.
+            For an array, the extents in each dimension are determined when the procedure is entered. 
+            For a character object, the length is determined when the procedure is entered.
 
-      These are useful in subprograms for temporary arrays and characters strings
-      whose sizes are different for each reference to the subprogram. An example of
-      a subprogram unit with an automatic array TEMP is:
+            These are useful in subprograms for temporary arrays and characters strings
+            whose sizes are different for each reference to the subprogram. An example of
+            a subprogram unit with an automatic array TEMP is:
 
-		SUBROUTINE SWAP_ARRAYS (A, B)
-	       REAL, DIMENSION (:) :: A, B
-		   REAL, DIMENSION (SIZE (A)) :: TEMP
+		        SUBROUTINE SWAP_ARRAYS (A, B)
+	               REAL, DIMENSION (:) :: A, B
+		           REAL, DIMENSION (SIZE (A)) :: TEMP
 
-		   TEMP = A
-		   A = B
-		   B = TEMP
-		END SUBROUTINE SWAP_ARRAYS
+		           TEMP = A
+		           A = B
+		           B = TEMP
+		        END SUBROUTINE SWAP_ARRAYS
 
 - initialization
 
@@ -552,7 +564,7 @@ NEW FEATURES IN FORTRAN 90 (compared with Fortran 77)
 PROCEDURES
 ----------
 
-- for all intents Fortran passes everything by reference
+- for all intents, Fortran passes everything by reference
 - however, The Fortran language standard doesn't say how arguments are passed. Different compilers can implement argument 
   passing in various ways, depending on the type of the argument and the "intent" of the argument (in/out/inout).
 
@@ -576,14 +588,14 @@ PROCEDURES
       such as modifying a set of arguments and/or global variables, or performing
       input/output.
 
-     call sub_name(...)
-     
-     subroutine sub_name(var1, var2)
-     !
-     implicit none
-     data_type :: var1, var2
-     ...
-     end subroutine sub_name
+         call sub_name(...)
+         
+         subroutine sub_name(var1, var2)
+         !
+         implicit none
+         data_type :: var1, var2
+         ...
+         end subroutine sub_name
      
 
 - user defined functions
@@ -592,31 +604,31 @@ PROCEDURES
        normally functions do not produce side effects, i.e., modify its arguments
        (although they are not prohibited from having side effects).
 
-     ! in main program
-     datatype :: func_name
+         ! in main program
+         datatype :: func_name
 
-     function func_name(var1, var2)
-     !
-     implicit none
-     
-     datatype :: func_name
-     datatype :: var1, var2
-     
-         func_name = value
-     
-     end function func_name
+         function func_name(var1, var2)
+         !
+         implicit none
+         
+         datatype :: func_name
+         datatype :: var1, var2
+         
+             func_name = value
+         
+         end function func_name
 
-     OR
+         OR
 
-     type function func_name(var1, var2)
-     !
-     implicit none
-     
-     datatype :: var1, var2
-     
-         func_name = value
-     
-     end function func_name
+         type function func_name(var1, var2)
+         !
+         implicit none
+         
+         datatype :: var1, var2
+         
+             func_name = value
+         
+         end function func_name
 
      - The type of the function may be specified in the function statement or in a
        type declaration statement, but not both.
@@ -693,19 +705,19 @@ PROCEDURES
 
     - IN: 
 
-         the subprogram must not change the value of the argument nor must the
-         argument become undefined during the course of the subprogram
+        - the subprogram must not change the value of the argument nor must the
+          argument become undefined during the course of the subprogram
 
     - OUT: 
 
-	the subprogram must not use the argument before it is defined, 
-        and it must be definable. Only used to return results to the calling program.
+        - the subprogram must not use the argument before it is defined, 
+          and it must be definable. Only used to return results to the calling program.
 
     - INOUT
 
-	the argument may be used to communicate information to the subprogram and
-	return information; it must be defined on entry into the subprogram and must
-	be definable. May be redefined during execution of the procedure
+        - the argument may be used to communicate information to the subprogram and
+	    - return information; it must be defined on entry into the subprogram and must
+	    - be definable. May be redefined during execution of the procedure
 
     - If no intent is specified, the use of the argument is subject to the
       limitations of the associated actual argument; for example, the actual argument
@@ -715,15 +727,27 @@ PROCEDURES
 
     - examples
 
-	SUBROUTINE MOVE (FROM, TO)
-	   USE PERSON_MODULE
-	   TYPE (PERSON), INTENT (IN) :: FROM
-	   TYPE (PERSON), INTENT (OUT) :: TO
-	   . . .
+	    SUBROUTINE MOVE (FROM, TO)
+	       USE PERSON_MODULE
+	       TYPE (PERSON), INTENT (IN) :: FROM
+	       TYPE (PERSON), INTENT (OUT) :: TO
+	       . . .
 
-	SUBROUTINE SUB (X, Y)
-	    INTEGER, INTENT (INOUT) :: X, Y
-	    . . .
+	    SUBROUTINE SUB (X, Y)
+	        INTEGER, INTENT (INOUT) :: X, Y
+	        . . .
+
+    - Fortran does not specify details of how function and subroutine arguments are passed, but it does require that if a 
+      procedure modifies an intent(out) or intent(inout) argument then the changes will be visible to the caller after the 
+      procedure returns. It is common for compilers to implement this requirement by passing arguments by reference, but that 
+      is not the only possibility -- copy in / copy out is the main alternative.
+
+      You can normally rely on the compiler to implement the fastest behavior it can be certain is correct, which is usually 
+      pass by reference. There are cases where that cannot work, however, such as passing a non-contiguous array section to an 
+      assumed-size dummy argument, and there are sometimes cases where copy-in / copy-out is faster (maybe on certain 
+      large multiprocessor systems with segmented memory architectures).
+
+      The bottom line is there is no general answer to question of "by-reference" or "by-value"
 
 - Both internal and module procedures have explicit interfaces by nature
 
@@ -907,9 +931,9 @@ PROGRAM ORGANIZATION
 	  interfaces.
 
 	- It may contain data definitions,
-	type definitions, procedure definitions, and procedure interface descriptions.
-	Information in a module may be made available to other program units or it
-	may be kept private to the module.
+      type definitions, procedure definitions, and procedure interface descriptions.
+      Information in a module may be made available to other program units or it
+      may be kept private to the module.
 
     - USE statements provide access to entities packaged in modules
       USE statements immediately follow the program unit heading
@@ -1079,10 +1103,10 @@ INPUT/OUTPUT
       
 - formatting output
 
- the write and format statements come in pairs.
+   - the write and format statements come in pairs.
 
-     write(output device,label) variable(s)
-     label  format(specification)
+       write(output device, label) variable(s)
+       label  format(specification)
 
      We are using in this example a * as the output device – in other words, the screen.
 

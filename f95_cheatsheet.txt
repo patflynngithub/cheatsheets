@@ -1,11 +1,51 @@
 ﻿
-Updated: 2/12/2019
+Updated: 2/22/2019
 
 
 FORTRAN cheatsheet   (focusing on FORTRAN 95 changes; was a minor revision)
 ===================
 
+To Do
+-----
+
+- good Fortran 95 links
+
+
+Quick reminders
+---------------
+
 - still case-insensitive
+
+- There are well over 100 intrinsic procedures in Fortran 95
+- BLOCK DATA : outmoded and unnecessary
+
+- WHERE constructs may be nested, and may be named, in the same way as IF constructs.
+
+- a WHERE construct may contain a series of masked ELSE WHERE statements, like
+  ELSE IF statements in the IF construct, as well as a non-masked ELSEWHERE that is analogous to
+  ELSE.
+
+- FORALL
+
+    - The FORALL statement provides a way of controlling the execution of assignment statements involving sets of “subobjects”, i.e. 
+      array sections and character substrings, of which the elements are identified by indices. FORALL is a bit like a cross between 
+      IF and WHERE. Like IF and WHERE, FORALL may be used either in the form of a single statement or in the form of a construct 
+      containing a block of code. FORALL is primarily intended to allow for the possibility of the parallel processing of assignment 
+      statements. The assignments could be applied in parallel for all the elements of specified data objects. An example will help 
+      to make the idea clear: 
+
+            FORALL (i=1:n, j=1:n, upside(i,j)/=0.0) & 
+                   down(i,j) = 1.0/upside(i,j) 
+    
+      which takes the inverses of all the non-zero elements of upside.
+
+=========================================================================
+
+
+- NOTE: "procedure” and “subprogram” are synonyms in the Fortran context
+
+
+========================================================================
 
 - changes from Fortran 90
 
@@ -26,18 +66,84 @@ FORTRAN cheatsheet   (focusing on FORTRAN 95 changes; was a minor revision)
     - ASSIGN and assigned GO TO statement, and assigned format specifiers
     - H edit descriptor.
 
-An important supplement to Fortran 95 was the ISO technical report TR-15581: Enhanced Data Type Facilities, informally known as the Allocatable TR. This specification defined enhanced use of ALLOCATABLE arrays, prior to the availability of fully Fortran 2003-compliant Fortran compilers. Such uses include ALLOCATABLE arrays as derived type components, in procedure dummy argument lists, and as function return values. (ALLOCATABLE arrays are preferable to POINTER-based arrays because ALLOCATABLE arrays are guaranteed by Fortran 95 to be deallocated automatically when they go out of scope, eliminating the possibility of memory leakage. In addition, elements of allocatable arrays are contiguous, and aliasing is not an issue for optimization of array references, allowing compilers to generate faster code than in the case of pointers.[30])
+- An important supplement to Fortran 95 was the ISO technical report TR-15581: Enhanced Data Type Facilities, informally known 
+  as the Allocatable TR. This specification defined enhanced use of ALLOCATABLE arrays, prior to the availability of fully 
+  Fortran 2003-compliant Fortran compilers. Such uses include ALLOCATABLE arrays as derived type components, in procedure dummy 
+  argument lists, and as function return values. (ALLOCATABLE arrays are preferable to POINTER-based arrays because ALLOCATABLE 
+  arrays are guaranteed by Fortran 95 to be deallocated automatically when they go out of scope, eliminating the possibility 
+  of memory leakage. In addition, elements of allocatable arrays are contiguous, and aliasing is not an issue for optimization 
+  of array references, allowing compilers to generate faster code than in the case of pointers.[30])
 
-Another important supplement to Fortran 95 was the ISO technical report TR-15580: Floating-point exception handling, informally known as the IEEE TR. This specification defined support for IEEE floating-point arithmetic and floating point exception handling.
-Conditional compilation and varying length strings
+- Another important supplement to Fortran 95 was the ISO technical report TR-15580: Floating-point exception handling, 
+  informally known as the IEEE TR. This specification defined support for IEEE floating-point arithmetic and floating point 
+  exception handling.
 
-In addition to the mandatory "Base language" (defined in ISO/IEC 1539-1 : 1997), the Fortran 95 language also includes two optional modules:
+- Conditional compilation and varying length strings
 
-    Varying length character strings (ISO/IEC 1539-2 : 2000)
-    Conditional compilation (ISO/IEC 1539-3 : 1998)
+    - In addition to the mandatory "Base language" (defined in ISO/IEC 1539-1 : 1997), the Fortran 95 language also includes two 
+      optional modules:
 
-which, together, compose the multi-part International Standard (ISO/IEC 1539).
+        Varying length character strings (ISO/IEC 1539-2 : 2000)
+        Conditional compilation (ISO/IEC 1539-3 : 1998)
 
-According to the standards developers, "the optional parts describe self-contained features which have been requested by a substantial body of users and/or implementors, but which are not deemed to be of sufficient generality for them to be required in all standard-conforming Fortran compilers." Nevertheless, if a standard-conforming Fortran does provide such options, then they "must be provided in accordance with the description of those facilities in the appropriate Part of the Standard". 
+      which, together, compose the multi-part International Standard (ISO/IEC 1539).
+
+- According to the standards developers, "the optional parts describe self-contained features which have been requested by a 
+  substantial body of users and/or implementors, but which are not deemed to be of sufficient generality for them to be required 
+  in all standard-conforming Fortran compilers." Nevertheless, if a standard-conforming Fortran does provide such options, then 
+  they "must be provided in accordance with the description of those facilities in the appropriate Part of the Standard". 
+
+=========================================================================================================
+
+NOT NECESSARILY CHANGES FROM FORTRAN 90, BUT GOOD BLURBS THAT I CAME ACROSS WRITING THIS UP
+-------------------------------------------------------------------------------------------
+
+- WRITE
+
+    - where it is necessary to continue a character string to the next
+      line, the effect can be achieved by using two &s, putting one at the end of the first line and the other at
+      the beginning of the second.
+
+     WRITE (UNIT=*, FMT=*) "Type in the lengths of the three &
+                            &sides."
+
+- The Fortran keyword-pairs (and in one case, triplet) that are allowed to be
+  run together without a blank space are as follows: BLOCKDATA, DOUBLEPRECISION, ELSEIF,
+  ELSEWHERE, END-BLOCKDATA, ENDDO, ENDIF, ENDINTERFACE, ENDMODULE,
+  ENDPROGRAM, ENDSELECT, ENDSUBROUTINE, ENDTYPE, ENDWHERE, GOTO,
+  INOUT, and SELECTCASE. Needless to say, for the sake of clarity, it is recommended that the
+  blanks be inserted.
+
+- .EQV. and .NEQV.
+
+      If p and q are logical, we must use p.EQV.q rather than p==q.
+
+- Alternative forms of the relational operators:
+
+    - The operators ==, /=, <, <=, >, and >= have also the synonymous forms .EQ., .NE., .LT., .LE., .GT.,
+      and .GE. respectively.
+
+- In Fortran, character constants are given between a pair of double or single quotes
+
+- The double-slash (//) is the
+  concatenation operator, making a single longer string out of the two strings on either side of it. The
+  concatenation operator can be used with character variables or with character constants.
+
+- If there is no bracketed number after CHARACTER, e.g. CHARACTER(10), the string is taken to have length one, i.e. it
+  consists of just a single character
+
+- A subroutine with no arguments does not even need the pair of brackets, i.e. we could just have 
+
+      CALL DATE_AND_TIME
+
+  The situation is slightly different with intrinsic (and external) functions. In the few cases where it makes sense to refer to a 
+  function without giving it an argument, the brackets cannot be omitted. For example, NULL () is permissible but not simply NULL . 
+  The reason is that, without the brackets that follow it, a function name would be indistinguishable from the name of an ordinary 
+  variable. A subroutine, however, is always distinguished by following the keyword CALL and so the brackets may be omitted without 
+  ambiguity.
+
+- e.g. of WHERE use
+
+    IF (SIZE(a)==SIZE(b)) WHERE (b==0.0) b=a
 
 

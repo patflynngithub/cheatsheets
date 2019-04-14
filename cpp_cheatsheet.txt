@@ -1,7 +1,5 @@
-C++ Cheatsheet
+C++ Cheatsheet    (modified: 3/13/2019)
 ==============
-
-Modified: 1/12/2019
 
 IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, ...
 
@@ -137,6 +135,7 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
     - single line: //
     - paired: /* */  (cannot nest them)
 
+    - javadoc: @param, @return
 
 - variable names must start with a letter or the underscore character, and the remaining characters must be letters, numbers, or underscores. 
   You cannot use other symbols such as $ or %. Spaces are not permitted inside names either.
@@ -170,7 +169,7 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
     - int main(int argc, char* argv[])
 
     - argc = number of command line arguments , including the name of the program in argv[0]
-    - argv[i]'s are character strings, not C++ strings
+    - argv[i]'s are character arrays, not C++ strings
 
     - use string(argv[i]) to convert to C++ string
 
@@ -334,9 +333,13 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
         - Uninitialized objects of built-in type defined inside a function body have undefined value.
           Objects of class type that we do not explicitly initialize have a value that is defined by the class.
 
+- typedef (alias for type)
+
+    typedef data_type new_name;
+    
 - type conversion
 
-    - type conversions happen automatically when we use an object of one type where an object of another type is expected
+    - type conversions happen automatically (implicitly) when we use an object of one type where an object of another type is expected
 
     - when we assign one of the nonbool arithmetic types to a bool object,
       the result is false if the value is 0 and true otherwise
@@ -347,6 +350,23 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
     - when we assign an integral value to an object of floating-point type, the fractional part is zero.
 
     - explicit cast : static_cast<type>
+
+    - conversion operators
+
+        - e.g.   Fraction::operator double() const { ... }
+
+    - a conversion represents any change in type
+    - a coercion is when the conversion is automatically carried out by the compiler
+    - when the conversion is explicitly requested by the programmer, it is called a cast
+        - can change the underlying representation (e.g., integer -> double) or just change
+          the type without changing the representation (e.g., derived-class pointer -> base-class pointer
+    - the C++ compiler only performs one level of user-defined type conversion when trying to match an
+      overloaded function
+
+    - explicit keyword
+
+        - forces a one-argument constructor to be used only for the creation of new values, and 
+          not used to provide a rule for implicit conversion from one type to another
 
 - operators
 
@@ -360,6 +380,31 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
     - ==, <, >, <=, >=, !=
 
     - !, &&, ||
+
+- arrays
+
+    - lover level abstraction than vectors
+    - cannot be resized
+    - faster more efficient than vectors
+
+    - double salaries[10];
+    - size has to be known upon compilation
+    - passing as parameter:   func_name(array_name[], int array_size, ...) {   }
+        - array parameters always passed by reference
+        - considered good style to add the const keyword whenever a function does not
+          actually modify an array
+    - cannot be function return type
+        - pass back through an array parameter
+
+    - 2D arrays
+
+        - double powers[NUM_ROWS][NUM_COLS];
+        - passing to a function must specify 2nd array size:  func_name(an_array[][NUM_COLS], int num_rows,...) 
+            - so can function can handle arbirary # of rows but must have set # of columns
+            - note: can specify # row if want: func_name(NUM_ROWS][NUM_COLS], int num_rows,...)
+                - compiler ignores first index though
+
+
 
 - flow of control
 
@@ -425,9 +470,16 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
         -References are usually preferred over pointers whenever we don't need "reseating".
 
+    - note: an object passed as a standard (value) parameter will be copied, so changes inside
+            the function will not be retained
+
     - constant references
 
+        void func_name(const class_type obj_name)
+
         - const type_name& parameter_name
+        - makes passing more efficient (doesn't copy)
+        0 gives efficieny of pass-by-value by meaining of call-by-value
         - don't use for integer or floating point numbers (would be slower)
 
     - overloading
@@ -538,7 +590,7 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
         - could instead return pointer to heap-allocated variable
         - or could use vector (best)
 
-    - dynamically allocating arrays
+    - dynamically allocating arrays (heap array)
 
         - Employee* staff = new Employee[staff_capacity];
 
@@ -548,6 +600,18 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
         - note; when dynamically allocating array variables, you can choose a different size for each program run
 
+        - use vector objects instead
+
+    - pointers to functions
+
+        - have defined "square" function double square(double);
+          print_table(double (*f).(double)) { ... y=f(x); ... }
+                     
+          or
+
+          typedef double (*DoubleFuncPtr)(double);
+          print_table(DoubleFuncPtr f) { ... y=f(x); ... }
+          
 - references
 
     - type_name&  parameter_name
@@ -571,6 +635,8 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
 - classes
 
+    - the interface of a class is specified in the class definition
+
         class ClassName
         {
             public:
@@ -581,13 +647,18 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
     - allows us to define our own data structures
 
-    - a class defines a type along with a collection of operations that are related to that type
+    - a class defines a type along with a collection of operations that are related to that type    
 
     - typically, a class is defined in a header file (.h)
 
     - member functions (aka methods)
 
     - = operator between two objects of same type defaults to copy by value (not by reference)
+
+    - should tag accessor functions with const:  e.g., bool member_function(...) const
+
+    - code inside of an member function has an implicit parameter of the object itself
+      (vs. a standard explicit parameter)
 
 - objects
 
@@ -598,7 +669,60 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
               Time a_time = Time();     (default construction)
               Time a_time;              (default construction)
 
+        - in general, all data fields of class type are automatically constructed when an object is
+          created, but the numberic fields must be set in the class constructors
+
+        - Class_name obj_name();  is not a default constructor but a function prototype
+
+        - copy constructor 
+
+                Class_name::Class_name(const Class_name& right);
+
+            - compiler will automatically generate one, but use only when appropriate
+                                                        (i.e. no dynamically allocated memory involved
+
+        - the constructor for a derived class will always invoke the constructor for the base class if no
+          alternative is provided
+
+    - destructors
+
+        - a destructor is only necesary if an object requires some kind of resource management
+        - whenever a class intended to serve as a base class for inheritance declares a destructor,
+          the destructor should be declared as virtual
+        - any class that includes at least one virtual member function should define a virtual destructor,
+          even if it performs no explicit memory management
+            - the remedy is to add a virtual do-nothing destructor to the base class
+                virtual ~Base_class() {}
+            - a good rule of thumb is to include a destructor (even if it does nothing) and declare it as 
+              virtual if there are any othe virtual memeber functions in your class
+                 - otherwise, destructors from any derived classes may not be executed
+
+        - don't confuse destruction and deletion
+
+        - the assignment operator, copy constructo, and destructor are collectively called the "big three."
+            - rule of thumb
+                - if you define a destructor, then you should always provide a copy constructo and an
+                  assignment operator, and make sure all three perform in a similar fashion.
+                - you must implement them for any class that manages heap memory
+
+- field initializers
+
+    - failing to use field initializer list may result in a data field being modified twice;
+      once by default constructor, and the seocnd time in the body of the construtor
+
+    - required for data fields initialized as constant, or for references (which like constants, are assigned once and never modified)
+    - also necesary when assigning a size to a vector
+            
 - inheritance
+
+     - without the characteristic of specialization as captured in the is-a relationship, the use of
+       inheritance (either single or multiple) is seldom appropriate
+
+     - multiple inheritance is possible
+
+        - a common error is use multiple inheritance as a tool for composition rather than for specialization
+
+     - base class / derived class
 
      - e.g.    class DerivedClass : public BaseClass
                {
@@ -608,21 +732,29 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
                      new data members
                };
 
+     - don't forget "public" keyword like on above example
+
+        - if forget then inheritance is done privately
+
      - all member functions and data members of the base class are automatically inherited by the derived class. 
        However, the private data members of the base class are not accessible by the member functions of the derived class.
 
-     - derived class will need its own constructor, which will also need initialize the base object
+     - derived class will need its own constructor, which can also to initialize the base object
          - e.g.   DerivedClass::DerivedClass( params)
                      : BaseClass(params)
                   {
                   . . .
                   }
 
+         - initializes base class before initializing the derived class data
+
+              - can also be used to initialize data field constructors as well
+
          - if the base-class constructor is omitted, the base object is constructed with the default constructor of the base class (error if not available).
 
      - "public" required to allow derived class objects to call member function of the base class
 
-     - not having public, which defaults elements in side the class to private, only allows member
+     - not having public, which defaults elements inside the class to private, only allows member
        functions of the derived class to access the base class member functions     (rarely useful)
 
      - calling Base-Class member functions
@@ -638,19 +770,50 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
      - protected  : allows access to Base Class data by the member functions of the derived class
 
+    - to call overridden base class member function:   Base_Class_Name::member_function(...)
+
+    - because of slicing, it is common in C++ to access objects in an inheritance hierarchy through pointers or references
+
+    - private inheritance
+
+        - functionality of base class but the interface for the base class does not flow through to the derived class
+          and it does not automatically become the interface for the new class.
+
+               - private keyword in class definition heading 
+        
+        - could do another way
+
+               - have base class as a field in the new class
+
+    - protected inheritance
+
+        - protected keyward in class definition heading
+  
+    - can have virtual inheritance
+
+        - class Student  : vitural public Person { };
+          class Employee : vitural public Person { };
+          class TeachingAssistant : public Student, public Employee { } ;
+
 - polymorphism
 
-    - to store objects of different classes in one vector w/o slicing occurring, use a vector of pointers instead:
+    - to store objects of different classes in one vector w/o slicing occurring, use a vector of BseClass pointers instead:
 
          vector<BaseClass*> obj_vector(3)
          obj_vector[0] = new BaseClass(...);
          obj_vector[1] = new DerivedClass1(...);
          obj_vector[2] = new DerivedClass2(...);
 
-    - However,  if all three classes have the member function named same_method_name, obj_vector[i]->same_method_name(...)
+        - slicing is not illegal (i.e., copying a derived-class object into a base-class variable)
+
+            - however, any derived-class information is lost
+
+        - can't do the reverse of copying a base-class object into a derived-class variable
+
+    - However, if all three classes have the member function named same_method_name, obj_vector[i]->same_method_name(...)
       only executes the BaseClass version of the member function in ALL three cases
 
-        - get around this with dynamic binding (vs. standard static binding), which is done by tagging the Base class declaration of the member function as virtual
+        - get around this with DYNAMIC BINDING (vs. standard static binding), which is done by tagging the Base class declaration of the member function as virtual
 
              class BaseClass
              {
@@ -679,7 +842,6 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
               2 – better way
                               
                      declaration in class definition
-
                           virtual double compute_pay(int hours) const = 0;
 
                      base class method definition
@@ -766,8 +928,80 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
         - cin.good()
         - cin.eof()
 
-- namespaces
+    - stream manipulators
 
+        - setprecision, setw, setfill, left, right, hex, dec, fixed
+
+    - string streams allow for stream operations with strings instead of files
+
+        - istringstream and ostringstream classes
+
+        - allows reading/writing from/to strings with >> and << operators
+
+        - can do some nice things with this
+
+- memory management
+
+    - memory categories/areas
+
+        - Code
+            - machine instructions
+        - Static Data
+            - global variables, static local variables, static data members of a class
+        - Run-time stack
+            - area used by most C++ variables
+            - all local, non-static variables reside here
+        - Heap or Free Store
+            - memory explicitly requested using the new operator
+
+    - scope vs lifetime
+
+    - within each namespace, each name of a global variable can be mapped one to one to an object
+    - gloabal variables can be initialized, either by assignment or constructor. The value is initialzed
+      only once, before execution of main begins.
+
+    - size of stack variables must be known at compile time
+
+    - global values and stack-resident arrays must have a size that is known at compile time.
+
+    - avoid buffer overflow erros by never allocating a fixed-sized buffer. When doing string input/output
+      use the newer stream I/O classes and string rather the older character arrays.
+
+    - If you need a dynmically sized, indexed data structure, use a vector, not an array
+
+- namespaces (and scopes)
+
+    - encapsulation is one of the primary tools programmers used to control complexity
+
+        - restrict access to names
+            - hide class/etc. elements
+        - avoid name collision
+
+    - scope
+
+        - where a name is visible and has a given meaning
+
+        - local scope  (special case of block scope)
+        - block scope
+        - class scope
+        - global scope
+            - variables declared outside of function and class definitions
+        - file scope
+            - static global variables
+            - those not static may be shared amongst files by using the extern keyword in each file in which it is used
+              but not defined
+            - the use of file scope has now largely been replaced by the introductin of namespaces
+        - protected scope
+            - allows access to subclasses
+
+    - don't confuse scope and lifetime
+    
+    - a name can hide, or block, a name from a surrounding scope. Such a name is said to shadow the previous definition
+
+        - access to names that have been shadowed can sometimes be circumvented using qualified names
+
+            - :: global qualifier (prefix to variable)
+    
     - allow us to avoid inadvertent collisions between the names we define and uses of those same names inside a library
 
     - all names defined by the standard library are in the std namespace
@@ -775,6 +1009,38 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
           using namespace std;
 
     - :: is the scope operator
+
+    - forward references
+
+        - to introduce a name before a full definition would be appropriate
+
+            e.g. function prototype  (declaration)
+
+    - friend keyword in a class givse private access to other explicitly named classes
+
+    - namespaces are another way to avoid naming conflicts    
+
+    - to add classes, functions, or variabloes to a name space, suround their declarations with a namespace block
+
+          namespace namespace_name { ... }
+
+    - unlike classes, namespaces are open
+
+        - you can add as many items to a namespace as you like, simple starting another namespace block with the same namespace name
+
+    - using namespace namespace_name;
+
+        - has scope, so can shadow previous namespace
+    
+    - can alias namespace
+
+          namepace acme = namespace_name;
+
+    - can limit names accessible in namespace
+
+          using std::cout, cin
+    - don't use the using directive for name spaces other than std
+
 
 - std::string library type
 
@@ -792,7 +1058,9 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
     - C strings
 
-        - char* or char[]
+        - char *p = "Harvey"; pointer variable that points to the starting character of a string, can point somewhere else
+        - chars s[] = "Harvey"; is an array of 8 characters (including '\0'), s is a constant
+        - convert to string: string name = p;
         - put a tremendous burden on the programmer to locate storage space
           for these sequences manually
         - in C, a common error is moving a string into a variable that is too small
@@ -800,6 +1068,38 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
         - C++ strings handle all this completely automatically
         - for most programming tasks you do not need the data type "char" at all.
           Instead, just use strings of length 1 for individual characters.
+
+- can do operator overloading
+
+    - at least one argument has to be a class type
+    - can be done two ways
+
+        1) defined as simple functions, apart from any class definition
+        2) defined as a member function within the body of a class definition
+            - some operaters, such as =, must be defined this way
+
+    - the assignment operator (=) is very seldom given an explicit redefinition
+      because it is already automatically generated in a way that works for most 
+      situations; it will assign all data fields (member-wise assignemnt).
+        - dynamic memory assignment involvement can lead one to redefine =
+
+    - can overload function call operator ()
+
+        - a function object defines the function call operator and so can be used in the
+          fashion of a function, but it retains the properties of an object
+
+- inline functions
+
+    - inline keyword
+    - use only when function body is very short
+    - can inline functions and member functions
+        - placing body of member function directly in class declaration
+          automatically inlines it (don't need inline keyword)
+            - however, this can make reading the class definition difficult
+    - rule of thumb for inlining
+        - three or fewer assignment statements,
+        - a single conditional if statement, and/or
+        - a return statement
 
 - prefined classes
 
@@ -849,6 +1149,10 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
         - needed for C-style strings
 
+    - <cassert>
+
+        - assert()
+
     - <cmath>
 
         - contains mathematical functions
@@ -861,10 +1165,138 @@ IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX, IN FLUX,
 
         - contains output formatting stream manipulators
 
+    - <vector>
+
+        - stores a collection (sequence) of items of the same type 
+
+        - e.g. vector<double> salaries(10);
+               salaries04] = 120000.0;
+
+        - size can change dynamically
+
+    - <list>, <stack>, <queue>
+
+    - <set>
+
+        - a set is an unordered collection of distinct items
+
+    - <multiset>
+
+        - a multiset (also called a bag) is an unordered container that can contain multiple copies of an element
+
+    - <map>
+
+        - is a data type that keeps associations between keys and values
+        - every key is unique in a map, but a value may be associated with several keys
+
+        - value = map_obj[key]
+
+        - if need to use a < operator, overload it for the type of object being stored
+
+    - <multimap>
+
+        - can have multiple values associated with a key
+
+
 - other
 
     - enumerated types
 
         - enum type_name { entity1,  ... , entityn };
         - type_name variable_name [ = entitiyi];
+
+
+- assert(expression)
+
+    - gives precondition
+    - program aborts if assertion fails
+    - a switch can be set in the compiler to ignore asserts
+
+    - establish clear preconditions for all inputs
+    - put these in javadoc @param comments in the function documentation
+    - write assert statements to enforce them
+
+- templates
+
+    - do non-template version first to get it working
+
+    - allows a function or class to be parameterized by type
+
+        template<typename T>  (or <class T>
+        void func_name(T data[]) { ... } 
+
+
+        template<typename T>  (or <class T>
+        class Class_name { Class_name(T var_name); member_funcname(T var_name); }
+        template<typename T>
+        Class_name<T>::Class_name(T var_name) { }
+        template<typename T>
+        Class_name<T>::member_funcname(T var_name) { }
+
+
+    - for template functions, the type attached to the template parameter is inferred from the parameter value
+      or can provide explicity with 
+
+        func_name_call<type>(...)
+
+    - because function and class are expanded at compile time, they are commonly stored in header files and not
+      in implementation files (.cpp)
+
+    - template function names can coexist with ordinary functions that use the same name. When the compiler must choose
+      between the two, it will always select the nontemplate version over the tempalte version. This allows the programmer
+      to make special cases, or exceptoins to template functions. The process is called specialization.
+
+    - can have nontype template parameters
+
+    - template parameters can be used as a mechanism for specifying behavior, sometimes called setting policy
+
+    - a default value can be associated with the template parameter
+
+- Error handling
+
+    - use cerr for error output
+
+
+- abstract classes
+
+    - pure virtual member function   ( = 0)
+
+          class Class_name
+          {
+             ...
+             virtual double area() const = 0;
+          }
+
+        - while it is legal to define a body for pure virtual member function, it is not required and not usually done
+
+    - class that contains at least one pure virtual member function is termed an abstract class
+
+        - it is not possible to create an instance of an abstract class, although you may use a ponter or reference to
+          an abstract class
+
+        - derived classes must override the base class's virtual functions and provide their own definiton or they 
+          themselves will be abstract
+
+    - a class that consists entirely of pure virtual memeber functions is sometimes called an interface
+
+        - an interface describes desired behaviors as a set of functions but does not define how the behaviors should be implemented
+
+    - don't confuse this with the use of virtual (w/o = 0) on member functions in order to allow for runtime polymorphism (dynamic binding)
+ 
+- Standard Template Library
+
+    - container classes (data structures)
+    - generic
+
+    - middle man between data structures and algorithms
+
+        - iterators
+
+            - is simply an object used to cycle through the elements stored in a container
+
+            - allow for the algorithms never manipulating the containers directly
+
+            - need not be in adjacent memory locations
+
+            - go from start to past-the-end location
 

@@ -1,0 +1,108 @@
+
+- program to an interface, not an implementation
+
+    - don't delcare variables to be instances of particular concrete classes. Instead, committ only to an interface defined by an 
+      abstract class
+    - Creational patterns ensure that your system is written in terms of interfaces, not implementations
+
+- Composition over inheritance (or composite reuse principle) 
+
+    - is the principle that classes should achieve polymorphic behavior and code reuse by their composition (by containing 
+      instances of other classes that implement the desired functionality) rather than inheritance from a base or parent class.[2] 
+      This is an often-stated principle of OOP, such as in the influential book Design Patterns.[3] 
+
+    - To favor composition over inheritance is a design principle that gives the design higher flexibility. It is more natural to
+      build subject-domain classes out of various components than trying to find commonality between them and creating a family 
+      tree.
+
+    - In other words, it is better to compose what an object can do (HAS-A) than extend what it is (IS-A).
+
+    - object composition reqires that the objects being composed have well-defined interfaces
+
+    - Initial design is simplified by identifying system object behaviors in separate interfaces instead of creating a hierarchical 
+      relationship to distribute behaviors among business-domain classes via inheritance. This approach more easily accommodates 
+      future requirements changes that would otherwise require a complete restructuring of business-domain classes in the 
+      inheritance model. Additionally, it avoids problems often associated with relatively minor changes to an inheritance-based 
+      model that includes several generations of classes. 
+
+    - One common drawback of using composition instead of inheritance is that methods being provided by individual components may 
+      have to be implemented in the derived type, even if they are only forwarding methods. In contrast, inheritance does not 
+      require all of the base class's methods to be re-implemented within the derived class. Rather, the derived class only needs 
+      to implement (override) the methods having different behavior than the base class methods. This can require significantly 
+      less programming effort if the base class contains many methods providing default behavior and only a few of them need to be 
+      overridden within the derived class. 
+
+      AND a design based on object composition will have more objects (if fewer classes), and the system's behavior will depend on 
+      their interelationships instead of being defined in one class
+
+      Heave use of object composition can make designs harder to understand
+
+    - class inheritance is compile-time
+    - object composition is defined dynamically at run-time through objects acquiring references to other objects
+
+    - the two most common techniques for reusing functionality in object-oriented systems are class inheritance and
+      object composition
+
+    - "favor object composition over class inheritance"
+
+- Delegation
+
+    - is an extreme example of object composition
+
+    - is a way of making compostion as powerful for reuse as inheritance
+
+    - in delegation, two objects are involved in handling a request
+
+        - a receiving object delegates oeprations to its delegate
+
+    - the main advantage is that it makes it easy to compose behaviors at run-time and to change the way they're composed
+
+    - disadvantage
+
+        - shares with other techniques that make software more flexible through object composition
+
+        - dynamic highly-parameterized software is harder to understand than more static software
+        - there are also run-time inefficiencies, but the human inefficiences are more important in the long run
+
+    - is a good design when it simplifies more than it complicates
+    - works best when it's used in highly stylized ways -- that is, in standard patterns
+
+- object aggregation vs acquaintance
+
+    - Aggregation implies that one object owns or is responsible for another object. Generally we speak of an object having or 
+      being part of another object. Aggregation implies that an aggregate object and its owner have identical lifetimes
+
+    - Acquaintance implies that an object merely knows of another obect. Sometimes acquaintance is called "association" or the
+      "using" relationship. Acquainted objects may request operations of each other, but they aren't responsible for each other.
+
+    - Acquaintnace is a weaker relationship than aggregation and suggests much loser coupling between objects
+
+- compile-time vs run-time structure
+
+- common causes of redesign
+
+    1) Creating an object by specifiying a class explicitly (by class name)
+        - instead, create objects indirectly
+
+    2) Dependence on specific operations
+        - try to avoid hard-coded requests
+
+    3) Dependence on hardware and software platform
+        - try to avoid platform dependencies
+
+    4) Dependence on object representations or implementations
+        - try to hide from clients how an object is represented, stored, located, or implemented
+
+    5) Algorithm dependencies
+
+    6) Tight coupling
+
+    7) Extending functionality by subclassing
+
+    8) Inabiilty to alter classes conveniently
+
+
+
+
+
+

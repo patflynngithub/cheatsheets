@@ -1,0 +1,191 @@
+Design Patterns Cheatsheet  (modified 3/12/19)
+==========================
+
+- To Do
+
+    - understand better the difference between Abstract Factory and Builder
+    - then move on to Factory Method
+
+==========================
+
+- sources
+
+    - GOF book
+
+- signature of the operation of an object
+
+    - the set of
+        - operation's name
+        - objects it takes as parameters
+        - operation's return value
+
+- interface
+
+    - set of all signatures definited by an object's operations 
+
+- program to an interface, not an implementation
+
+    - don't delcare variables to be instances of particular concrete classes. Instead, committ only to an interface defined by an 
+      abstract class
+    - Creational patterns ensure that your system is written in terms of interfaces, not implementations
+
+- Solving general problems such as
+
+    - decoupling objects so that changes to one can affect any number of others without requiring the changed object
+      to know details of the others
+    - group objects and treat the group like an invidual object
+
+- design patterns help you identify less-obvious abstractions and the objects that can capture them
+
+- Categories or purposes
+
+    - Creational Patterns
+
+        - concerned with the process of object creation
+        - class patterns defer some part of object creation to subclasses
+        - object patterns defer it to another object
+
+    - Structural Patterns
+
+        - deal with the composition of classes or objects
+
+    - Behavioral Patterns
+
+        - characterize the ways in which classes or objects interact and distribute responsibility
+
+- scope: does the pattern apply primarily to classes or to objects
+
+    - Class patterns deal with relationships between classes and their subclasses
+        - these relationships are established through inheritance, so they are static -- fixed at compile time
+    - Object patterns deal with object relationships
+        - can be changed at run-tijme and are more dynamic
+
+- some patterns are often used together
+- some patterns are alternatives to one another
+- some patterns result in similar designs even though the patterns have different intents
+
+---------------------------------------------------------------------------------------
+
+- MVC - Model/View/Controller (GOF intro, p. 4-6)
+
+    - is a triad of classes that is used to build user interfaces
+    - Model:      application object
+    - View:       screen presentation
+    - Controller: controls the way the user interface reacts to user input
+    - MVC decouples these three objects to increase flexibility and reuse
+        - by extablishing a subscribe/notify protocol between them
+    - main patterns used are:
+        - Observer, Composite, and Strategy
+    - uses other paters, such as the Factory Method and Decorator
+
+===========================================================================================
+
+----------------------
+|CREATIONAL PATTERNS |
+----------------------
+
+- abstract the instantiation process
+- help make a system independent of how its objects are created, composed, and represented
+
+- a class creational pattern uses inheritance to vary the class that's instantiated.
+- an object creational pattern will delegate instantiation to another object
+
+- two recurring themes
+
+    1) they all encapsulate knowledge about which concrete classes tye system uses
+    2) they hide how instances of these classes are created and put together
+
+- all the system at large knows about the objects is their interfaces as defined by abstract classes
+- consequently, the creational patterns give you a lot of flexibility in 
+
+    - what gets created
+    - who creates it
+    - how it gets created
+    - when it gets created
+
+- sometimes, the biggest barrier to change lies in hard-coding the classes that get instantiated.
+- the creational patterns provide different ways to remove explicity references to concreate classes from code that
+  needs to instantiate them
+
+----------------------------------------------------------------------------------------
+
+- ABSTRACT FACTORY
+
+    - object creational
+    - provide an interface for creating families of related or dependent objects w/o specifying their concrete classes
+    - aka Kit
+    
+    - clients create objects through the abstract factory, not knowing that concreate subclasses of the abstract factory are
+      actually creating the objects
+
+    - Use when
+
+        - a system should be independent of how its products are created, composed, and represented
+        - a system should be configuredwith one of multiple families of products
+        - a family of related product objects is designed to be used together, and you need to enforce this constraint
+        - you want to provide a class library of products, and you want to reveal just their interfaces, not their implementations
+
+    - Benefits
+
+        - isolates concrete classes
+        - makes exchanging product families easy
+        - promotes consistency among products
+
+    - Liabilities
+
+        - supporting new kinds of productsis difficult
+
+    - Useful techniques
+
+        - factories as singletons
+
+    - Related Patterns
+
+        - AbstractFactory classes are often implemented with factory methods (Factory Method), but they can also
+          be implemented using the Prototype pattern
+        - a concrete factory is often a singleton
+
+--------------------------
+
+- BUILDER
+
+    - object creational
+
+    - separate the construction of a complex object from its representation so that the same construction process
+      can create different representations
+
+    - the reader class is called the "director"
+    - each "converter" class is called a "builder"
+
+    - Use when
+
+        - the algorithm for creating a complex object should be independent of the parts that make up the object and
+          how they're assembled
+
+        - the construction process must allow different representations for the object that's constructed
+
+    - Consequences
+
+        - lets you vary a prduct's internal representation
+        - isolates code for construction and representation
+        - it gives you finer control over the construction process
+
+    - Related Patterns
+
+        - Abstract Factory is similar to Builder in that it too may construct complex objects. The primary difference
+          is that Builder pattern focuses on constructing a complex object step by step. Abstract Factory's emphasis is
+          on families of product objects (either simple or complex). Builder returns the product as final step, but as far
+          as the Abstract Factory pattern is concerned, the product get returned immediately.
+
+        - A Composite is what the builder often builds
+
+-------------------------
+
+- FACTORY METHOD
+
+    - class creational
+
+    - define an interface for creating an object, but let subclasses dcide which class to instantiate. Factory Method lets
+      a class defer instantiation to subclasses.
+
+
