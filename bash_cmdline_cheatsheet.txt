@@ -152,35 +152,37 @@ BASH command-line environment
     Also try using the −e option with echo. This will allow you to use the escape character sequences to
     format the output of a line. Such as '\t' for tab, '\n' for newline etc.
 
-CTRL−D
+- keystrokes / shortcuts
 
-    - the "end−of−file" (EOF) key combination can be used to quickly log out of any terminal. CTRL−D is
-     also used in programs such as "at" to signal that you have finished typing your commands (the EOF
-     command).
+    CTRL−D
 
-CTRL−Z
+        - the "end−of−file" (EOF) key combination can be used to quickly log out of any terminal. CTRL−D is
+         also used in programs such as "at" to signal that you have finished typing your commands (the EOF
+         command).
 
-    - this key combination is used to stop a process. It can be used to put something in the background
-      temporarily.
+    CTRL−Z
 
-- CTRL−A and CTRL−E
+        - this key combination is used to stop a process. It can be used to put something in the background
+          temporarily.
 
-    These key combinations are used for going to the start and end of the line on the command line. Use
+    CTRL−A and CTRL−E
 
-    CTRL−A to jump to the start of the line
-    CTRL−E to jump to the end of the line.
-    
-- CTRL−K
+        These key combinations are used for going to the start and end of the line on the command line. Use
 
-    This key combination can be used to cut or delete what is currently in front of the cursor.
+        CTRL−A to jump to the start of the line
+        CTRL−E to jump to the end of the line.
+        
+    CTRL−K
 
-- CTRL−Y
+        This key combination can be used to cut or delete what is currently in front of the cursor.
 
-    This key combination can be used to paste the last thing you deleted (using CTRL−K or CTRL−W ).
+    CTRL−Y
 
-- CTRL−W
+        This key combination can be used to paste the last thing you deleted (using CTRL−K or CTRL−W ).
 
-    This key combination can be used to cut or delete the entire line that has being typed.
+    CTRL−W
+
+        This key combination can be used to cut or delete the entire line that has being typed.
 
 - whatis
 
@@ -191,3 +193,434 @@ CTRL−Z
 
     Searches the whatis database for strings, similar to whatis except it finds and prints anything matching
     the string (or any part of the string). Also relies on the whatis database (see above).
+
+- Standard error
+
+    Standard error is error output from programs. This output is also sent to the screen and will normally
+    be seen mixed in with standard output. The difference between standard output and standard error is
+    that standard error is unbuffered (it appears immediately on the screen) and standard error is only
+    printed when something goes wrong (it will give you details of what went wrong).
+
+- <<
+
+    The << symbol is sometimes used with commands that use standard input to take information. You
+    simply type << word (where word can be any string) at the end of the command. However its main
+    use is in shell scripting.
+
+    The command takes your input until you type "word", which causes the command to terminate and
+    process the input.
+
+    Using << is similar to using CTRL−D (EOF key), except it uses a string to perform the end−of−file
+    function. This design allows it to be used in shell scripts.
+
+    For example type "cat" (with no options...) and it will work on standard input.
+    To stop entering standard input you would normally hit CTRL−D .
+    As an alternative you can type "cat << FINISHED", then type what you want.
+
+    When you are finished, instead of hitting CTRL−D you could type "FINISHED" and it will end (the
+    word FINISHED will not be recorded).
+
+- tee
+
+    Sends output of a program to a file and to standard output. Think of it as a T intersection...it goes two
+    ways.
+
+        ls /home/user | tee my_directories.txt
+    
+    Lists the files (displays the output on the screen) and sends the output to a file: "my_directories.txt".
+
+- &>
+
+    Redirects standard output and error output to a specific location.
+
+    For example:
+
+        make &> /dev/null
+
+    Sends both error output and standard output to /dev/null so you won't see anything...
+
+- cd −
+
+    will return you to the previous directory (a bit like an "undo").
+
+- tree
+
+    Outputs an ASCII text tree/graph starting at a given directory (by default the current directory). This
+    command recursively lists all files and all directories.
+
+- find
+
+    find is a tool which looks for files on a filesystem. find has a large number of options which can be
+    used to customise the search (refer to the manual/info pages).
+
+    Note that find works with standard wildcards,Section 20.4.1, and can work with regular expressions,
+
+    Basic example:
+
+        find / −name file
+
+    This would look for a file named "file" and start at the root directory (it will search all directories
+    including those that are mounted filesystems).
+
+    The `−name' option is case sensitive you can use the `−iname' option to find something regardless of
+    case.
+
+    Use the '−regex' and '−iregex' to find something according to a regular expression (either case
+    sensitive or case insensitive respectively).
+
+    The '−exec' option is one of the more advanced find operations. It executes a command on the files it
+    finds (such as moving or removing it or anything else...).
+
+    To use the −exec option: use find to find something, then add the −exec option to the end, then:
+    (1) command_to_be_executed then (2) '{}' (curly brackets) then the arguments then (3) ending semicolon
+
+    (1) This is the tool you want to execute on the files find locates. For example if you wanted to
+    remove everything it finds then you would use −exec rm −f
+
+    (2) The curly brackets are used in find to represent the current file which has been found. ie. If it
+        found the file shopping.doc then {} would be substituted with shopping.doc. It would then
+        continue to substitute {} for each file it finds. The brackets are normally protected by
+        backslashes (\) or single−quotation marks ('), to stop bash expanding them (trying to interpret
+        them as a special command eg. a wildcard).
+
+    (3) This is the symbol used by find to signal the end of the commands. It's usually protected by a
+        backslash (\) or quotes to stop bash from trying to expand it.
+
+        find / −name '*.doc' −exec cp '{}' /tmp/ ';'
+
+    The above command would find any files with the extension '.doc' and copy them to your /tmp
+    directory, obviously this command is quite useless, it's just an example of what find can do. Note that
+    the quotation marks are there to stop bash from trying to interpret the other characters as something.
+
+    Excluding particular folders with find can be quite confusing, but it may be necessary if you want to
+    search your main disk (without searching every mounted filesystem). Use the −path option to exclude
+    the particular folder (note, you cannot have a '/' (forward slash) on the end) and the −prune option to
+    exclude the subdirectories. An example is below:
+
+        find / −path '/mnt/win_c' −prune −o −name "string" −print
+
+    This example will search your entire directory tree (everything that is mounted under it) excluding
+    /mnt/win_c and all of the subdirectories under /mnt/win_c. When using the −path option you can use
+    wildcards.
+
+    Note that you could add more −path '/directory' statements on if you wanted.
+    find has many, many different options, refer to the manual (and info) page for more details.
+
+- slocate
+
+    slocate outputs a list of all files on the system that match the pattern, giving their full path name (it
+    doesn't have to be an exact match, anything which contains the word is shown).
+
+    Replaces locate
+    Secure locate is a replacement for locate, both have identical syntax. On most
+    distributions locate is an alias to slocate.
+
+    Commmand syntax:  slocate string
+
+    This won't work unless
+    You need to run either updatedb (as root) or slocate −u (as root) for slocate to work.
+
+    locate uses a prebuilt database, which should be regularly updated, while find iterates over a filesystem
+    to locate files. Thus, locate is much faster than find , but can be inaccurate if the database -can be seen
+    as a cache- is not updated (see updatedb command).
+
+- whereis
+
+    whereis locates the binary, source, and manual page for a particular program, it uses exact matches
+    only, if you only know part of the name use slocate.
+
+    Command syntax:  whereis program_name
+
+- which
+
+    Virtually the same as whereis, except it only finds the executable (the physical program). It only looks
+    in the PATH (environment variable) of a users shell.
+
+    Use the −a option to list all occurances of the particular program_name in your path (so if theres
+    more than one you can see it).
+
+    Command syntax:  which program_name
+
+- ln
+
+    Create a link to a file. There are two types of links:
+
+    Hard links
+
+        Hard links are considered pointers to a file (the number is listed by typing ls −l). Each
+        hard−link is a reference to a file.
+
+        Target and link files have same inode #
+
+        The file itself only goes away when all hard−links are deleted. If you delete the original file
+        and there are hard links to it the original file will remain.
+
+        Example:  ln target_name link_name
+
+        Will create a "hard link" to target_name called link_name, you need to delete both of these to
+        remove the file.
+
+        When you delete a file it removes one link to the underlying inode. The inode is only deleted 
+        (or deletable/over-writable) when all links to the inode have been deleted.
+
+        Once a hard link has been made the link is to the inode. deleting renaming or moving the original file
+        will not affect the hard link as it links to the underlying inode. Any changes to the data on the inode
+        is reflected in all files that refer to that inode.
+
+    Symbolic links
+
+        Symbolic links are created by typing "ln −s". When you remove the original file the symbolic
+        link becomes broken, a symbolic link is similar to a windows "short−cut".
+
+        The advantage of symbolic links is that the target can be to something on another file−system,
+        while hard−links can only exist on the same file−system.
+
+        For example:  ln −s target_name link_name
+
+        This creates a symbolic link to "target_name" called "link_name", if you delete the original
+        file the symbolic link won't work (it becomes a broken link).
+
+        Soft links is a special kind of file that points to another file, much like a shortcut. Unlike a hard link,
+        a symbolic link does not contain the data in the target file. It simply points to another entry somewhere in
+        the file system. This difference gives symbolic links certain qualities that hard links do not have, such as
+        the ability to link to directories, or to files on remote computers networked through NFS. Also, when you
+        delete a target file, symbolic links to that file become unusable, whereas hard links preserve the content
+        s of the file.
+
+- du
+
+    Displays information about file size. Use du filename to display the size of a particular file. If you use
+    it on directories it will display the information on the size of the files in the directory and each
+    subdirectory.
+
+    Options for du (use du −option(s)):
+        ◊ −c −− this will make du print a grand total after all arguments have being processed.
+        ◊ −s −− summarises for each argument (prints the total).
+        ◊ −h −− prints things in " human readable" mode; for example printing 1M (megabyte) rather
+                than 1,024,000 (bytes).
+
+    Using the −hs options on a directory will display the total size of the directory and all subdirectories.
+
+    Command syntax:   du −options file_directory_or_files
+
+    Example:     du −hs *
+
+    This command will list the size of all files in the current directory and it will list the size of
+    subdirectories, it will list things in human−readable sizes using 1024 Kb is a Megabyte, M for
+    megabyte, K for kilobyte etc.
+
+- file
+
+    Attempts to find out what type of file it is, for example it may say it's: binary, an image file (well it
+    will say jpeg, bmp et cetera), ASCII text, C header file and many other kinds of files, it's a very useful
+    utility.
+
+    Command syntax:  file file_name
+
+- stat
+
+    Tells you detailed information about a file, including inode number creation/access date. Also has
+    many advanced options and uses.
+
+    For simple use type:  stat file
+
+- split
+
+    Splits files into several smaller files.
+
+    Use the −b xx option to split into xx bytes, also try −k for kilobytes, and −m for megabytes. You can
+    use it to split text files and any other files... you can use cat to re−combine the files.
+
+    This may be useful if you have to transfer something to floppy disks or you wish to divide text files
+    into certain sizes.
+
+    Command syntax:  split −options file
+
+    This will split the input file into 1000 lines of input each (thats the default...), and output (using the
+    above example), with the input name file, "fileaa" (1st part of file), "fileab" (2nd part of file), "fileac"
+    (3rd part of file) etc. until the there is no more of the file left to split.
+
+- Mass Rename/copy/link Tools
+
+    - see GNU/Linux Command−Line Tools Summary
+
+- who
+
+    Displays information on which users are logged into the system including the time they logged in.
+
+- w
+
+    Displays information on who is logged into the system and what they are doing (ie. the processes they
+    are running). It's similar to who but displays slightly different information.
+
+- users
+
+    Very similar to who except it only prints out the user names who are currently logged in. (Doesn't
+    need or take any options).
+
+- last
+
+    Displays records of when various users have logged in or out. This includes information on when the
+    computer was rebooted
+
+- xargs
+
+    Note that xargs is an advanced, confusing, yet powerful command. xargs is a command used to run
+    other commands as many times as necessary, this way it prevents any kind of overload... When you
+    run a command then add a "| xargs command2". The results of command1 will be passed to
+    command2, possibly on a line−by−line basis or something similar.
+
+- CTRL−C
+
+    The break key, will kill (break, stop) something that's running on your terminal.
+
+- jobs
+
+    Prints currently running jobs, as in processes you have executed within the shell.
+- bg
+
+    Backgrounds a process. To start a program in the background (so it doesn't take over the terminal) use
+    an "&" (ampersand) sign at the end of the command. You usually use CTRL−Z to suspend something
+    you are currently using. You can simply use bg to resume in the background the last job suspended...
+
+- fg
+    Bring a process to the foreground, so you can interact with it. The process will use your current
+    terminal. Note simply use fg to foreground the last job number suspended.
+
+- chsh
+
+    Used to change your login shell.
+
+    To list the shells available type:
+
+        chsh −−list−shells
+
+- wc
+
+    Word count, count how many words you have in a text document. Can also be used to count the lines
+    or bytes within the file.
+
+    Use the options −w for words, −l for lines and −c for bytes. Or simply run wc with no options to get
+    all three.
+
+- cmp
+
+    Determines whether or not two files differ, works on any type of file. Very similar to diff only it
+    compares on the binary level instead of just the text.
+
+- diff
+
+    Compares two text files and output a difference report (sometimes called a "diff") containing the text
+    that differs between two files.
+
+    Can be used to create a 'patch' file (which can be used by patch).
+
+    Example:  diff file1.txt file2.txt
+    
+    diff will output a '>' (followed by the line) for each line that isn't in the first file but is in the second
+    file, and it will output a '<' (followed by the line) for each line that is in the first file but not in the
+    second file.
+
+- sdiff
+    Instead of giving a difference report, it outputs the files in two columns, side by side, separated by
+    spaces.
+- diff3
+    Same as diff except for three files.
+
+- comm
+
+    Compares two files, line−by−line and prints lines that are unique to file1 (1st column), unique to file2
+    (2nd column) and common to both files (3rd column).
+
+    Use comm with the −1, −2, or −3 to suppress the printing of those particular lines. Simply run comm
+    to have all three listed (ie. unique to files 1 and 2 and common to both).
+
+- end of line
+
+    on a Windows text file, a newline is signalled by a carriage
+    return followed by a newline, '\r\n' in ASCII.
+
+    On a UNIX system a newline is simply a newline, '\n' in ASCII.
+- Standard Wildcards (globbing patterns)
+
+    Standard wildcards (also known as globbing patterns) are used by various command−line utilities to work
+    with multiple files. For more information on standard wildcards (globbing patterns) refer to the manual page
+    by typing:
+
+        man 7 glob
+
+    Standard wildcards are used by nearly any command (including mv, cp, rm and many others).
+
+    ? (question mark)
+
+        this can represent any single character. If you specified something at the command line like "hd?"
+        GNU/Linux would look for hda, hdb, hdc and every other letter/number between a−z, 0−9.
+
+    * (asterisk)
+
+        this can represent any number of characters (including zero, in other words, zero or more characters).
+        If you specified a "cd*" it would use "cda", "cdrom", "cdrecord" and anything that starts with "cd"
+        also including "cd" itself. "m*l" could by mill, mull, ml, and anything that starts with an m and ends
+        with an l.
+
+    [ ] (square brackets)
+
+        specifies a range. If you did m[a,o,u]m it can become: mam, mum, mom if you did: m[a−d]m it can
+        become anything that starts and ends with m and has any character a to d inbetween. For example,
+        these would work: mam, mbm, mcm, mdm. This kind of wildcard specifies an "or" relationship (you
+        only need one to match).
+
+    { } (curly brackets)
+
+        terms are separated by commas and each term must be the name of something or a wildcard. This
+        wildcard will copy anything that matches either wildcard(s), or exact name(s) (an "or" relationship,
+        one or the other).
+
+        For example, this would be valid:
+
+            cp {*.doc,*.pdf} ~
+
+        This will copy anything ending with .doc or .pdf to the users home directory. Note that spaces are not
+        allowed after the commas (or anywhere else).
+
+    [!]
+
+        This construct is similar to the [ ] construct, except rather than matching any characters inside the
+        brackets, it'll match any character, as long as it is not listed between the [ and ]. This is a logical NOT.
+        For example rm myfile[!9] will remove all myfiles* (ie. myfiles1, myfiles2 etc) but won't remove a
+        file with the number 9 anywhere within it's name.
+
+    \ (backslash)
+
+        is used as an "escape" character, i.e. to protect a subsequent special character. Thus, "\\" searches for a
+        backslash. Note you may need to use quotation marks and backslash(es).
+
+        Key or key combination      Function
+        ----------------------      --------
+        Ctrl+A                      Move cursor to the beginning of the command line.
+        Ctrl+C                      End a running program and return the prompt, see Chapter 4, Processes.
+        Ctrl+D                      Log out of the current shell session, equal to typing exit or logout.
+        Ctrl+E                      Move cursor to the end of the command line.
+        Ctrl+H                      Generate backspace character.
+        Ctrl+L                      Clear this terminal.
+        Ctrl+R                      Search command history
+        Ctrl+Z                      Suspend a program
+        ArrowLeft and               Move the cursor one place to the left or right on the command line, so that you
+        ArrowRight                  can insert characters at other places than just at the beginning and the end.
+        ArrowUp and                 Browse history. Go to the line that you want to repeat, edit details if necessary,
+        ArrowDown                   and press Enter to save time.
+        Shift+PageUp and            Browse terminal buffer (to see text that has "scrolled off" the screen).
+        Shift+PageDown
+        Tab                         Command or filename completion; when multiple choices are possible, the
+                                    system will either signal with an audio or visual bell, or, if too many choices are
+                                    possible, ask you if you want to see them all.
+        Tab Tab                     Shows file or command completion possibilities.
+
+        The last two items in the above table may need some extra explanations. For instance, if you want
+        to change into the directory directory_with_a_very_long_name , you are not going to type that very
+        long name, no. You just type on the command line cd dir, then you press Tab and the shell
+        completes the name for you, if no other files are starting with the same three characters. Of course,
+        if there are no other items starting with “d”, then you might just as wel type cd d and then Tab. If
+        more than one file starts with the same characters, the shell will signal this to you, upon which you
+        can hit Tab twice with short interval, and the shell presents the choices you have:
+
