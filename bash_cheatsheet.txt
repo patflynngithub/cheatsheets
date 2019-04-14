@@ -123,6 +123,44 @@ Bash CheatSheet
 
     - unset VARNAME
 
+    - declare
+
+        Using a declare statement, we can limit the value assignment to variables.
+
+        The syntax for declare is the following:
+
+            declare OPTION(s) VARIABLE=value
+
+            Option Meaning
+            ------ -------
+            -a          Variable is an array.
+            -f          Use function names only.
+            -i          The variable is to be treated as an integer; arithmetic evaluation is performed when the variable is assigned a value (see Section 3.4.6).
+            -p          Display the attributes and values of each variable. When -p is used, additional options are ignored.
+            -R          Make variables read-only. These variables cannot then be assigned values by subsequent assignment
+                        statements, nor can they be unset.
+            -t          Give each variable the trace attribute.
+            -x          Mark each variable for export to subsequent commands via the environment.
+
+            Using + instead of - turns off the attribute instead. When used in a function, declare creates local variables.
+
+        Note that Bash has an option to declare a numeric value, but none for declaring string values. This is because,
+        by default, if no specifications are given, a variable can hold any type of data
+
+    - readonly variables
+
+        In Bash, constants are created by making a variable read-only. The readonly built-in marks each specified
+        variable as unchangeable. The syntax is:
+
+            readonly OPTION VARIABLE(s)
+
+        The values of these variables can then no longer be changed by subsequent assignment. If the -f option is
+        given, each variable refers to a shell function;
+
+    - Length of a variable
+
+        Using the ${#VAR} syntax will calculate the number of characters in a variable.
+
 - examples in script file
 
     - note: sha-bang #! on first line/column
@@ -534,8 +572,11 @@ Bash CheatSheet
         
         When the old-style backquoted form of substitution is used, backslash retains its literal meaning except when
         followed by "$", "`", or "\". The first backticks not preceded by a backslash terminates the command
-        substitution. When using the "$(COMMAND)" form, all characters between the parentheses make up the
+        substitution. 
+
+        When using the "$(COMMAND)" form, all characters between the parentheses make up the
         command; none are treated specially.
+
         Command substitutions may be nested. To nest when using the backquoted form, escape the inner backticks
         with backslashes.
 
@@ -633,7 +674,7 @@ Bash CheatSheet
 
     9) File name expansion
 
-        After word splitting, unless the -f option has been set (see Section 2.3.2), Bash scans each word for the
+        After word splitting, unless the -f option has been set, Bash scans each word for the
         characters "*", "?", and "[". If one of these characters appears, then the word is regarded as a PATTERN, and
         replaced with an alphabetically sorted list of file names matching the pattern. If no matching file names are
         found, and the shell option nullglob is disabled, the word is left unchanged. If the nullglob option is
@@ -1075,7 +1116,7 @@ Bash CheatSheet
     zsh manual being even bigger is split into several man pages and also has a good info manual with a very good index.
 
     It should be noted that the info manual is generated from a texinfo format which is also used to generate HTML and printable
-   (PDF/PS) versions. In the case of zsh though, the texinfo is generated from another format (yodl).
+    (PDF/PS) versions. In the case of zsh though, the texinfo is generated from another format (yodl).
 
 - looping
 
@@ -1164,43 +1205,9 @@ Bash CheatSheet
     The xargs command builds and executes command lines from standard input. This has the advantage
     that the command line is filled until the system limit is reached. 
 
-     In its most basic form - reads data from standard input (stdin) and executes the command
-     (supplied to it as an argument) one or more times based on the input read. Any blanks and spaces
-     in the input are treated as delimiters, while blank lines are ignored. 
-
-- declare
-
-    Using a declare statement, we can limit the value assignment to variables.
-
-    The syntax for declare is the following:
-
-        declare OPTION(s) VARIABLE=value
-
-        Option Meaning
-        ------ -------
-        -a          Variable is an array.
-        -f          Use function names only.
-        -i          The variable is to be treated as an integer; arithmetic evaluation is performed when the variable is assigned a value (see Section 3.4.6).
-        -p          Display the attributes and values of each variable. When -p is used, additional options are ignored.
-        -R          Make variables read-only. These variables cannot then be assigned values by subsequent assignment
-                    statements, nor can they be unset.
-        -t          Give each variable the trace attribute.
-        -x          Mark each variable for export to subsequent commands via the environment.
-
-        Using + instead of - turns off the attribute instead. When used in a function, declare creates local variables.
-
-    Note that Bash has an option to declare a numeric value, but none for declaring string values. This is because,
-    by default, if no specifications are given, a variable can hold any type of data
-
-- readonly variables
-
-    In Bash, constants are created by making a variable read-only. The readonly built-in marks each specified
-    variable as unchangeable. The syntax is:
-
-        readonly OPTION VARIABLE(s)
-
-    The values of these variables can then no longer be changed by subsequent assignment. If the -f option is
-    given, each variable refers to a shell function;
+    In its most basic form - reads data from standard input (stdin) and executes the command
+    (supplied to it as an argument) one or more times based on the input read. Any blanks and spaces
+    in the input are treated as delimiters, while blank lines are ignored. 
 
 - Array variables
 
@@ -1235,8 +1242,7 @@ Bash CheatSheet
 
     Attributes may be specified for an array variable using the declare and readonly builtins. Each attribute applies to all members of an array. 
 
-    An array is a variable containing multiple values. Any variable may be used as an array. There is no
-    maximum limit to the size of an array, nor any requirement that member variables be indexed or assigned
+    There is no maximum limit to the size of an array, nor any requirement that member variables be indexed or assigned
     contiguously. Arrays are zero-based: the first element is indexed with the number 0.
 
     Indirect declaration is done using the following syntax to declare a variable:
@@ -1304,10 +1310,6 @@ Bash CheatSheet
         unset ARRAY
         echo ${ARRAY[*]}
         <--no output-->
-
-- Length of a variable
-
-    Using the ${#VAR} syntax will calculate the number of characters in a variable.
 
 - functions
 
@@ -1690,89 +1692,6 @@ Bash CheatSheet
 
     - For tests, the [[ ]] construct may be more appropriate than [ ]. Likewise, arithmetic comparisons might
       benefit from the (( )) construct.
-
-- history
-
-    - !!
-
-        repeat last entered command
-
-    - !xyz
-
-        run the last command beginning with xyz that you typed
-
-    - !xyz:p
-
-        If you need to be very sure of the command you’re targeting, :p can be a huge help. !xyz:p will print the command
-        that would be executed rather than executing it. :p is also clever enough to add the printed command to your history
-        list as the last command executed (even though it didn’t execute it) so that, if you decide that you like what was printed,
-        a !! is all you need to make it happen.
-
-    - !N
-
-        type history, find the number of the command you want and then type !N where "N" is the number of the command
-        you’d like to execute. (:p works here too.)
-
-    - ctrl-r ...
-
-         ^r (ctrl-r) followed by whatever you type will search the command history for that string. The bonus here is
-         that you’re able to edit the command line you’ve searched for before you send it down the line.
-
-    - !$
-
-        Bang dollar-sign
-
-        !$ is the "end" of the previous command. Consider the following example: We start by looking for a word in a file
-
-            $ grep -i joe /some/long/directory/structure/user-lists/list-15
-
-        if joe is in that userlist, we want to remove him from it. We can either fire up vi with that long directory tree as the argument, or as simply as
-
-            $ vi !$
-
-        Which bash expands to:
-
-            $ vi /some/long/directory/structure/user-lists/list-15
-
-        A word of caution: !$ expands to the end word of the previous command. What’s a word? The bash man page calls a word
-        "A sequence of characters considered as a single unit by the shell." If you haven’t changed anything, chances are good
-        that a word is a quoted string or a white-space delimited group of characters. What is a white-space delimited group of
-        characters ? It’s a group of characters that are separated from other characters by some form of white-space (which could
-        be a tab, space, etc.) If you’re in doubt, :p works here too.
-
-        Another thing to keep in mind when using !$ is that if the previous command had no agruments, !$ will expand to the previous
-        command rather than the most recent argument. This can be handy if, for example, you forget to type vi and you just type the
-        filename. A simple vi !$ and you’re in.
-
-    - !*
-
-        Similar to !$ is !*. !* is all of the arguments to the previous command rather than just the last one. As usual, this is useful
-        in many situations. Here’s a simple example:
-
-            $ vi cd /stuff #(oops!)
-            [exit vi twice]
-            $ !*
-
-        Which bash expands to:
-
-            $ cd /stuff
-
-    - tab-tab
-
-        One of my favorite features of bash is tab-completion. Tab-completion works in a couple of ways, it can complete filenames in the
-        current directory or in your $PATH. Like the !commands above, you just need to give bash enough of the filename to make it unique
-        and hit the tab key — bash will do the rest for you. Let’s say you have a file in your home directory called ransom.note, consider
-        the following:
-
-            $ mor[tab] ran[tab]
-
-        Will expand to
-
-            $ more ransom.note
-
-        Let’s say you also have a file named random in your home directory. ran above is no longer enough to be unique, but you’re in luck. 
-        If you hit tab twice, bash will print the list of matching files to the screen so that you can see what you need to add to make your
-        shortcut unique.
 
 ================================================================================================
 
