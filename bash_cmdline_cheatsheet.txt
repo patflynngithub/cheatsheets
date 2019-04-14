@@ -6,6 +6,11 @@ BASH command-line environment
 
 - history
 
+    - The history command can be used to list Bash's log of the commands you have typed
+
+    - history n
+
+        This will only list the last n commands.
     - !!
 
         repeat last entered command
@@ -87,4 +92,102 @@ BASH command-line environment
         If you hit tab twice, bash will print the list of matching files to the screen so that you can see what you need to add to make your
         shortcut unique.
 
+- \ (backslash)
 
+        The backslash escape character can be used before a shell command to override any aliases.
+
+        For example if rm was made into an alias for rm −i then typing "rm" would actually run rm −i.
+        However, typing \rm lets the shell ignore the alias and just run rm (its runs exactly what you type),
+        this way it won't confirm if you want to delete things.
+
+        The "\" character can be used before special characters (such as a space or a wildcard), to stop bash
+        from trying to expand them.
+
+- script
+
+    The "script" command creates a typescript, or "capture log" of a shell session − it writes a copy of
+    your session to a file, including commands you type and their output.
+
+~ (tilde character)
+
+    The tilde character is used as an alias to a users home directory.
+
+    For example, if your user−name was "fred", instead of typing cd /home/fred you could simply type cd
+    ~. Or to get to fred's tmp directory (under his home directory) you could type cd ~/tmp.
+
+    Home directory shortcut
+
+        ~ (tilde) can also be used as a shortcut to other users home directories, simply type:
+        ~user_name and it will take you to the users home directory. Note that you need to
+        spell the username exactly correct, no wildcards.
+- reset
+
+    The reset command re−initializes your current terminal. This can be useful when the text from your
+    terminal becomes garbled, simply type "reset" and this will fix your terminal.
+
+- echo
+
+    A little command that repeats anything you type.
+
+    Example:
+
+        echo "hello world"
+
+    Example:
+
+        echo rm −R *
+    
+        This will output what will be passed to the rm command (and therefore what would be deleted),
+        putting echo before a command renders it harmless (it just expands wildcards so you know what it
+        will do).
+
+        Using echo to prevent accidents
+
+            Typing: echo command(s) could save you the trouble of accidentally doing something
+            you didn't expect.
+
+            Using echo allows you to expand the wildcards to understand what will happen before
+            you actually run the command.
+
+    Also try using the −e option with echo. This will allow you to use the escape character sequences to
+    format the output of a line. Such as '\t' for tab, '\n' for newline etc.
+
+CTRL−D
+
+    - the "end−of−file" (EOF) key combination can be used to quickly log out of any terminal. CTRL−D is
+     also used in programs such as "at" to signal that you have finished typing your commands (the EOF
+     command).
+
+CTRL−Z
+
+    - this key combination is used to stop a process. It can be used to put something in the background
+      temporarily.
+
+- CTRL−A and CTRL−E
+
+    These key combinations are used for going to the start and end of the line on the command line. Use
+
+    CTRL−A to jump to the start of the line
+    CTRL−E to jump to the end of the line.
+    
+- CTRL−K
+
+    This key combination can be used to cut or delete what is currently in front of the cursor.
+
+- CTRL−Y
+
+    This key combination can be used to paste the last thing you deleted (using CTRL−K or CTRL−W ).
+
+- CTRL−W
+
+    This key combination can be used to cut or delete the entire line that has being typed.
+
+- whatis
+
+    Displays a one−line description of what a program does. The string needs to be an exact match,
+    otherwise whatis won't output anything. Relies on the whatis database (see below).
+
+- apropos
+
+    Searches the whatis database for strings, similar to whatis except it finds and prints anything matching
+    the string (or any part of the string). Also relies on the whatis database (see above).
