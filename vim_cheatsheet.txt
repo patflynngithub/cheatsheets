@@ -1,5 +1,5 @@
 
-Updated: 4/15/19
+Updated: 4/16/19
 
 VIM Cheatsheet
 ==============
@@ -41,12 +41,14 @@ VIM Cheatsheet
         :q!                         forces the exit when you want to quit a file containing unsaved changes.
         :wq                         save and exit
         :w                          newfile will save the text to newfile .
-        :wq!                        overrides read-only permission (if you have the permission to override permissions, for
-                                    instance when you are using the root account.
-        /astring                    search the string in the file and position the cursor on the first match below its
-                                    position.
+        :wq!                        overrides read-only permission (if you have the permission to override 
+                                    permissions, for instance when you are using the root account.
+        /astring                    search the string in the file and position the cursor on the first match
+                                    below its position.
         / or n                      perform the same search again, moving the cursor to the next match.
-        :1, $s/word/anotherword/g   replace word with anotherword throughout the file.
+        N                           continue search in the opposite direction
+        ?                           search for a phrase in the backward direction
+        :1, $s/word/anotherword/g   replace word with another word throughout the file.
         yy                          copy a block of text.
         n p                         paste it n times.
         :recover                    recover a file after an unexpected interruption.
@@ -140,6 +142,7 @@ NOTE:  Pressing just the motion while in Normal mode without an operator will
 - Replace command
 
     rx       replace the character at the cursor with  x
+    R        replace more than one character ("OVERWRITE" mode)
 
 - Change operator
 
@@ -149,11 +152,196 @@ NOTE:  Pressing just the motion while in Normal mode without an operator will
 
 - Cursor location and file status
 
-    CTRL-G      your location in the file and the file status.
-         G      move to end of file.
+    CTRL-G      display your location in the file and the file status.
         gg      move to start of file
+         G      move to end of file.
+       n G      move to line n
 
     NOTE:  You may see the cursor position in the lower right corner of the screen
            This happens when the 'ruler' option is set (see  :help 'ruler'  )
+
+- find find a matching ),], or }
+
+         %      %  find a matching ),], or }
+
+
+- show options
+
+    :set            show all optoin that differ from their default value
+    :set all        list all options, including defaults (except terminal options)
+    :set termcap    show all terminal options
+
+    :echo &mps      show setting for matching parents, braces, etc.
+    :set mps?       show setting for matching parents, braces, etc.
+
+
+- back to previous spots
+
+    Ctrl-O         to go back to where you came from 
+                   repeat to go back further
+    CTRL-I         goes forward
+
+-substitute command
+
+    :s/old/new/g   to substitute 'new' for 'old'
+
+    NOTE: without the '/g' suffix, only changes the first occurrence
+
+    To change every occurrence of a character string between two lines,
+     
+        :#,#s/old/new/g    where #,# are the line numbers of the range
+                           of lines where the substitution is to be done.
+        :%s/old/new/g      to change every occurrence in the whole file.
+        :%s/old/new/gc     to find every occurrence in the whole file,
+                           with a prompt whether to substitute or not.
+
+- search on the word over which your cursor is positioned
+
+        *                 forwards
+        #                 backwards
+
+- execute an external command
+
+        :! followed by an external command to execute that command 
+
+- writing to a file
+
+        :w filename
+
+- selecting text
+
+    Pressing  v  starts Visual selection.  You can move the cursor around
+    to make the selection bigger or smaller.  Then you can use an operator
+    to do something with the text.  For example,  d  deletes the text.
+
+        - go to starting point
+        - press v
+        - move to ending point
+
+    e.g. of application of writing selected text to a file
+
+        - do above
+        - :
+        - verify see '<,'>
+        - w filename
+
+- RETRIEVING AND MERGING FILES
+
+    :r FILENAME     insert the contents of a file at cursor
+
+    :r !command     read the output of an external command.  For example,
+                    :r !ls  reads the output of the ls command and puts it below the
+                    cursor.
+
+- THE OPEN COMMAND
+
+    Type  o  to open a line below the cursor and place you in Insert mode
+
+        - Move the cursor to the line
+        - Type the lowercase letter  o  to open up a line BELOW the cursor and place
+          you in Insert mode.
+        - Now type some text and press <ESC> to exit Insert mode.
+
+    Note: To open up a line ABOVE the cursor, simply type a capital  O , rather
+          than a lowercase  o.  Try this on the line below
+
+- insert
+
+        a       insert text AFTER the cursor
+
+- movement
+
+        e               Move to the end of a word. 
+        w               Move forward to the beginning of a word. 
+        3w              Move forward three words. 
+        W               Move forward a WORD (any non-whitespace characters). 
+        b               Move backward to the beginning of a word. 
+        3b              Move backward three words. 
+        $               Move to the end of the line. 
+        0               Move to the beginning of the line. 
+        ^               Move to the first non-blank character of the line. 
+        )               Jump forward one sentence. 
+        (               Jump backward one sentence. 
+        }               Jump forward one paragraph. 
+        {               Jump backward one paragraph. 
+        j               Jump forward one line. 
+        10j             Jump forward 10 lines 
+        k               Jump backward one line. 
+        10k             Jump backward 10 lines. 
+        H               Jump to the top of the screen. 
+        M               Jump to the middle of the screen. 
+        L               Jump to the bottom of the screen.
+
+- copy and paste text
+
+        - use v selection method
+        - y to yank (copy)
+        - move to where want to paste
+        - p to paste
+
+- ignore case when searching    
+
+    - "permanent"
+
+        :set ic        (or :set ignorecase)
+        :set noic      (disable ignoring case)
+
+    - ignore case for just one search command
+
+        use  \c in the phrase:  
+
+            /ignore\c  <ENTER>
+
+    - start searching as characters entered
+
+        :set incsearch      (or :set is)
+
+    - highlight all matches at same time
+
+        :set hlsearch       (or :set hls)
+
+    - prepend "no" to switch an option off
+
+- help
+
+    Vim has a comprehensive on-line help system.  To get started, try one of
+    these three:
+  
+        - press the <HELP> key (if you have one)
+        - press the <F1> key (if you have one)
+        - type   :help <ENTER>
+
+    - help command
+    - help insert-index
+    - help user-manual
+    - help vimrc-intro
+
+- CREATE A STARTUP SCRIPT
+
+      Vim has many more features than Vi, but most of them are disabled by
+      default.  To start using more features you have to create a ".vimrc" file.
+
+COMPLETION
+
+    Command line completion with CTRL-D and <TAB> **
+
+    Example
+
+        1. Make sure Vim is not in compatible mode:  :set nocp
+
+        2. Look what files exist in the directory:  :!ls   or  :!dir
+
+        3. Type the start of a command:  :e
+
+        4. Press  CTRL-D  and Vim will show a list of commands that start with "e".
+
+        5. Press <TAB>  and Vim will complete the command name to ":edit".
+
+        6. Now add a space and the start of an existing file name:  :edit FIL
+
+        7. Press <TAB>.  Vim will complete the name (if it is unique).
+
+    NOTE:  Completion works for many commands.  Just try pressing CTRL-D and
+           <TAB>.  It is especially useful for  :help .
 
 
