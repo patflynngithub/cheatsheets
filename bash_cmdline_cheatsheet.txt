@@ -1,5 +1,4 @@
-Updated: April 13, 2019
-
+Updated: April 15, 2019
 
 BASH command-line environment
 -----------------------------
@@ -153,6 +152,10 @@ BASH command-line environment
     format the output of a line. Such as '\t' for tab, '\n' for newline etc.
 
 - keystrokes / shortcuts
+
+    CTRL-L
+    
+        the terminal can be cleared using the Ctrl+L key combination
 
     CTRL−D
 
@@ -541,6 +544,7 @@ BASH command-line environment
     return followed by a newline, '\r\n' in ASCII.
 
     On a UNIX system a newline is simply a newline, '\n' in ASCII.
+
 - Standard Wildcards (globbing patterns)
 
     Standard wildcards (also known as globbing patterns) are used by various command−line utilities to work
@@ -624,3 +628,233 @@ BASH command-line environment
         more than one file starts with the same characters, the shell will signal this to you, upon which you
         can hit Tab twice with short interval, and the shell presents the choices you have:
 
+- man / info / help
+
+    - man
+
+        - man man
+
+        The first line contains the name of the command you are reading about, and the id of the
+        section in which this man page is located. The man pages are ordered in chapters.
+        Commands are likely to have multiple man pages, for example the man page from the user
+        section, the man page from the system admin section, and the man page from the
+        programmer section.
+
+        By default, the man page with the lowest number is shown. If
+        you want to see another section than the default, specify it after the man command:
+
+            man 5 passwd
+
+        If you want to see all man pages about a command, one after the other, use the -a to man:
+
+            man -a passwd
+
+        This way, when you reach the end of the first man page and press SPACE again, the man page
+        from the next section will be displayed.
+
+        A reference to other man pages is given in the “SEE ALSO” section. In between parentheses
+        is the number of the man page section in which to find this command. Experienced users
+        often switch to the “SEE ALSO” part using the / command followed by the search string SEE
+        and press Enter.
+
+    - info
+
+        In addition to the man pages, you can read the Info pages about a command, using the info
+        command. These usually contain more recent information and are somewhat easier to use. The
+        man pages for some commands refer to the Info pages.
+
+    - "--help"
+
+ - Linux structure
+
+    “On a UNIX system, everything is a file; if something is not a file, it is a process.”
+
+    This statement is true because there are special files that are more than just files (named pipes
+    and sockets, for instance), but to keep things simple, saying that everything is a file is an
+    acceptable generalization. A Linux system, just like UNIX, makes no difference between a file and
+    a directory, since a directory is just a file containing names of other files. Programs, services, texts,
+    images, and so forth, are all files. Input and output devices, and generally all devices, are
+    considered to be files, according to the system.
+
+    - File typeS
+
+        Symbol   Meaning
+        ------   -------
+        -        Regular file
+        d        Directory
+        l        Link
+        c        Special file
+        s        Socket
+        p        Named pipe
+        b        Block device
+
+
+    - partitions
+
+        There are two kinds of major partitions on a Linux system:
+
+            data partition: normal Linux system data, including the root partition containing all the data to
+            start up and run the system; and
+
+            swap partition: expansion of the computer's physical memory, extra memory on hard disk.
+
+        Most systems contain a root partition, one or more data partitions and one or more swap partitions.
+        Systems in mixed environments may contain partitions for other system data, such as a partition
+        with a FAT or VFAT file system for MS Windows data.
+
+        The standard root partition (indicated with a single forward slash, /) is about 100-500 MB, and
+        contains the system configuration files, most basic commands and server programs, system
+        libraries, some temporary space and the home directory of the administrative user. A standard
+        installation requires about 250 MB for the root partition.
+
+        Read the software documentation for specific guidelines. Some applications, such as databases,
+        might require more swap space. Others, such as some handheld systems, might not have any
+        swap at all by lack of a hard disk. Swap space may also depend on your kernel version.
+
+        The kernel is on a separate partition as well in many distributions, because it is the most important
+        file of your system. If this is the case, you will find that you also have a /boot partition, holding your
+        kernel(s) and accompanying data files.
+
+        The rest of the hard disk(s) is generally divided in data partitions, although it may be that all of the
+        non-system critical data resides on one partition, for example when you perform a standard
+        workstation installation. When non-critical data is separated on different partitions, it usually
+        happens following a set pattern:
+
+            a partition for user programs (/usr)
+            a partition containing the users' personal data (/home)
+            a partition to store temporary data like print- and mail-queues (/var)
+            a partition for third party and extra software (/opt)
+
+        Every partition has its own set of inodes; throughout a system with multiple partitions, files with the
+        same inode number can exist.
+
+        - swap partitions
+
+            Linux generally counts on having twice the amount of physical memory in the form of swap space
+            on the hard disk. When installing a system, you have to know how you are going to do this.
+
+            An example on a system with 512 MB of RAM:
+
+                1st possibility: one swap partition of 1 GB
+                2nd possibility: two swap partitions of 512 MB
+                3rd possibility: with two hard disks: 1 partition of 512 MB on each disk.
+
+            The last option will give the best results when a lot of I/O is to be expected.
+
+            Read the software documentation for specific guidelines. Some applications, such as databases,
+            might require more swap space. Others, such as some handheld systems, might not have any
+            swap at all by lack of a hard disk. Swap space may also depend on your kernel version.
+
+- PATH
+
+    echo $PATH
+    /home/jumper/bin:/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin:\
+    /usr/bin:/usr/sbin:/bin:/sbin
+    
+    export PATH=/usr/local/bin:/usr/local/sbin:/usr/X11R6/bin:\
+        /usr/bin:/usr/sbin:/bin:/sbin:/home/jumper/bin
+
+    - augment path
+
+        export PATH="$PATH:/Applications/SublimeText/Contents/SharedSupport/bin/"
+
+- chmod
+
+    - change file permissions
+
+- Redirection
+
+    - Redirecting “nothing” to an existing file is equal to emptying the file:
+
+        nancy:~> ls -l list
+        -rw-rw-r--   1 nancy   nancy   117 Apr 2 18:09 list
+        nancy:~> > list
+        nancy:~> ls -l list
+
+    if the file descriptor number is omitted, and the first character of the
+    redirection operator is <, the redirection refers to the standard input (file descriptor 0). If the first
+    character of the redirection operator is >, the redirection refers to the standard output (file descriptor 1).
+
+    The ampersand here is not used to run a process in the background. Here, it merely serves as an indication that
+    the number that follows is not a file name, but rather a location that the data stream is pointed to.
+
+    If your process generates a lot of errors, this is a way to thoroughly examine them:
+    
+        command 2>&1 | less
+
+    Separating standard output from standard error
+
+        Constructs like these are often used by programmers, so that output is displayed in one terminal
+        window, and errors in another. Find out which pseudo terminal you are using issuing the tty
+        command first:
+
+            andy:~/newsoft> make all 2> /dev/pts/7
+
+- tee
+
+    Writing to output and files simultaneously
+
+    You can use the tee command to copy input to standard output and one or more output files in one
+    move. Using the -a option to tee results in appending input to the file(s). This command is useful if
+    you want to both see and save output. The > and >> operators do not allow to perform both actions
+    simultaneously.
+
+    This tool is usually called on through a pipe (|), as demonstrated in the example below:
+
+        mireille ~/test> date | tee file1 file2
+        Thu Jun 10 11:10:34 CEST 2004
+        mireille ~/test> cat file1
+        Thu Jun 10 11:10:34 CEST 2004
+        mireille ~/test> cat file2
+        Thu Jun 10 11:10:34 CEST 2004
+
+        mireille ~/test> uptime | tee -a file2
+        11:10:51 up 21 days, 21:21, 57 users, load average: 0.04, 0.16, 0.26
+        mireille ~/test> cat file2
+        Thu Jun 10 11:10:34 CEST 2004
+        11:10:51 up 21 days, 21:21, 57 users, load average: 0.04, 0.16, 0.26
+
+- filters
+
+    When a program performs operations on input and writes the result to the standard output, it is
+    called a filter. One of the most common uses of filters is to restructure output.
+
+    - grep
+    - sort
+    - uniq
+
+- truncating a file
+
+    andy:~>  > placeholder
+
+- tools that work on compressed files, by uncompressing them only in memory.
+
+    The actual compressed file stays on your disk as it is. Most systems support zgrep, zcat, bzless and
+    other members of the z-family to prevent unnecessary decompressing/compressing actions. See
+    your system's binary directory and the Info pages.
+
+- MANPATH 
+
+    Variable that tells the man command where to look for compressed man pages.
+
+    If new software is added to the system in new or unusual directories, the
+    documentation for it will probably also be in an unusual directory. If you want to read the man pages
+    for the new software, extend the MANPATH variable:      
+
+        export MANPATH=$MANPATH:/opt/FlightGear/man
+
+- LD_LIBRARY_PATH
+
+    paths to search for libraries
+
+- When logging into an interactive login shell, login will do the authentication, set the environment
+  and start your shell. 
+
+  In the case of bash, the next step is reading the general profile from /etc , if
+  that file exists. bash then looks for ~/.bash_profile , ~/.bash_login and ~/.profile , in that order,
+  and reads and executes commands from the first one that exists and is readable. If none exists,
+  /etc/bashrc is applied.
+
+
+When a login shell exits, bash reads and executes commands from the file ~/.bash_logout , if it
+exists.
