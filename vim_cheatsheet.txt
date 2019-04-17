@@ -8,12 +8,28 @@ VIM Cheatsheet
 
 - it can operate in two modes: 
 
-     command mode and insert mode. The editor always starts in command mode.
+      command mode and insert mode. 
+
+  The editor always starts in command mode.
+
+  Get back to command mode
+
+        Esc                         go back to command mode
   
   Commands move you through the text, search, replace, mark blocks and perform other editing tasks, and
   some of them switch the editor to insert mode. This means that each key has not one, but likely two 
   meanings: it can either represent a command for the editor when in command mode, or a character that 
   you want in a text when in insert mode.
+
+  Pressing the Esc key switches back to command mode. If you're not sure what mode you're in
+  because you use a really old version of vi that doesn't display an “INSERT” message, type Esc and 
+  you'll be sure to return to command mode. It is possible that the system gives a little alert when you
+  are already in command mode when hitting Esc, by beeping or giving a visual bell (a flash on the
+  screen). This is normal behavior.
+
+  NOTE: If you are ever unsure about something you typed, press <ESC> to place
+        you in Normal mode.  Then retype the command you wanted.
+
 
 - Moving through the text is usually possible with the arrow keys.
 
@@ -23,233 +39,19 @@ VIM Cheatsheet
             h       l
                 j
 
-  SHIFT-G will put the prompt at the end of the document.
+  NOTE: The cursor keys should also work.  But using hjkl you will be able to
+        move around much faster, once you get used to it.  Really!
 
-- Basic operations
-
-        Esc                         go back to command mode
-
-        dd                          delete current linethe line starting from the current cursor position.
-        dw                          delete the word at the right side of the cursor.
-        d$                          delete to end of line
-        n dd                        delete n lines starting from the current cursor position.
-        n dw                        delete n words at the right side of the cursor.
-        x                           delete the character on which the cursor is positioned
-        :n                          moves to line n of the file.
-        :w                          save (write) the file
-        :q                          exit the editor.
-        :q!                         forces the exit when you want to quit a file containing unsaved changes.
-        :wq                         save and exit
-        :w                          newfile will save the text to newfile .
-        :wq!                        overrides read-only permission (if you have the permission to override 
-                                    permissions, for instance when you are using the root account.
-        /astring                    search the string in the file and position the cursor on the first match
-                                    below its position.
-        / or n                      perform the same search again, moving the cursor to the next match.
-        N                           continue search in the opposite direction
-        ?                           search for a phrase in the backward direction
-        :1, $s/word/anotherword/g   replace word with another word throughout the file.
-        yy                          copy a block of text.
-        n p                         paste it n times.
-        :recover                    recover a file after an unexpected interruption.
-
-        u                           undo
-        U                           fix a whole line
-        Ctrl-R                      undo the undo's
-        :set number                 show line numbers
-
-- Commands that switch the editor to insert mode
-
-    a                               append: it moves the cursor one position to the right before switching to insert mode
-    i                               insert before the cursor
-    o                               insert a blank line under the current cursor position and move the cursor to that line.
-
-    A                               append to end of line
-
-    Pressing the Esc key switches back to command mode. If you're not sure what mode you're in
-    because you use a really old version of vi that doesn't display an “INSERT” message, type Esc and
-    you'll be sure to return to command mode. It is possible that the system gives a little alert when you
-    are already in command mode when hitting Esc, by beeping or giving a visual bell (a flash on the
-    screen). This is normal behavior.
-
-- if vi freezes, the culprit could by Ctrl-s (stops screen output)
-
-    - try Ctrl-q to fix  (restores screen to normal)
-
-------------------------------------------------
-
-NOTE: If you are ever unsure about something you typed, press <ESC> to place
-      you in Normal mode.  Then retype the command you wanted.
-
-NOTE: The cursor keys should also work.  But using hjkl you will be able to
-      move around much faster, once you get used to it.  Really!
-
-----------------------------------------------
-
-- Many commands that change text are made from an operator and a motion.
-
-  The format for a delete command with the  d  delete operator is as follows:
-
-        d   motion
-
-  Where:
-        d      - is the delete operator.
-        motion - is what the operator will operate on (listed below).
-
-  A short list of motions:
-
-      w - until the start of the next word, EXCLUDING its first character.
-      e - to the end of the current word, INCLUDING the last character.
-      $ - to the end of the line, INCLUDING the last character.
-
-  Thus typing  de  will delete from the cursor to the end of the word.
-
-      dw, de, d$
-
------------------------------------------------------------------
-
-NOTE:  Pressing just the motion while in Normal mode without an operator will
-       move the cursor as specified.
-
-----------------------------------------------------------------
-
-- Typing a number before a motion repeats it that many times.
-
-     2w  move the cursor two words forward.
-
-     3e  move the cursor to the end of the third word forward.
-
-      0  (zero) to move to the start of the line.
-
-- In the combination of the delete operator and a motion mentioned above you
-  insert a count before the motion to delete more:
-
-      d   number   motion
-    
-      e.g.    d2w
-
-- Delete whole line(s)
-
-    dd
-    2dd
-
-- Put command
-
-    p        put previously deleted text after the cursor.
-
-        (e.g. last delete was a dd ; the deletion contents where stored in a VIM register)
-
-- Replace command
-
-    rx       replace the character at the cursor with  x
-    R        replace more than one character ("OVERWRITE" mode)
-
-- Change operator
-
-    ce       o change until the end of a word
-
-     c    [number]   motion     (motions: w, $, etc.)
-
-- Cursor location and file status
+- movement
 
     CTRL-G      display your location in the file and the file status.
+                NOTE:  You may see the cursor position in the lower right corner of the screen
+                       This happens when the 'ruler' option is set (see  :help 'ruler'  )
+
+        :n                          moves to line n of the file.    
         gg      move to start of file
          G      move to end of file.
        n G      move to line n
-
-    NOTE:  You may see the cursor position in the lower right corner of the screen
-           This happens when the 'ruler' option is set (see  :help 'ruler'  )
-
-- find find a matching ),], or }
-
-         %      %  find a matching ),], or }
-
-
-- show options
-
-    :set            show all optoin that differ from their default value
-    :set all        list all options, including defaults (except terminal options)
-    :set termcap    show all terminal options
-
-    :echo &mps      show setting for matching parents, braces, etc.
-    :set mps?       show setting for matching parents, braces, etc.
-
-
-- back to previous spots
-
-    Ctrl-O         to go back to where you came from 
-                   repeat to go back further
-    CTRL-I         goes forward
-
--substitute command
-
-    :s/old/new/g   to substitute 'new' for 'old'
-
-    NOTE: without the '/g' suffix, only changes the first occurrence
-
-    To change every occurrence of a character string between two lines,
-     
-        :#,#s/old/new/g    where #,# are the line numbers of the range
-                           of lines where the substitution is to be done.
-        :%s/old/new/g      to change every occurrence in the whole file.
-        :%s/old/new/gc     to find every occurrence in the whole file,
-                           with a prompt whether to substitute or not.
-
-- search on the word over which your cursor is positioned
-
-        *                 forwards
-        #                 backwards
-
-- execute an external command
-
-        :! followed by an external command to execute that command 
-
-- writing to a file
-
-        :w filename
-
-- selecting text
-
-    Pressing  v  starts Visual selection.  You can move the cursor around
-    to make the selection bigger or smaller.  Then you can use an operator
-    to do something with the text.  For example,  d  deletes the text.
-
-        - go to starting point
-        - press v
-        - move to ending point
-
-    e.g. of application of writing selected text to a file
-
-        - do above
-        - :
-        - verify see '<,'>
-        - w filename
-
-- RETRIEVING AND MERGING FILES
-
-    :r FILENAME     insert the contents of a file at cursor
-
-    :r !command     read the output of an external command.  For example,
-                    :r !ls  reads the output of the ls command and puts it below the
-                    cursor.
-
-- THE OPEN COMMAND
-
-    Type  o  to open a line below the cursor and place you in Insert mode
-
-        - Move the cursor to the line
-        - Type the lowercase letter  o  to open up a line BELOW the cursor and place
-          you in Insert mode.
-        - Now type some text and press <ESC> to exit Insert mode.
-
-    Note: To open up a line ABOVE the cursor, simply type a capital  O , rather
-          than a lowercase  o.  Try this on the line below
-
-- insert
-
-        a       insert text AFTER the cursor
-
-- movement
 
         e               Move to the end of a word. 
         w               Move forward to the beginning of a word. 
@@ -272,56 +74,192 @@ NOTE:  Pressing just the motion while in Normal mode without an operator will
         M               Jump to the middle of the screen. 
         L               Jump to the bottom of the screen.
 
-- copy and paste text
+    - back to previous spots
+
+        Ctrl-O         to go back to where you came from 
+                       repeat to go back further
+        CTRL-I         goes forward
+
+
+
+- editing
+
+        dd                          delete current line starting from the current cursor position.
+        dw                          delete the word at the right side of the cursor.
+        d$                          delete to end of line
+        n dd                        delete n lines starting from the current cursor position.
+        n dw                        delete n words at the right side of the cursor.
+        x                           delete the character on which the cursor is positioned
+        rx                          replace the character at the cursor with  x
+
+        commands that switch the editor to insert mode
+        ----------------------------------------------
+
+        R                           replace more than one character ("OVERWRITE" mode)
+        ce                          o change until the end of a word
+                                    (e.g. of  c    [number]   motion     (motions: w, $, etc.))
+        a                           append: it moves the cursor one position to the right before switching to insert mode
+        A                           append to end of line
+        i                           insert before the cursor
+        o                           insert a blank line under the current cursor position and move the cursor to that line.
+
+        c$ or C (shift-c)           delete from the cursor position until the end of the line and put you in [INSERT] mode.
+        u                           undo
+        U                           fix a whole line
+        Ctrl-R                      undo the undo's
+
+    - open command
+
+        Type  o  to open a line below the cursor and place you in Insert mode
+
+            - Move the cursor to the line
+            - Type the lowercase letter  o  to open up a line BELOW the cursor and place
+              you in Insert mode.
+            - Now type some text and press <ESC> to exit Insert mode.
+
+        Note: To open up a line ABOVE the cursor, simply type a capital  O , rather
+              than a lowercase  o.  Try this on the line below
+
+
+- operators/repeats/motions
+
+    - Many commands that change text are made from an operator and a motion.
+
+      Example
+ 
+         The format for a delete command with the  d  delete operator is as follows:
+
+         d   motion
+
+         Where:
+           d      - is the delete operator.
+           motion - is what the operator will operate on (listed below).
+
+    - A short list of motions:
+
+           w - until the start of the next word, EXCLUDING its first character.
+           e - to the end of the current word, INCLUDING the last character.
+           $ - to the end of the line, INCLUDING the last character.
+
+    - Thus typing  de  will delete from the cursor to the end of the word.
+
+           dw, de, d$
+
+    -----------------------------------------------------------------
+
+    NOTE:  Pressing just the motion while in Normal mode without an operator will
+           move the cursor as specified.
+
+    ----------------------------------------------------------------
+
+    - Typing a number before a motion repeats it that many times.
+
+         2w  move the cursor two words forward.
+
+         3e  move the cursor to the end of the third word forward.
+
+          0  (zero) to move to the start of the line.
+
+    - In the combination of the delete operator and a motion mentioned above you
+      insert a count before the motion to delete more:
+
+          d   number   motion
+    
+          e.g.    d2w
+
+
+- selecting/copying/cutting/pasting
+
+    - selecting text
+
+        Pressing  v  starts Visual selection.  You can move the cursor around
+        to make the selection bigger or smaller.  Then you can use an operator
+        to do something with the text.  For example,  d  deletes the text.
+
+            - go to starting point
+            - press v
+            - move to ending point
+
+        e.g. of application of writing selected text to a file
+
+            - do above
+            - :
+            - verify see '<,'>
+            - w filename
+
+
+    y or yy                     copy a block of text.
+    p                           put previously copied/cut/deleted text after the cursor (PUT command)
+                                (e.g. last delete was a dd ; the deletion contents where stored in a VIM register)
+    n p                         paste it n times.
+    
+    - copy and paste text
 
         - use v selection method
         - y to yank (copy)
         - move to where want to paste
         - p to paste
 
-- ignore case when searching    
 
-    - "permanent"
+- search & replace
 
-        :set ic        (or :set ignorecase)
-        :set noic      (disable ignoring case)
+        /astring                    search the string in the file and position the cursor on the first match
+                                    below its position.
+        / or n                      perform the same search again, moving the cursor to the next match.
+        N                           continue search in the opposite direction
+        ?                           search for a phrase in the backward direction
 
-    - ignore case for just one search command
+        :s/word/anotherword/g       replace word with another word throughout the file.
 
-        use  \c in the phrase:  
 
-            /ignore\c  <ENTER>
+    -substitute command
 
-    - start searching as characters entered
+        :s/old/new/g   to substitute 'new' for 'old'
 
-        :set incsearch      (or :set is)
+        NOTE: without the '/g' suffix, only changes the first occurrence
 
-    - highlight all matches at same time
+        To change every occurrence of a character string between two lines,
+         
+            :#,#s/old/new/g    where #,# are the line numbers of the range
+                               of lines where the substitution is to be done.
+            :%s/old/new/g      to change every occurrence in the whole file.
+            :%s/old/new/gc     to find every occurrence in the whole file,
+                               with a prompt whether to substitute or not.
 
-        :set hlsearch       (or :set hls)
+    - search on the word over which your cursor is positioned
 
-    - prepend "no" to switch an option off
+            *                 forwards
+            #                 backwards
 
-- help
+    - ignore case when searching    
 
-    Vim has a comprehensive on-line help system.  To get started, try one of
-    these three:
-  
-        - press the <HELP> key (if you have one)
-        - press the <F1> key (if you have one)
-        - type   :help <ENTER>
+        - "permanent"
 
-    - help command
-    - help insert-index
-    - help user-manual
-    - help vimrc-intro
+            :set ic        (or :set ignorecase)
+            :set noic      (disable ignoring case)
 
-- CREATE A STARTUP SCRIPT
+        - ignore case for just one search command
 
-      Vim has many more features than Vi, but most of them are disabled by
-      default.  To start using more features you have to create a ".vimrc" file.
+            use  \c in the phrase:  
 
-COMPLETION
+                /ignore\c  <ENTER>
+
+        - start searching as characters entered
+
+            :set incsearch      (or :set is)
+
+        - highlight all matches at same time
+
+            :set hlsearch       (or :set hls)
+
+        - prepend "no" to switch an option off
+
+    
+    - find find a matching ),], or }
+
+             %          find a matching ),], or }
+
+- completion
 
     Command line completion with CTRL-D and <TAB> **
 
@@ -343,5 +281,65 @@ COMPLETION
 
     NOTE:  Completion works for many commands.  Just try pressing CTRL-D and
            <TAB>.  It is especially useful for  :help .
+
+
+
+- file/editor operations
+
+        :w                          save (write) the file
+        :q                          exit the editor.
+        :q!                         forces the exit when you want to quit a file containing unsaved changes.
+        :wq                         save and exit
+        :w                          newfile will save the text to newfile .
+        :wq!                        overrides read-only permission (if you have the permission to override 
+                                    permissions, for instance when you are using the root account.
+        :recover                    recover a file after an unexpected interruption.
+        :set number                 show line numbers
+
+    - retrieving and merging files
+
+        :r FILENAME     insert the contents of a file at cursor
+
+        :r !command     read the output of an external command.  For example,
+                    :r !ls  reads the output of the ls command and puts it below the
+                    cursor.
+
+    - if vi freezes, the culprit could by Ctrl-s (stops screen output)
+    
+        - try Ctrl-q to fix  (restores screen to normal)
+
+    - execute an external command
+
+            :! followed by an external command to execute that command 
+
+    - show options
+
+        :set            show all optoin that differ from their default value
+        :set all        list all options, including defaults (except terminal options)
+        :set termcap    show all terminal options
+
+        :echo &mps      show setting for matching parents, braces, etc.
+        :set mps?       show setting for matching parents, braces, etc.
+
+
+- help
+
+    Vim has a comprehensive on-line help system.  To get started, try one of
+    these three:
+  
+        - press the <HELP> key (if you have one)
+        - press the <F1> key (if you have one)
+        - type   :help <ENTER>
+
+    - help command
+    - help insert-index
+    - help user-manual
+    - help vimrc-intro
+
+
+- CREATE A STARTUP SCRIPT
+
+      Vim has many more features than Vi, but most of them are disabled by
+      default.  To start using more features you have to create a ".vimrc" file.
 
 
