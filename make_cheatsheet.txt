@@ -1,0 +1,853 @@
+Updated: 04/17/2019
+
+MAKE Cheatsheet
+---------------
+
+- the center of MAKE is the text file called "makefile" that is automatically used when
+  the "make" command is issued at the command line
+
+  It is possible to use the -f [filename] option to specify a different makefile name, but this happens so rarely,
+  I recommend you don't get into the habit of doing it.
+
+- what is a makefile?
+
+    A makefile is a specially formatted text file that a unix program called 'make' can interpret. 
+    Basically, the makefile contains a list of requirements for a program to be 'up to date.' 
+    The make program looks at these requirements, checks the timestamps on all the source-files 
+    listed in the makefile, and re-compiles any files which have an out-of-date timestamp.
+
+- variables and comments are two features of a makefile that are not required but make life much easier.
+
+- comments
+
+    # makefile for creating helloworld.exe
+
+- variables (aka macros)
+
+    - variables in makefiles do not have types, and are typically interpreted as strings.
+
+    - Some commonly used variable names, with declarations:
+
+        CFLAGS = -g -Wall
+        CC = g++
+        MACROS= -me
+        PSROFF= groff -Tps
+        DITROFF= groff -Tdvi
+        CFLAGS= -O -systype bsd43
+        LIBS = "-lncurses -lm -lsdl"
+        MYFACE = ":*)"
+
+      These variables allow you to quickly change the behavior of your makefile. These variables will be used in later examples. 
+
+      To use the value stored in the variable, type${varname}
+
+- filenames
+
+    You will see that all the files in this tutorial have the extension .cc. '.cc' is the accepted file extension
+    for c++ when using gcc. You may remember from the gcc tutorial that if your file extension is .cc, then you can
+    call gcc on your files instead of g++ because you are using a recognized extension. Feel free to use .cp or .cpp
+    but be sure that you are only making calls to g++ in that case, or you will get command line errors.
+
+- dependencies
+
+    Think of a dependency as a rule that must be adhered to.
+
+    Here is the structure:
+
+        [name of rule] : [list of other rules, separated by 
+        spaces] [list of source files, separated by spaces]
+
+        [TAB]command to execute in the event that the rule is violated.
+
+        - notes
+
+            - the name of the rule on the left is just a name. In many makefiles, the rule name may be an exact match of
+              a file name in your directory, but make does not actually look at that file. 
+
+        - another structure (from another MAKE tutorial)
+
+          The general syntax of a Makefile target rule is given below:
+
+                target [target...] : [dependent ....]
+
+                    [ command ...]
+
+          In the above code, the arguments in brackets are optional and ellipsis means one or more.
+          Here, note that the tab to preface each command is required.
+
+        - Example
+
+            checkFormainDoto: main.cc
+
+                g++ -c main.cc
+
+            checkFormainDotEXE: checkFormainDoto
+
+                g++ main.o -o main.exe
+
+            - What this says is that to have an up-to-date main.exe file, we need to check for main.o first.
+              If make finds that main.cc has a different time stamp than the last time make was run, then it
+              will complete the tabbed-in command on the line following the main.o rule. Then, when that rule
+              is satisfied, make should find that the outcome of the checkFormainDoto rule has changed since
+              the last time make was run and then run the tabbed-in code for creating make.exe.
+
+            The format you will see in a typical makefile (and the format you should use and get used to reading) is:
+
+                main.o: main.cc
+
+                    g++ -c main.cc
+
+                main.exe: main.o
+
+                    g++ main.o -o main.exe
+
+            or, for a more interesting usage:
+
+                    main.o: main.cc
+
+                        g++ -c main.cc
+
+                    help.o: help.cc
+
+                        g++ -c help.cc
+
+                    main.exe: main.o help.o
+
+                        g++ main.o help.o -o main.exe
+
+    The reason these rules are called dependencies is that one rule, such as the main.exe rule, 
+    can depend on the status of another rule or file. Dependencies can become
+    very complicated very quickly. More advanced topics outside of this tutorial allow a programmer
+    to create makefiles for massive projects with little effort.
+
+    Another thing to notice in the format of a dependency is the requirement of a tab before the resulting command.
+    A tab MUST BE USED. Be careful to realize that a sequence of spaces, or a space and then a tab are not the same
+    thing as a single tab. After listing the requirements for a dependency, every line that follows which has a leading [tab]
+    character will be interpreted as a command that will contribute to satisfying that rule. Note that a dependency can have 
+    multiple tabbed-in commands to satisfy it.
+
+    If you copied-and-pasted, and you have unexplained errors, delete the whitespace in front of 'g++ helloworld' and insert a tab.
+    Be sure there is no white space in front of the first line.
+
+- more interesting example
+
+    
+    # makefile for compiling the frog project
+    
+    # Author:  Adam Anthony
+
+    CC=g++
+    CFLAGS=-g -Wall
+    RM=/bin/rm -f     #for Windows, use RM=del
+
+    # calling 'make all' will ensure that every feature of the program is compiled
+
+    all: main
+
+
+    # create the object file for frog.cc
+
+    frog.o: frog.h frog.cc
+
+        ${CC} ${CFLAGS} -c frog.cc
+
+
+    # create the object file for the main file
+
+    main.o: frog.h main.cc
+
+        ${CC} ${CFLAGS} -c main.cc
+
+
+    # create the executable
+
+    main: main.o frog.o
+
+        ${CC} ${CFLAGS} -o main main.o frog.o
+
+
+    # rule for cleaning files generated during compilations.  Call 'make clean' to 
+    # use it
+
+    clean:
+
+        ${RM} *.o main
+
+    - try > make clean
+      to force make to delete all your compiled code, so that make will compile every file in your project on the next run.
+
+- An Even More Interesting Example
+
+    This example shows how you can direct make to compile different
+    groups of files. Typically Make will find the first dependency in the file,
+    satisfy all dependencies and sub-dependencies that it requires, and exit.
+    It is possible to set up a compilation directory where all of your source
+    files can be kept, controlled by a single make file.
+
+        # makefile for compiling the frog and helloworld projects
+
+        # you can compile one at a time or use 'make all' to compile both
+
+        #Author:  Adam Anthony
+
+        CC=g++
+        CFLAGS=-g -Wall
+        RM=/bin/rm -f       # for Windows, use RM=del
+
+        # calling 'make all' will ensure that every feature of the program is compiled
+
+        all: main helloworld
+
+        # create the object file for frog.cc
+
+        frog.o: frog.h frog.cc
+
+            ${CC} ${CFLAGS} -c frog.cc
+
+        # create the object file for the main file
+
+        main.o: frog.h main.cc
+
+            ${CC} ${CFLAGS} -c main.cc
+
+        # create the executable
+
+        main: main.o frog.o
+
+            ${CC} ${CFLAGS} -o main main.o frog.o
+
+        # create helloworld
+
+        helloworld: helloworld.cc
+
+            ${CC} ${CFLAGS} -o helloworld helloworld.cc
+
+        # rule for cleaning files generated during compilations. Call 'make clean' to
+        #use it
+
+        clean:
+
+            ${RM} *.o main
+
+    - Try any combination of the following calls, to see how make behaves.
+      To be sure you are seeing the proper behavior, run 'make clean' and then
+      try a new combination.
+
+        > make all
+        > make main
+        > make helloworld
+
+- doesn't have to be for just gcc/g++
+
+    One advantage to using the CC and CFLAGS variables is
+    that you can quickly change what compiler you are using and what
+    flags to include, without editing the entire file. However, LaTeX users
+    can use makefiles, as well as java programmers. Make can also be
+    used to keep archives up-to-date without having to re-compress every
+    single file in the archive. Since all make does is look at file ages and
+    compare with its own records, it can be used for a multitude of
+    applications.
+
+- What kinds of commands can I use in a makefile to satisfy
+  dependencies?
+
+    Any command you can type on the command line(cd, ls, grep, tar,
+    javac), you can use for the tabbed-in portion of a dependency.
+
+- I have a project with hundreds of dependencies. Must I create a
+  makefile by hand?
+
+    - no, can use dependency generators
+
+- Special Macros
+
+    Before issuing any command in a target rule set, there are certain special macros predefined:
+
+        $@          the name of the file to be made.
+        $?          the name of the changed dependents.
+
+        For example, we could use a rule as follows:
+
+            hello: main.cpp hello.cpp factorial.cpp
+
+                $(CC) $(CFLAGS) $? $(LDFLAGS) -o $@
+
+        alternatively:
+
+            hello: main.cpp hello.cpp factorial.cpp
+
+                $(CC) $(CFLAGS) $@.cpp $(LDFLAGS) -o $@
+
+        In this example, $@ represents hello and $? or $@.cpp picks up all the changed source files.
+
+    There are two more special macros used in the implicit rules. They are:
+ 
+       $<          the name of the related file that caused the action.
+       $*          the prefix shared by target and dependent files.
+
+    Common implicit rule is given below for the construction of .o (object) files out of .cpp (source files).
+
+        .o.cpp:
+
+            $(CC) $(CFLAGS) -c $<
+
+    alternatively:
+
+        .o.cpp:
+
+            $(CC) $(CFLAGS) -c $*.c  # this might need to be .cpp instead of .c
+
+- conventional macros
+
+    There are various default macros. You can see them by typing "make -p" to print out the
+    defaults. Most are pretty obvious from the rules in which they are used.
+
+    These predefined variables, i.e., macros used in implicit rules fall into two classes. They are
+    as follows:
+
+        1. Macros that are names of programs (such as CC).
+        2. Macros that contain arguments of the programs (such as CFLAGS).
+
+    Below is a table of some of the common variables used as names of programs in built-in rules
+    of makefiles:
+
+        AR               Archive-maintaining program; default is 'ar'.
+        AS               Program to compile assembly files; default is 'as'.
+        CC               Program to compile C programs; default is 'cc'.
+        CO               Program to check out files from RCS; default is 'co'.
+        CXX              Program to compile C++ programs; default is 'g++'.
+        CPP              Program to run the C preprocessor, with results to standard output; default
+                         is '$(CC) -E'.
+        FC               Program to compile or preprocessing Fortran and Ratfor programs; default
+                         is 'f77'.
+        GET              Program to extract a file from SCCS; default is 'get'.
+        LEX              Program to use to turn Lex grammars into source code; default is 'lex'.
+        YACC             Program to use to turn Yacc grammars into source code; default is 'yacc'.
+        LINT             Program to use to run lint on source code; default is 'lint'.
+        MAKEINFO         Program to convert a Texinfo source file into an Info file; default is
+                         'makeinfo'.
+        TEX              Program to make TeX dvi files from TeX source; default is 'tex'.
+        TEXI2DVI         Program to make TeX dvi files from Texinfo source; default is 'texi2dvi'.
+        RM Command to remove a file; default is 'rm -f'.
+
+    Here is a table of variables whose values are additional arguments for the programs above.
+    The default values for all of these is the empty string, unless otherwise noted.
+
+        ARFLAGS          Flags to give the archive-maintaining program; default is 'rv'.
+        ASFLAGS          Extra flags to give to the assembler when explicitly invoked on a '.s' or '.S'
+                         file.
+        CFLAGS           Extra flags to give to the C compiler.
+        CXXFLAGS         Extra flags to give to the C compiler.
+        COFLAGS          Extra flags to give to the RCS co program.
+        CPPFLAGS         Extra flags to give to the C preprocessor and programs, which use it (such
+                         as C and Fortran compilers).
+        FFLAGS           Extra flags to give to the Fortran compiler.
+        GFLAGS           Extra flags to give to the SCCS get program.
+        LDFLAGS          Extra flags to give to compilers when they are supposed to invoke the
+                         linker, 'ld'.
+        LFLAGS           Extra flags to give to Lex.
+        YFLAGS           Extra flags to give to Yacc.
+        PFLAGS           Extra flags to give to the Pascal compiler.
+        RFLAGS           Extra flags to give to the Fortran compiler for Ratfor programs.
+        LINTFLAGS        Extra flags to give to lint.
+
+    NOTE: You can cancel all variables used by implicit rules with the '-R' or '--no-builtin-
+          variables' option.
+
+    You can also define macros at the command line as shown below:
+
+        make CPP = /home/courses/cop4530/spring02
+
+- Make behavior when a failure status.
+
+    After each shell invocation returns, make looks at its exit status. If the shell completed successfully (the exit status is zero),
+    the next line in the recipe (makefile) is executed in a new shell; after the last line is finished, the rule is finished.
+
+    If there is an error (the exit status is nonzero), make gives up on the current rule, and perhaps on all rules.
+
+    Sometimes the failure of a certain recipe line does not indicate a problem. For example, you may use the mkdir command
+    to ensure that a directory exists. If the directory already exists, mkdir will report an error, but you probably want
+    make to continue regardless.
+
+    To ignore errors in a recipe (makefile line, write a ‘-’ at the beginning of the line’s text (after the initial tab). 
+    The ‘-’ is discarded before the line is passed to the shell for execution.
+
+    For example,
+
+        clean:
+
+            -rm -f *.o
+
+        or
+
+        clean:
+
+            -rm *.o *~ core paper
+
+    This causes make to continue even if rm is unable to remove a file.
+
+    When you run make with the ‘-i’ or ‘--ignore-errors’ flag, errors are ignored in all recipes of all rules. 
+    A rule in the makefile for the special target .IGNORE has the same effect, if there are no prerequisites. 
+    These ways of ignoring errors are obsolete because ‘-’ is more flexible.
+
+    When errors are to be ignored, because of either a ‘-’ or the ‘-i’ flag, make treats an error return just
+    like success, except that it prints out a message that tells you the status code the shell exited with, 
+    and says that the error has been ignored.
+
+    When an error happens that make has not been told to ignore, it implies that the current target cannot be 
+    correctly remade, and neither can any other that depends on it either directly or indirectly. No further
+    recipes will be executed for these targets, since their preconditions have not been achieved.
+
+    Normally make gives up immediately in this circumstance, returning a nonzero status. However, if the ‘-k’ 
+    or ‘--keep-going’ flag is specified, make continues to consider the other prerequisites of the pending targets,
+    remaking them if necessary, before it gives up and returns nonzero status. For example, after an error in 
+    compiling one object file, ‘make -k’ will continue compiling other object files even though it already knows that 
+    linking them will be impossible. See Summary of Options.
+
+    The usual behavior assumes that your purpose is to get the specified targets up to date; once make learns that this 
+    is impossible, it might as well report the failure immediately. The ‘-k’ option says that the real purpose is to test 
+    as many of the changes made in the program as possible, perhaps to find several independent problems so that you can 
+    correct them all before the next attempt to compile. This is why Emacs’ compile command passes the ‘-k’ flag by default.
+
+    Usually when a recipe line fails, if it has changed the target file at all, the file is corrupted and cannot be used—or 
+    at least it is not completely updated. Yet the file’s time stamp says that it is now up to date, so the next time make 
+    runs, it will not try to update that file. The situation is just the same as when the shell is killed by a signal; see 
+    Interrupts. So generally the right thing to do is to delete the target file if the recipe fails after beginning to change 
+    the file. make will do this if .DELETE_ON_ERROR appears as a target. This is almost always what you want make to do, but 
+    it is not historical practice; so for compatibility, you must explicitly request it. 
+
+- Make echoes the commands, after macro substitution to show you what is happening.
+
+  Sometimes you might want to turn that off (using @). For example:
+
+        install:
+
+            @echo You must be root to install
+
+- People have come to expect certain targets in Makefiles. You should always browse first.
+  However, it is reasonable to expect that the targets all (or just make), install, and clean is
+  found.
+
+        make all         It compiles everything so that you can do local testing before installing
+                         applications.
+        make install     It installs applications at right places.
+        make clean       It cleans applications, gets rid of the executables, any temporary files,
+                         object files, etc.
+
+- Makefile Implicit Rules
+
+    The command is one that ought to work in all cases where we build an executable x out of
+    the source code x.cpp. This can be stated as an implicit rule:
+
+        .cpp:
+
+            $(CC) $(CFLAGS) $@.cpp $(LDFLAGS) -o $@    
+
+            # recall  $@  is the name of the file to be made.
+       $*          the prefix shared by target and dependent files.
+
+    This implicit rule says how to make x out of x.c -- run cc on x.c and call the output x. The rule
+    is implicit because no particular target is mentioned. It can be used in all cases.
+
+    Another common implicit rule is for the construction of .o (object) files out of .cpp (source
+    files).
+
+        .o.cpp:
+
+            $(CC) $(CFLAGS) -c $<
+
+            # recall $<  is the name of the related file that caused the action.
+
+    Alternatively:
+
+        .o.cpp:
+
+            $(CC) $(CFLAGS) -c $*.cpp
+
+            # recall $* is the prefix shared by target and dependent files.
+
+    ----------------------------
+
+    - Using Implicit Rules (from gnu.org)
+
+        Certain standard ways of remaking target files are used very often. For example, one
+        customary way to make an object file is from a C source file using the C compiler, cc.
+        
+        Implicit rules tell make how to use customary techniques so that you do not have to
+        specify them in detail when you want to use them. For example, there is an implicit rule
+        for C compilation. File names determine which implicit rules are run. For example, C
+        compilation typically takes a .c file and makes a .o file. So make applies the implicit rule
+        for C compilation when it sees this combination of file name endings.
+
+        A chain of implicit rules can apply in sequence; for example, make will remake a .o file
+        from a .y file by way of a .c file. See Section 10.4 [Chains of Implicit Rules], page 117.
+
+        The built-in implicit rules use several variables in their recipes so that, by changing
+        the values of the variables, you can change the way the implicit rule works. For example,
+        the variable CFLAGS controls the flags given to the C compiler by the implicit rule for C
+        compilation.
+
+        You can define your own implicit rules by writing pattern rules.
+
+        To allow make to find a customary method for updating a target file, all you have to do is
+        refrain from specifying recipes yourself. Either write a rule with no recipe, or don’t write
+        a rule at all. Then make will figure out which implicit rule to use based on which kind of
+        source file exists or can be made.
+
+        For example, suppose the makefile looks like this:
+
+            foo : foo.o bar.o
+                cc -o foo foo.o bar.o $(CFLAGS) $(LDFLAGS)
+
+        Because you mention foo.o but do not give a rule for it, make will automatically look for
+        an implicit rule that tells how to update it. This happens whether or not the file foo.o
+        currently exists.
+
+        If an implicit rule is found, it can supply both a recipe and one or more prerequisites
+        (the source files). You would want to write a rule for foo.o with no recipe if you need to
+        specify additional prerequisites, such as header files, that the implicit rule cannot supply.
+
+        Each implicit rule has a target pattern and prerequisite patterns. There may be many
+        implicit rules with the same target pattern. For example, numerous rules make ‘.o’ files:
+        one, from a ‘.c’ file with the C compiler; another, from a ‘.p’ file with the Pascal compiler;
+        and so on. The rule that actually applies is the one whose prerequisites exist or can be
+        made. So, if you have a file foo.c, make will run the C compiler; otherwise, if you have a
+        file foo.p, make will run the Pascal compiler; and so on.
+
+    - Catalogue of Built-In Rules
+
+        Here is a catalogue of predefined implicit rules which are always available unless the
+        makefile explicitly overrides or cancels them. 
+
+        This manual only documents the default rules available on POSIX-based operating sys-
+        tems. Other operating systems, such as VMS, Windows, OS/2, etc. may have different sets
+        of default rules. To see the full list of default rules and variables available in your version
+        of GNU make, run ‘make -p’ in a directory with no makefile.
+
+        Not all of these rules will always be defined, even when the ‘-r’ option is not given.
+        Many of the predefined implicit rules are implemented in make as suffix rules, so which
+        ones will be defined depends on the suffix list (the list of prerequisites of the special target
+        .SUFFIXES). The default suffix list is: .out, .a, .ln, .o, .c, .cc, .C, .cpp, .p, .f, .F, .m,
+        .r, .y, .l, .ym, .lm, .s, .S, .mod, .sym, .def, .h, .info, .dvi, .tex, .texinfo, .texi,
+        .txinfo, .w, .ch .web, .sh, .elc, .el. All of the implicit rules described below whose
+        prerequisites have one of these suffixes are actually suffix rules. If you modify the suffix list,
+        the only predefined suffix rules in effect will be those named by one or two of the suffixes
+        that are on the list you specify; rules whose suffixes fail to be on the list are disabled. See
+        Section 10.7 [Old-Fashioned Suffix Rules], page 125, for full details on suffix rules.
+
+            Compiling C programs
+
+                n.o is made automatically from n.c with a recipe of the form 
+
+                    ‘$(CC) $(CPPFLAGS) $(CFLAGS) -c’.
+
+            Compiling C++ programs
+
+                n.o is made automatically from n.cc, n.cpp, or n.C with a recipe of the form
+
+                    ‘$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c’. 
+
+                We encourage you to use the suffix ‘.cc’ for C++ source files instead of ‘.C’.
+
+            Linking a single object file
+
+                n is made automatically from n.o by running the linker (usu-
+                ally called ld) via the C compiler.
+
+                The precise recipe used is
+
+                    ‘$(CC) $(LDFLAGS) n.o $(LOADLIBES) $(LDLIBS)’.
+
+                This rule does the right thing for a simple program with only one source file. It
+                will also do the right thing if there are multiple object files (presumably coming
+                from various other source files), one of which has a name matching that of the
+                executable file. Thus,
+
+                    x: y.o z.o
+
+                when x.c, y.c and z.c all exist will execute:
+
+                    cc -c x.c -o x.o 
+                    cc -c y.c -o y.o
+                    cc -c z.c -o z.o
+                    cc x.o y.o z.o -o x
+                    rm -f x.o
+                    rm -f y.o
+                    rm -f z.o
+
+                In more complicated cases, such as when there is no object file whose name
+                derives from the executable file name, you must write an explicit recipe for
+                linking.
+
+                Each kind of file automatically made into ‘.o’ object files will be automatically
+                linked by using the compiler (‘$(CC)’, ‘$(FC)’ or ‘$(PC)’; the C compiler ‘$(CC)’
+                is used to assemble ‘.s’ files) without the ‘-c’ option. This could be done by
+                using the ‘.o’ object files as intermediates, but it is faster to do the compiling
+                and linking in one step, so that’s how it’s done.
+
+    - Variables Used by Implicit Rules
+
+        The recipes in built-in implicit rules make liberal use of certain predefined variables. You
+        can alter the values of these variables in the makefile, with arguments to make, or in the en-
+        vironment to alter how the implicit rules work without redefining the rules themselves. You
+        can cancel all variables used by implicit rules with the ‘-R’ or ‘--no-builtin-variables’
+        option.
+
+        For example, the recipe used to compile a C source file actually says ‘$(CC) -c $(CFLAGS)
+        $(CPPFLAGS)’. The default values of the variables used are ‘cc’ and nothing, resulting in
+        the command ‘cc -c’. By redefining ‘CC’ to ‘ncc’, you could cause ‘ncc’ to be used for
+        all C compilations performed by the implicit rule. By redefining ‘CFLAGS’ to be ‘-g’, you
+        could pass the ‘-g’ option to each compilation. All implicit rules that do C compilation use
+        ‘$(CC)’ to get the program name for the compiler and all include ‘$(CFLAGS)’ among the
+        arguments given to the compiler.
+
+        The variables used in implicit rules fall into two classes: those that are names of programs
+        (like CC) and those that contain arguments for the programs (like CFLAGS). (The “name of
+        a program” may also contain some command arguments, but it must start with an actual
+        executable program name.) If a variable value contains more than one argument, separate
+        them with spaces.
+
+        The following tables describe of some of the more commonly-used predefined variables.
+        This list is not exhaustive, and the default values shown here may not be what make selects
+        for your environment. To see the complete list of predefined variables for your instance of
+        GNU make you can run ‘make -p’ in a directory with no makefiles.
+
+        Here is a table of some of the more common variables used as names of programs in
+        built-in rules:
+
+            . . .
+
+            CC            Program for compiling C programs; default ‘cc’.
+            CXX           Program for compiling C++ programs; default ‘g++’.
+            CPP           Program for running the C preprocessor, with results to standard output; de-
+                          fault ‘$(CC) -E’.
+
+        Here is a table of variables whose values are additional arguments for the programs
+        above. The default values for all of these is the empty string, unless otherwise noted. 
+
+            CFLAGS        Extra flags to give to the C compiler.
+            CXXFLAGS      Extra flags to give to the C++ compiler.
+            CPPFLAGS      Extra flags to give to the C preprocessor and programs that use it (the C and
+                          Fortran compilers).
+            CPPFLAGS      Extra flags to give to the C preprocessor and programs that use it (the C and
+                          Fortran compilers).
+            LDFLAGS       Extra flags to give to compilers when they are supposed to invoke the linker,
+                          ‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
+                          instead.
+            LDLIBS        Library flags or names given to compilers when they are supposed to invoke
+                          the linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
+                          LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS variable.
+
+- 5. SUFFIX RULES
+
+    Make can automatically create a.o file, using cc -c on the corresponding .c file. These rules
+    are built-in the make, and you can take this advantage to shorten your Makefile. If you
+    indicate just the .h files in the dependency line of the Makefile on which the current target is
+    dependent on, make will know that the corresponding .c file is already required. You do not
+    have to include the command for the compiler.
+
+    This reduces the Makefile further, as shown below:
+
+        OBJECTS = main.o hello.o factorial.o
+
+        hello: $(OBJECTS)
+
+            cc $(OBJECTS) -o hello
+
+        hellp.o: functions.h
+
+        main.o: functions.h
+
+        factorial.o: functions.h
+
+    Make uses a special target, named .SUFFIXES to allow you to define your own suffixes. For
+    example, refer the dependency line given below:
+
+        .SUFFIXES: .foo .bar
+
+    It informs make that you will be using these special suffixes to make your own rules.
+
+    Similar to how make already knows to make a .o file from a .c file, you can define rules in
+    the following manner:
+
+        .foo.bar:
+
+            tr '[A-Z][a-z]' '[N-Z][A-M][n-z][a-m]' < $< > $@
+        .c.o:
+
+            $(CC) $(CFLAGS) -c $<
+
+    The first rule allows you to create a .bar file from a .foo file. It basically scrambles the file.
+    The second rule is the default rule used by make to create a.o file from a .c file.
+
+- DIRECTIVES
+
+    There are numerous directives available in various forms. The make program on your system
+    may not support all the directives. So please check if your make supports the directives we
+    are explaining here. GNU make supports these directives.
+
+    - Conditional Directives
+
+        The conditional directives are:
+
+            ifeq        begins the conditional, and specifies the condition. It contains two
+                        arguments, separated by a comma and surrounded by parentheses. Variable
+                        substitution is performed on both arguments and then they are compared. The lines
+                        of the makefile following the ifeq are obeyed if the two arguments match; otherwise
+                        they are ignored.
+
+            ifneq       begins the conditional, and specifies the condition. It contains two
+                        arguments, separated by a comma and surrounded by parentheses. Variable
+                        substitution is performed on both arguments and then they are compared. The lines
+                        of the makefile following the ifneq are obeyed if the two arguments do not match;
+                        otherwise they are ignored.
+
+            ifdef       begins the conditional, and specifies the condition. It contains
+                        single argument. If the given argument is true then condition becomes true.
+
+            ifndef      directive begins the conditional, and specifies the condition. It contains
+                        single argument. If the given argument is false then condition becomes true.
+
+            else        causes the following lines to be obeyed if the previous conditional
+                        failed. In the example above, this means, the second alternative linking command is
+                        used whenever the first alternative is not used. It is optional to have an else in a
+                        conditional.
+
+            endif       ends the conditional. Every conditional must end with an endif.
+
+        - Syntax of Conditionals Directives
+
+            The syntax of a simple conditional with no else is as follows:
+
+                conditional-directive
+                text-if-true
+                endif
+
+            The text-if-true may be any lines of text, to be considered as part of the makefile if the
+            condition is true. If the condition is false, no text is used instead.
+
+            The syntax of a complex conditional is as follows:
+
+                conditional-directive
+                text-if-true
+                else
+                text-if-false
+                endif
+
+    - The include Directive
+
+        The include directive allows make to suspend reading the current makefile and read one or
+        more other makefiles before continuing. The directive is a line in the makefile that looks as
+        follows:
+
+            include filenames...
+
+        The filenames can contain shell file name patterns. Extra spaces are allowed and ignored at
+        the beginning of the line, but a tab is not allowed.
+
+    - The override Directive
+
+        If a variable has been set with a command argument, then ordinary assignments in the
+        makefile are ignored. If you want to set the variable in the makefile even though it was set
+        with a command argument, you can use an override directive, which is a line that looks as
+        follows:
+
+            override variable = value
+        or
+
+            override variable := value
+
+- Recursive Use of Make
+
+  Recursive use of make means using make as a command in a makefile. This technique is
+  useful when you want separate makefiles for various subsystems that compose a larger
+  system. 
+
+  For example, suppose, you have a subdirectory named 'subdir' which has its own
+  makefile, and you would like the containing directory's makefile to run make on the
+  subdirectory. You can do it by writing the below code:
+
+      subsystem:
+
+          cd subdir && $(MAKE)
+    
+      or, equivalently
+
+      subsystem:
+
+          $(MAKE) -C subdir
+
+  You can write recursive make commands just by copying this example. However, you need
+  to know about how they work and why, and how the sub-make relates to the top-level make.
+
+- Communicating Variables to a Sub-Make
+
+    Variable values of the top-level make can be passed to the sub-make through the
+    environment by explicit request. These variables are defined in the sub-make as defaults.
+    You cannot override what is specified in the makefile used by the sub-make makefile unless
+    you use the '-e' switch.
+
+    To pass down or export a variable, make adds the variable and its value to the environment
+    for running each command. The sub-make, in turn, uses the environment to initialize its table
+    of variable values.
+
+    The special variables SHELL and MAKEFLAGS are always exported (unless you unexport
+    them). MAKEFILES is exported if you set it to anything.
+
+    If you want to export specific variables to a sub-make, use the export directive, as shown
+    below:
+
+        export variable ...
+
+    If you want to prevent a variable from being exported, use the unexport directive, as shown
+    below:
+
+        unexport variable ...
+
+- The Variable MAKEFILES
+
+    If the environment variable MAKEFILES is defined, make considers its value as a list of names
+    (separated by whitespace) of additional makefiles to be read before others. This works much
+    like the include directive: various directories are searched for those files.
+
+    The main use of MAKEFILES is in communication between recursive invocations of the make.
+
+- Including Header File from Different Directories
+
+    If you have put the header files in different directories and you are running make in a different
+    directory, then it is required to provide the path of header files. This can be done using -I
+    option in makefile. Assuming that functions.h file is available in /home/tutorialspoint/header
+    folder and rest of the files are available in /home/tutorialspoint/src/ folder, then the makefile
+    would be written as follows:
+
+        INCLUDES = -I "/home/tutorialspoint/header"
+
+        CC = gcc
+
+        LIBS = -lm
+
+        CFLAGS = -g -Wall
+
+        OBJ = main.o factorial.o hello.o
+
+
+        hello: ${OBJ}
+
+            ${CC} ${CFLAGS} ${INCLUDES} -o $@ ${OBJS} ${LIBS}
+
+        .cpp.o:
+
+            ${CC} ${CFLAGS} ${INCLUDES} -c $<
+
+- Continuation Line in Makefile
+
+    If you do not like too big lines in your Makefile, then you can break your line using a back-
+    slash "\" as shown below:
+
+        OBJ = main.o factorial.o \
+           hello.o
+
+        is equivalent to
+
+        OBJ = main.o factorial.o hello.o
+    
