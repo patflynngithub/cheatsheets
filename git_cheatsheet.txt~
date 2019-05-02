@@ -1,0 +1,260 @@
+
+Modified: 05/01/19
+
+
+Git Cheatsheet
+==============
+
+
+- Git is a DVCS
+
+    Distributed Version Control System
+
+
+- The major difference between Git and any other VCS (Subversion and friends
+  included) is the way Git thinks about its data. Conceptually, most other systems
+  store information as a list of file-based changes. These systems (CVS, Subver-
+  sion, Perforce, Bazaar, and so on) think of the information they keep as a set of
+  files and the changes made to each file over time.
+
+  Git doesn’t think of or store its data this way. Instead, Git thinks of its data
+  more like a set of snapshots of a miniature filesystem. Every time you commit,
+  or save the state of your project in Git, it basically takes a picture of what all
+  your files look like at that moment and stores a reference to that snapshot. To
+  be efficient, if files have not changed, Git doesn’t store the file again, just a link
+  to the previous identical file it has already stored. Git thinks about its data more
+  like a stream of snapshots.
+
+  This makes Git more like a mini
+  filesystem with some incredibly powerful tools built on top of it, rather than
+  simply a VCS.
+
+- Nearly Every Operation Is Local
+  
+  Most operations in Git only need local files and resources to operate – generally
+  no information is needed from another computer on your network.
+
+  This also means that there is very little you can’t do if you’re offline or off
+  VPN.
+
+- The Three States
+
+  Git has three main states that
+  your files can reside in: 
+
+        committed, 
+        modified, and 
+        staged.
+
+  Committed means
+  that the data is safely stored in your local database. 
+
+  Modified means 
+  that you have changed the file but have not committed it to your database yet. 
+
+  Staged means that you have marked a modified file in its current version to go into
+  your next commit snapshot.
+
+  This leads us to the three main sections of a Git project: 
+
+       the Git directory, 
+       the working directory, and 
+       the staging area.
+
+  The Git directory is where Git stores the metadata and object database for
+  your project. This is the most important part of Git, and it is what is copied
+  when you clone a repository from another computer.
+
+  The working directory is a single checkout of one version of the project.
+  These files are pulled out of the compressed database in the Git directory and
+  placed on disk for you to use or modify.
+
+  The staging area is a file, generally contained in your Git directory, that
+  stores information about what will go into your next commit. It’s sometimes re-
+  ferred to as the “index”, but it’s also common to refer to it as the staging area.
+
+  The basic Git workflow goes something like this:
+
+    1. You modify files in your working directory.
+    2. You stage the files, adding snapshots of them to your staging area.
+    3. You do a commit, which takes the files as they are in the staging area and
+       stores that snapshot permanently to your Git directory.
+    
+    If a particular version of a file is in the Git directory, it’s considered committed. 
+    If it has been modified and was added to the staging area, it is staged. And
+    If it was changed since it was checked out but has not been staged, it is modified.
+
+    Working Directory                   Staging Area                .git directdory (Repository)
+    -----------------                   ------------                ----------------------------
+          |                                   |                                    | 
+          |<======================== Checkout the project =======================> |
+          |                                   |                                    |
+          | Stage Fixes ===================>  |                                    |
+          |                                   |                                    |
+          |                                   | Commit ==========================> |
+
+- configuration
+
+    - config files
+
+        1. /etc/gitconfig file: Contains values for every user on the system and
+                                all their repositories. 
+
+                                If you pass the option --system to git config , it
+                                reads and writes from this file specifically.
+
+        2. ~/.gitconfig or ~/.config/git/config file: 
+
+                                Specific to your user.
+
+                                You can make Git read and write to this file specifically by passing the 
+                                --global option.
+
+        3. config file in the Git directory (that is, .git/config ) of whatever repos-
+           itory you’re currently using: 
+
+                                Specific to that single repository.
+
+        Each level overrides values in the previous level, so values in .git/config
+        trump those in /etc/gitconfig.
+
+
+    - setting settings
+
+        git config --global user.name "John Doe"
+        git config --global user.email johndoe@example.com
+        git config --global core.editor emacs
+
+        Again, you need to do this only once if you pass the --global option, be-
+        cause then Git will always use that information for anything you do on that sys-
+        tem. If you want to override this with a different name or email address for spe-
+        cific projects, you can run the command without the --global option when
+        you’re in that project.
+
+    - listing settings
+
+        - git config --list
+
+        You may see keys more than once, because Git reads the same key from dif-
+        ferent files ( /etc/gitconfig and ~/.gitconfig , for example). In this case,
+        Git uses the last value for each unique key it sees.
+
+    You can also check what Git thinks a specific key’s value is by typing
+
+        git config <key> :
+
+        example:
+
+            git config user.name
+            John Doe
+
+- Getting a Git Repository
+
+  You can get a Git project using two main approaches. 
+
+     The first takes an existing project or directory and imports it into Git. 
+     The second clones an existing Git repository from another server.
+
+  - Initializing a Repository in an Existing Directory
+
+    If you’re starting to track an existing project in Git, you need to go to the
+    project’s directory and type:
+
+        git init
+
+    This creates a new subdirectory named .git that contains all of your neces-
+    sary repository files – a Git repository skeleton. At this point, nothing in your
+    project is tracked yet
+
+    If you want to start version-controlling existing files (as opposed to an empty
+    directory), you should probably begin tracking those files and do an initial com-
+    mit. You can accomplish that with a few git add commands that specify the
+    files you want to track, followed by a git commit :
+
+        git add *.c
+        git add LICENSE
+        git commit -m 'initial project version'
+
+    At this point, you have a Git repository with tracked files and an initial commit.
+
+- Cloning an Existing Repository
+
+    If you want to get a copy of an existing Git repository – for example, a project
+    you’d like to contribute to – the command you need is git clone . 
+
+    If you’re fa-
+    miliar with other VCS systems such as Subversion, you’ll notice that the com-
+    mand is “clone” and not “checkout”. This is an important distinction – instead
+    of getting just a working copy, Git receives a full copy of nearly all data that the
+    server has. Every version of every file for the history of the project is pulled
+    down by default when you run git clone .
+
+    You clone a repository with git clone [url] . For example, if you want to
+    clone the Git linkable library called libgit2, you can do so like this:
+
+        git clone https://github.com/libgit2/libgit2
+
+    That creates a directory named “libgit2”, initializes a .git directory inside it,
+    pulls down all the data for that repository, and checks out a working copy of the
+    latest version.
+
+    If you want to clone the repository
+    into a directory named something other than “libgit2”, you can specify that as
+    the next command-line option:
+
+        git clone https://github.com/libgit2/libgit2 mylibgit
+
+    That command does the same thing as the previous one, but the target di-
+    rectory is called mylibgit.
+
+- Checking the Status of Your Files
+
+    The main tool you use to determine which files are in which state is the git
+    status command. If you run this command directly after a clone, you should
+    see something like this:
+
+        git status
+        On branch master
+        nothing to commit, working directory clean
+
+        This means you have a clean working directory – in other words, there are no
+        tracked and modified files. Git also doesn’t see any untracked files, or they
+        would be listed here. Finally, the command tells you which branch you’re on
+        and informs you that it has not diverged from the same branch on the server.
+        For now, that branch is always “master”, which is the default
+
+- git add
+
+    git add is a multipurpose command – you use it to begin tracking
+    new files, to stage files, and to do other things like marking merge-conflicted
+    files as resolved. It may be helpful to think of it more as “add this content to the
+    next commit” rather than “add this file to the project”
+
+    Git stages a file exactly as it is when you run the git add command.
+
+    If you modify a file after you run git add , you have
+    to run git add again to stage the latest version of the file.
+
+- Committing Your Changes
+
+    Now that your staging area is set up the way you want it, you can commit your
+    changes. Remember that anything that is still unstaged – any files you have cre-
+    ated or modified that you haven’t run git add on since you edited them –
+    won’t go into this commit. They will stay as modified files on your disk.
+
+    Remember that the commit records the snapshot you set up in your staging
+    area. Anything you didn’t stage is still sitting there modified; you can do anoth-
+    er commit to add it to your history. Every time you perform a commit, you’re
+    recording a snapshot of your project that you can revert to or compare to later.
+
+    Skipping the Staging Area
+
+        Although it can be amazingly useful for crafting commits exactly how you want
+        them, the staging area is sometimes a bit more complex than you need in your
+        workflow. If you want to skip the staging area, Git provides a simple shortcut.
+        Adding the -a option to the git commit command makes Git automatically
+        stage every file that is already tracked before doing the commit, letting you skip
+        the git add part.
+
+
+
