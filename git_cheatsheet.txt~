@@ -256,5 +256,243 @@ Git Cheatsheet
         stage every file that is already tracked before doing the commit, letting you skip
         the git add part.
 
+- Removing files
+
+        git rm <filename>
+
+    To remove a file from Git, you have to remove it from your tracked files (more
+    accurately, remove it from your staging area) and then commit. The git rm
+    command does that, and also removes the file from your working directory so
+    you don’t see it as an untracked file the next time around.       
+
+    If you simply remove the file from your working directory, it shows up under
+    the “Changed but not updated” (that is, unstaged) area of your git status
+    output.
+
+        $ rm PROJECTS.md
+        $ git status
+        Then, if you run git rm , it stages the file’s removal:
+        $ git rm PROJECTS.md
+        $ git status
+
+        The next time you commit, the file will be gone and no longer tracked. If you
+        modified the file and added it to the index already, you must force the removal
+        with the -f option. This is a safety feature to prevent accidental removal of data
+        that hasn’t yet been recorded in a snapshot and that can’t be recovered from
+        Git.
+
+    NOTE: can also do
+
+        rm <filename>
+        git add -A .
+
+    Another useful thing you may want to do is to keep the file in your working
+    tree but remove it from your staging area. In other words, you may want to
+    keep the file on your hard drive but not have Git track it anymore. This is partic-
+    ularly useful if you forgot to add something to your .gitignore file and acci-
+    dentally staged it, like a large log file or a bunch of .a compiled files. To do this,
+    use the --cached option:
+
+        git rm --cached README
+
+    You can pass files, directories, and file-glob patterns to the git rm command.
+
+- Moving Files
+
+    Unlike many other VCS systems, Git doesn’t explicitly track file movement. If
+    you rename a file in Git, no metadata is stored in Git that tells it you renamed
+    the file. However, Git is pretty smart about figuring that out after the fact – we’ll
+    deal with detecting file movement a bit later.
+
+    Thus it’s a bit confusing that Git has a mv command. If you want to rename a
+    file in Git, you can run something like:
+
+        git mv file_from file_to
+
+    this is equivalent to running something like this:
+
+    mv README.md README
+    git rm README.md
+    git add README
+
+    Git figures out that it’s a rename implicitly, so it doesn’t matter if you re-
+    name a file that way or with the mv command. The only real difference is that
+    mv is one command instead of three – it’s a convenience function.
+
+- Viewing the Commit History
+
+    After you have created several commits, or if you have cloned a repository with
+    an existing commit history, you’ll probably want to look back to see what has
+    happened. The most basic and powerful tool to do this is
+
+        git log
+
+- Undoing Things
+
+    At any stage, you may want to undo something. Here, we’ll review a few basic
+    tools for undoing changes that you’ve made. Be careful, because you can’t al-
+    ways undo some of these undos. This is one of the few areas in Git where you
+    may lose some work if you do it wrong.
+
+    One of the common undos takes place when you commit too early and pos-
+    sibly forget to add some files, or you mess up your commit message. If you want
+    to try that commit again, you can run commit with the --amend option:
+
+        git commit --amend
+
+    This command takes your staging area and uses it for the commit. If you’ve
+    made no changes since your last commit (for instance, you run this command
+    immediately after your previous commit), then your snapshot will look exactly
+    the same, and all you’ll change is your commit message.
+
+    The same commit-message editor fires up, but it already contains the mes-
+    sage of your previous commit. You can edit the message the same as always,
+    but it overwrites your previous commit.
+
+    As an example, if you commit and then realize you forgot to stage the
+    changes in a file you wanted to add to this commit, you can do something like
+    this:
+
+        git commit -m 'initial commit'
+        git add forgotten_file
+        git commit --amend
+
+    You end up with a single commit – the second commit replaces the results of
+    the first.
+
+- Showing your remotes
+
+    git remote
+    git remote -v
+
+- Fetching and Pulling from Your Remotes
+
+    As you just saw, to get data from your remote projects, you can run:
+
+        git fetch [remote-name]
+
+    The command goes out to that remote project and pulls down all the data
+    from that remote project that you don’t have yet. After you do this, you should
+    have references to all the branches from that remote, which you can merge in
+    or inspect at any time.
+
+    If you clone a repository, the command automatically adds that remote
+    repository under the name “origin”. So, git fetch origin fetches any new
+    work that has been pushed to that server since you cloned (or last fetched
+    from) it. It’s important to note that the git fetch command pulls the data to
+    your local repository – it doesn’t automatically merge it with any of your work
+    or modify what you’re currently working on. You have to merge it manually into
+    your work when you’re ready.
+
+    If you have a branch set up to track a remote branch, you can use the git pull command to
+    automatically fetch and then merge a remote branch into your current branch.
+    This may be an easier or more comfortable workflow for you; and by default,
+    the git clone command automatically sets up your local master branch to
+    track the remote master branch (or whatever the default branch is called) on
+    the server you cloned from. Running git pull generally fetches data from the
+    server you originally cloned from and automatically tries to merge it into the
+    code you’re currently working on.
+
+- Pushing to Your Remotes
+
+    When you have your project at a point that you want to share, you have to push
+    it upstream. The command for this is simple: 
+
+        git push [remote-name] [branch-name] 
+
+    If you want to push your master branch to your origin server
+    (again, cloning generally sets up both of those names for you automatically),
+    then you can run this to push any commits you’ve done back up to the server:
+
+        git push origin master
+
+    This command works only if you cloned from a server to which you have
+    write access and if nobody has pushed in the meantime. If you and someone
+    else clone at the same time and they push upstream and then you push up-
+    stream, your push will rightly be rejected. You’ll have to pull down their work
+    first and incorporate it into yours before you’ll be allowed to push.
+
+- Inspecting a Remote
+
+    If you want to see more information about a particular remote, you can use the
+
+        git remote show [remote-name] 
+
+    command.
+
+- Branching
+
+    Branching means you diverge from the main line of development and continue to do work without
+    messing with that main line.
+
+    Git doesn’t store data as a series of
+    changesets or differences, but instead as a series of snapshots.
+
+    When you make a commit, Git stores a commit object that contains a pointer
+    to the snapshot of the content you staged. This object also contains the au-
+    thor’s name and email, the message that you typed, and pointers to the commit
+    or commits that directly came before this commit (its parent or parents): zero
+    parents for the initial commit, one parent for a normal commit, and multiple
+    parents for a commit that results from a merge of two or more branches.
+
+    The default branch name in Git is master . As you start making commits,
+    you’re given a master branch that points to the last commit you made.
+
+    The “master” branch in Git is not a special branch. It is exactly like any
+    other branch. The only reason nearly every repository has one is that the
+    git init command creates it by default and most people don’t bother to
+    change it.
+
+    - Creating a New Branch
+
+        What happens if you create a new branch? Well, doing so creates a new pointer
+        for you to move around. Let’s say you create a new branch called testing. You
+        do this with the git branch command:
+
+            git branch testing
+
+        This creates a new pointer to the same commit you’re currently on.
+
+        How does Git know what branch you’re currently on? It keeps a special
+        pointer called HEAD . Note that this is a lot different than the concept of HEAD in
+        other VCSs you may be used to, such as Subversion or CVS. In Git, this is a point-
+        er to the local branch you’re currently on. In this case, you’re still on master .
+        The git branch command only created a new branch – it didn’t switch to that
+        branch.
+
+    - Switching Branches
+
+        To switch to an existing branch, you run the git checkout command. Let’s
+        switch to the new testing branch:
+
+            git checkout testing
+
+        This moves HEAD to point to the testing branch.
+
+        SWITCHING BRANCHES CHANGES FILES IN YOUR WORKING DIRECTORY
+
+            It’s important to note that when you switch branches in Git, files in your
+            working directory will change. If you switch to an older branch, your
+            working directory will be reverted to look like it did the last time you
+            committed on that branch. If Git cannot do it cleanly, it will not let you
+            switch at all.
+
+    Because a branch in Git is in actuality a simple file that contains the 40 char-
+    acter SHA-1 checksum of the commit it points to, branches are cheap to create
+    and destroy. Creating a new branch is as quick and simple as writing 41 bytes to
+    a file (40 characters and a newline).
+
+    This is in sharp contrast to the way most older VCS tools branch, which in-
+    volves copying all of the project’s files into a second directory. This can take
+    several seconds or even minutes, depending on the size of the project, whereas
+    in Git the process is always instantaneous. Also, because we’re recording the
+    parents when we commit, finding a proper merge base for merging is automati-
+    cally done for us and is generally very easy to do. These features help encour-
+    age developers to create and use branches often.
+
+    When you switch branches, Git resets your
+    working directory to look like it did the last time you committed on that branch.
+    It adds, removes, and modifies files automatically to make sure your working
+    copy is what the branch looked like on your last commit to it.
 
 
