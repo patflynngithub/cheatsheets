@@ -1,10 +1,58 @@
 
-Modified: 05/01/19
+Modified: 05/06/19
 
 
 Git Cheatsheet
 ==============
 
+git config
+
+git add -A .
+git commit -m "Final revision before sending out Lesson 1"
+git push origin master
+
+git commit --amend
+
+git fetch
+git pull   (combo of git fetch and git merge)
+git reset
+git rm
+git mv
+git clean
+git rebase
+
+git status
+git log
+git remote
+git remote add
+git remote show
+git diff     (git difftool)
+git show
+git shortlog
+
+git branch branch-name
+git checkout branch-name
+git checkout -- <file>         (to discard changes in working directory)
+
+
+git merge    (git mergetool)
+git stash
+git tag
+
+git help
+
+SETUP
+-----
+
+	git config --global user.name "Firstname Lastname" (whatever yours is)
+	git config --global user.email "your@email.address" (whatever yours is)
+	git config --global credential.helper 'cache --timeout=3600'
+	git config --global core.editor "gedit -w -s"  (or whatever text editor you use)
+
+    git init
+	git clone https://github.com/your-github-account-name/pycnumanal-lessons
+
+-------------------------------------------------------
 
 - Git is a DVCS
 
@@ -25,45 +73,39 @@ Git Cheatsheet
   to the previous identical file it has already stored. Git thinks about its data more
   like a stream of snapshots.
 
-  This makes Git more like a mini
-  filesystem with some incredibly powerful tools built on top of it, rather than
-  simply a VCS.
+  This makes Git more like a mini filesystem with some incredibly powerful tools built
+  on top of it, rather than simply a VCS.
 
 - Nearly Every Operation Is Local
-  
+
   Most operations in Git only need local files and resources to operate – generally
   no information is needed from another computer on your network.
 
-  This also means that there is very little you can’t do if you’re offline or off
-  VPN.
+  This also means that there is very little you can’t do if you’re offline or off VPN.
 
 - The Three States
 
-  Git has three main states that
-  your files can reside in: 
+      Git has three main states that
+      your files can reside in: 
 
-        committed, 
-        modified, and 
-        staged.
+            modified,
+            staged, and
+            committed
 
-  Committed means
-  that the data is safely stored in your local database. 
+      Modified means 
+      that you have changed the file but have not committed it to your database yet. 
 
-  Modified means 
-  that you have changed the file but have not committed it to your database yet. 
+      Staged means that you have marked a modified file in its current version to go into
+      your next commit snapshot.
 
-  Staged means that you have marked a modified file in its current version to go into
-  your next commit snapshot.
+      Committed means
+      that the data is safely stored in your local database. (as a result of taking a snapshot)
 
   This leads us to the three main sections of a Git project: 
 
-       the Git directory, 
-       the working directory, and 
-       the staging area.
-
-  The Git directory is where Git stores the metadata and object database for
-  your project. This is the most important part of Git, and it is what is copied
-  when you clone a repository from another computer.
+       the working directory,
+       the staging area, and
+       the Git directory
 
   The working directory is a single checkout of one version of the project.
   These files are pulled out of the compressed database in the Git directory and
@@ -73,12 +115,16 @@ Git Cheatsheet
   stores information about what will go into your next commit. It’s sometimes re-
   ferred to as the “index”, but it’s also common to refer to it as the staging area.
 
+  The Git directory is where Git stores the metadata and object database for
+  your project. This is the most important part of Git, and it is what is copied
+  when you clone a repository from another computer.
+
   The basic Git workflow goes something like this:
 
     1. You modify files in your working directory.
-    2. You stage the files, adding snapshots of them to your staging area.
+    2. You stage the files, adding snapshots of them to your staging area.          (git add)
     3. You do a commit, which takes the files as they are in the staging area and
-       stores that snapshot permanently to your Git directory.
+       stores that snapshot permanently to your Git directory.                      (git commit)
     
     If a particular version of a file is in the Git directory, it’s considered committed. 
     If it has been modified and was added to the staging area, it is staged. And
@@ -90,9 +136,9 @@ Git Cheatsheet
           |<======================== Checkout the project =======================> |
           |                                   |                                    |
           | Stage Fixes ===================>  |                                    |
-          |                                   |                                    |
+          | (git add)                         |                                    |
           |                                   | Commit ==========================> |
-
+                                                (git commit)
 - configuration
 
     - config files
@@ -235,6 +281,18 @@ Git Cheatsheet
     If you modify a file after you run git add , you have
     to run git add again to stage the latest version of the file.
 
+- Ignoring Files
+
+    Often, you’ll have a class of files that you don’t want Git to automatically add or
+    even show you as being untracked. These are generally automatically gener-
+    ated files such as log files or files produced by your build system. In such cases,
+    you can create a file listing patterns to match them named .gitignore . Here is
+    an example .gitignore file:
+
+        cat .gitignore
+        *.[oa]
+        *~
+
 - Committing Your Changes
 
     Now that your staging area is set up the way you want it, you can commit your
@@ -263,7 +321,7 @@ Git Cheatsheet
     To remove a file from Git, you have to remove it from your tracked files (more
     accurately, remove it from your staging area) and then commit. The git rm
     command does that, and also removes the file from your working directory so
-    you don’t see it as an untracked file the next time around.       
+    you don’t see it as an untracked file the next time around.
 
     If you simply remove the file from your working directory, it shows up under
     the “Changed but not updated” (that is, unstaged) area of your git status
@@ -393,6 +451,17 @@ Git Cheatsheet
     server you originally cloned from and automatically tries to merge it into the
     code you’re currently working on.
 
+- git reset
+
+    - Reset current HEAD to the specified state
+    - can be used to unstage a file
+
+    The git reset command is primarily used to undo things, as you can possibly
+    tell by the verb. It moves around the HEAD pointer and optionally changes the
+    index or staging area and can also optionally change the working directory if
+    you use --hard . This final option makes it possible for this command to lose
+    your work if used incorrectly, so make sure you understand it before using it.
+
 - Pushing to Your Remotes
 
     When you have your project at a point that you want to share, you have to push
@@ -420,7 +489,76 @@ Git Cheatsheet
 
     command.
 
+- Tagging
+
+    Like most VCSs, Git has the ability to tag specific points in history as being im-
+    portant. Typically people use this functionality to mark release points (v1.0, and
+    so on).
+
+    - git tag
+      git tag <tag_name>
+      git tag -a <tag_name> <commit_checksum>  (tag a commit after the fact)
+      git tag -a <tag_name> -m "tag message"
+      git show <tag_name>
+
+    - Creating Tags
+
+        Git uses two main types of tags: lightweight and annotated.
+
+        A lightweight tag is very much like a branch that doesn’t change – it’s just a
+        pointer to a specific commit.
+
+            git tag <tag_name>
+
+        Annotated tags, however, are stored as full objects in the Git database.
+        They’re checksummed; contain the tagger name, email, and date; have a tag-
+        ging message; and can be signed and verified with GNU Privacy Guard (GPG).
+        It’s generally recommended that you create annotated tags so you can have all
+        this information; but if you want a temporary tag or for some reason don’t want
+        to keep the other information, lightweight tags are available too.
+
+            git tag -a <tag_name> -m "tag message"
+
+    - Sharing Tags
+
+        By default, the git push command doesn’t transfer tags to remote servers.
+        You will have to explicitly push tags to a shared server after you have created
+        them. This process is just like sharing remote branches – you can run
+
+            git push origin [tag_name]
+
+        If you have a lot of tags that you want to push up at once, you can also use
+        the --tags option to the git push command. This will transfer all of your tags
+        to the remote server that are not already there.
+
+            git push origin --tags
+
+    - Checking out Tags
+
+        You can’t really check out a tag in Git, since they can’t be moved around. If you
+        want to put a version of your repository in your working directory that looks
+        like a specific tag, you can create a new branch at a specific tag with 
+
+            git checkout -b [branchname] [tagname]
+
+- Git Aliases
+
+    one little tip that can make your Git experience simpler, easier, and more familiar: aliases. 
+
+    Git doesn’t automatically infer your command if you type it in partially. If
+    you don’t want to type the entire text of each of the Git commands, you can
+    easily set up an alias for each command using git config
+
+        git config --global alias.co checkout
+        git config --global alias.br branch
+        git config --global alias.ci commit
+        git config --global alias.st status
+
+        git config --global alias.last 'log -1 HEAD'    (git last; see last commit easily)
+
 - Branching
+
+    Note: git clone gets full copy of everything; git branch doesn't, just generates a new pointer
 
     Branching means you diverge from the main line of development and continue to do work without
     messing with that main line.
@@ -494,5 +632,29 @@ Git Cheatsheet
     working directory to look like it did the last time you committed on that branch.
     It adds, removes, and modifies files automatically to make sure your working
     copy is what the branch looked like on your last commit to it.
+
+GitHub
+------
+
+- The way that GitHub maps your Git commits to your user is by email address.
+
+- Forking Projects
+
+    If you want to contribute to an existing project to which you don’t have push
+    access, you can “fork” the project. What this means is that GitHub will make a
+    copy of the project that is entirely yours; it lives in your user’s namespace, and
+    you can push to it.
+
+    This way, projects don’t have to worry about adding users as collaborators
+    to give them push access. People can fork a project, push to it, and contribute
+    their changes back to the original repository by creating what’s called a 
+    Pull Request,
+
+    Historically, the term “fork” has been somewhat negative in context,
+    meaning that someone took an open source project in a different direc-
+    tion, sometimes creating a competing project and splitting the contribu-
+    tors. In GitHub, a “fork” is simply the same project in your own name-
+    space, allowing you to make changes to a project publicly as a way to
+    contribute in a more open manner.
 
 
