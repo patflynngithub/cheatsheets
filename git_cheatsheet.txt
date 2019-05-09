@@ -1036,6 +1036,29 @@ Maintaining a Project
 
         git stash pop
 
+    There are a few stash variants that may also be helpful. The first option that is
+    quite popular is the --keep-index option to the stash save command. This
+    tells Git to not stash anything that you’ve already staged with the git add
+    command.
+
+        git stash --keep-index
+
+    This can be really helpful if you’ve made a number of changes but want to
+    only commit some of them and then come back to the rest of the changes at a
+    later time.
+
+    Another common thing you may want to do with stash is to stash the un-
+    tracked files as well as the tracked ones. By default, git stash will only store
+    files that are already in the index. If you specify --include-untracked or -u ,
+    Git will also stash any untracked files you have created.
+
+        git stash -u
+
+    Finally, if you specify the --patch flag, Git will not stash everything that is
+    modified but will instead prompt you interactively which of the changes you
+    would like to stash and which you would like to keep in your working directory.
+
+        git stash --patch
 
 GitHub
 ------
