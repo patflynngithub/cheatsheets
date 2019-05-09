@@ -1207,6 +1207,15 @@ Rewriting History
         were originally checked out. You then replace some of those files with new
         versions of them, and git commit converts that into the tree for a new commit.
 
+    THE WORKING DIRECTORY
+
+        Finally, you have your working directory. The other two trees store their content
+        in an efficient but inconvenient manner, inside the .git folder. The Working Di-
+        rectory unpacks them into actual files, which makes it much easier for you to
+        edit them. Think of the Working Directory as a sandbox, where you can try
+        changes out before committing them to your staging area (index) and then to
+        history.
+
 
 GitHub
 ------
