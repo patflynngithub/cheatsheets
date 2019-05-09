@@ -1,5 +1,9 @@
 
-Modified: 05/06/19
+Modified: 05/09/19
+
+Mostly based on:
+
+    Pro Git, 2nd edition, Chacon and Straub
 
 To Do:
 ------
@@ -857,6 +861,182 @@ SETUP
         you’ve made but haven’t shared yet before you push them in order to clean up
         your story, but never rebase anything you’ve pushed somewhere.
 
+    git-rebase: Reapply all the commit from your branch to the tip of another branch.
+
+    The most important word here is “reapply” because a rebase is not simply a ctrl-x/ctrl-v
+    of a branch to another. A rebase will sequentially take all the commit from the branch 
+    you’re in, and reapply them to the destination. This behavior has 2 main implications:
+
+        By reapplying commits git creates new ones. Those new commits, even if they bring the
+        same set of change will be treated as completely different and independent by git.
+
+        Git rebase reapplies commits, and does not destroy the old ones. It means that even 
+        after a rebase, your old commits will still be in the /objects folder in your .git 
+        directory. 
+
+        The feature branch has completely new commits. As said before, same set of changes,
+        but completely different objects from the git point of view. And you can also see that
+        previous commits are not destroyed. They are simply not directly accessible.
+
+        No one shall rebase a shared (public) branch” — Everyone about rebase
+
+        You have probably came across that rule, maybe phrased differently. For those who haven’t,
+        this rule is quite simple. 
+
+            Never, NEVER, **NEVER, **rebase a shared (public) branch. 
+
+        By shared branch I mean a branch that exists on the distant repository and that
+        other people on your team could pull.
+
+Maintaining a Project
+---------------------
+
+    When you’re thinking of integrating new work, it’s generally a good idea to try it
+    out in a topic branch – a temporary branch specifically made to try out that
+    new work. This way, it’s easy to tweak a patch individually and leave it if it’s not
+    working until you have time to come back to it. If you create a simple branch
+    name based on the theme of the work you’re going to try, such as 
+
+        ruby_client 
+
+    or something similarly descriptive, you can easily remember it if you have
+    to abandon it for a while and come back later. The maintainer of the Git project
+    tends to namespace these branches as well – such as
+
+         sc/ruby_client
+
+    here sc is short for the person who contributed the work. As you’ll remember, you
+    can create the branch based off your master branch like this:
+
+        git branch sc/ruby_client master
+
+    Or, if you want to also switch to it immediately, you can use the  checkout -b option:
+
+        git checkout -b sc/ruby_client master
+
+    Now you’re ready to add your contributed work into this topic branch and
+    determine if you want to merge it into your longer-term branches.
+
+    - Can apply patches from email
+
+    - can apply changes via provided remote branches
+
+        Checking Out Remote Branches
+
+            If your contribution came from a Git user who set up their own repository, push-
+            ed a number of changes into it, and then sent you the URL to the repository and
+            the name of the remote branch the changes are in, you can add them as a re-
+            mote and do merges locally.
+
+            For instance, if Jessica sends you an email saying that she has a great new
+            feature in the ruby-client branch of her repository, you can test it by adding
+            the remote and checking out that branch locally:
+
+                git remote add jessica git://github.com/jessica/myproject.git
+                git fetch jessica
+                git checkout -b rubyclient jessica/ruby-client
+
+            If she emails you again later with another branch containing another great
+            feature, you can fetch and check out because you already have the remote set-
+            up.
+
+        If you aren’t working with a person consistently but still want to pull from
+        them in this way, you can provide the URL of the remote repository to the git
+        pull command. This does a one-time pull and doesn’t save the URL as a re-
+        mote reference:
+
+            $ git pull https://github.com/onetimeguy/project
+            From https://github.com/onetimeguy/project
+             * branch    HEAD    -> FETCH_HEAD
+            Merge made by recursive.
+
+        See book for more details on further steps in the new contribution assessment process
+
+    - MERGING WORKFLOWS
+
+        One simple workflow merges your work into your master branch. In this sce-
+        nario, you have a master branch that contains basically stable code. When you
+        have work in a topic branch that you’ve done or that someone has contributed
+        and you’ve verified, you merge it into your master branch, delete the topic
+        branch, and then continue the process.
+
+        If you have a more important project, you might want to use a two-phase
+        merge cycle. In this scenario, you have two long-running branches, master and
+        develop , in which you determine that master is updated only when a very sta-
+        ble release is cut and all new code is integrated into the develop branch. You
+        regularly push both of these branches to the public repository. Each time you
+        have a new topic branch to merge in, you merge it into develop; then, when you
+        tag a release, you fast-forward master to wherever the now-stable develop branch is
+
+        This way, when people clone your project’s repository, they can either check
+        out master to build the latest stable version and keep up to date on that easily,
+        or they can check out develop, which is the more cutting-edge stuff. You can
+        also continue this concept, having an integrate branch where all the work is
+        merged together. Then, when the codebase on that branch is stable and passes
+        tests, you merge it into a develop branch; and when that has proven itself sta-
+        ble for a while, you fast-forward your master branch.
+
+- Stashing
+
+    Often, when you’ve been working on part of your project, things are in a messy
+    state and you want to switch branches for a bit to work on something else. The
+    problem is, you don’t want to do a commit of half-done work just so you can get
+    back to this point later. The answer to this issue is the git stash command.
+
+       git stash
+
+    Stashing takes the dirty state of your working directory – that is, your modi-
+    fied tracked files and staged changes – and saves it on a stack of unfinished
+    changes that you can reapply at any time.
+
+    Say you want to switch branches, but you don’t want to commit what
+    you’ve been working on yet; so you’ll stash the changes. To push a new stash
+    onto your stack, run 
+
+        git stash 
+
+    or 
+
+        git stash save
+
+    (To restore type "git stash apply")
+
+
+    Your working directory is clean:
+
+        git status
+        # On branch master
+        nothing to commit, working directory clean
+
+    At this point, you can easily switch branches and do work elsewhere; your
+    changes are stored on your stack. To see which stashes you’ve stored, you can
+
+        git stash list
+
+    Having a clean working directory and applying it on the same branch aren’t
+    necessary to successfully apply a stash. You can save a stash on one branch,
+    switch to another branch later, and try to reapply the changes. You can also
+    have modified and uncommitted files in your working directory when you apply
+    a stash – Git gives you merge conflicts if anything no longer applies cleanly.
+
+    To reapply stash
+
+        git stash apply
+
+    The changes to your files are reapplied, but the any files you staged before
+    aren't restaged. To do that, you must run the git stash apply command
+    with a --index option to tell the command to try to reapply the staged
+    changes. If you run this instead, you'll get back to your original
+    position
+
+        git stash apply --index
+
+    You can also run "git stash pop" to apply the stash and then immediately
+    drop it from your stack.
+
+        git stash pop
+
+
 GitHub
 ------
 
@@ -881,4 +1061,12 @@ GitHub
     space, allowing you to make changes to a project publicly as a way to
     contribute in a more open manner.
 
+- NOT ONLY FORKS
+
+    It’s important to note that you can also open a Pull Request between two
+    branches in the same repository. If you’re working on a feature with
+    someone and you both have write access to the project, you can push a
+    topic branch to the repository and open a Pull Request on it to the master
+    branch of that same project to initiate the code review and discussion
+    process. No forking necessary.
 
