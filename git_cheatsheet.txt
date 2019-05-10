@@ -1217,6 +1217,34 @@ Rewriting History
         history.
 
 
+- Git in Bash
+
+    If you’re a Bash user, you can tap into some of your shell’s features to make
+    your experience with Git a lot friendlier. Git actually ships with plugins for sever-
+    al shells, but it’s not turned on by default.
+
+    First, you need to get a copy of the contrib/completion/git-
+    completion.bash file out of the Git source code. Copy it somewhere handy,
+    like your home directory, and add this to your .bashrc :
+
+        . ~/git-completion.bash
+
+    Once that’s done, change your directory to a git repository, and type:
+
+        git chec<tab>
+    
+    and Bash will auto-complete to git checkout . This works with all of Git’s
+    subcommands, command-line parameters, and remotes and ref names where
+    appropriate.
+
+    It’s also useful to customize your prompt to show information about the cur-
+    rent directory’s Git repository. This can be as simple or complex as you want,
+    but there are generally a few key pieces of information that most people want,
+    like the current branch, and the status of the working directory. To add these to
+    your prompt, just copy the contrib/completion/git-prompt.sh file from
+    Git’s source repository to your home directory, add some variables to
+    your .bashrc (see documentation)
+
 GitHub
 ------
 
