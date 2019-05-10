@@ -6,7 +6,6 @@ To Do:
 
 - better understanding of rebasing and its potential problems
 
-
 Git Cheatsheet
 ==============
 

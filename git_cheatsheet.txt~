@@ -1,10 +1,6 @@
 
 Modified: 05/09/19
 
-Mostly based on:
-
-    Pro Git, 2nd edition, Chacon and Straub
-
 To Do:
 ------
 
@@ -13,6 +9,13 @@ To Do:
 
 Git Cheatsheet
 ==============
+
+Mostly based on:
+
+    Pro Git, 2nd edition, Chacon and Straub
+
+Quick Hits
+----------
 
 git config
 
@@ -51,8 +54,6 @@ git stash
 git tag
 
 git help
-
-
 
 
 SETUP
