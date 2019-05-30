@@ -34,7 +34,7 @@ QUICK IMPORTANT STUFF (changed from F77)
 - free-form
 - case insensitive (not changed from F77)
 - no semicolons requred; can be used to separate statements one line
-- inline comments using ! (note: no block commenting)
+- inline comments using !
 - continuation character &
 - characters strings: ' ' or " "
 
